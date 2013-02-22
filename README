@@ -1,0 +1,33 @@
+This is the readme file to Project Development Studio at DIKU.
+
+Project name: VOLTSET
+Group name: Hotel
+Group members: Jens Turning Bramstedt, Petros Maznas, Daniel Povlan, Panas Karampis & Joachim Vig
+
+The project is being developed with Ecplipse and an Android SDK.
+
+How to run the program
+Install the latest JDK from http://www.oracle.com/technetwork/java/javase/downloads/index.html
+Install the latest Android SDK (with Eclipse) from http://developer.android.com/sdk/index.html
+
+Install target image
+Start SDK Manager: tools/android
+Check Android 4.2 (API level 17)
+Click Install Packages
+
+Create a virtual device
+Start Virtual Device Manager: tools/android avd
+Click New
+Enter the following in the form
+AVD Name: Voltset
+Device: Nexus 7 (...)
+Target: Android 4.2 – API level 17
+SD Card size: 1000 MiB
+Leave the rest of the fields as they are.
+Click Ok
+
+Run the emulator
+tools/emulator -avd Voltset
+
+Install the App on Virtual Device
+platform-tools/adb install /path/to/apk/Voltset.apk
