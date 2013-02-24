@@ -8,34 +8,70 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
         android:layout_marginTop="22dp" >
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/linearLayout1"
-        android:layout_alignTop="@+id/linearLayout1" >
+        <TextView
+            android:id="@+id/lblMeasurement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/staticLabel_measure" />
+
+        <TextView
+            android:id="@+id/lblCurrentMeasurement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="@string/voltages" />
+
     </LinearLayout>
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/cButton"
+        style="@style/AppTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout1"
-        android:layout_toRightOf="@+id/linearLayout1"
-        android:text="@string/button" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="65dp"
+        android:layout_toRightOf="@+id/vButton"
+        android:text="@string/cButton"
+        android:textSize="10sp"
+        android:textStyle="italic" />
+
+    <Button
+        android:id="@+id/aButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/cButton"
+        android:layout_alignBottom="@+id/cButton"
+        android:layout_toRightOf="@+id/cButton"
+        android:text="@string/aButton"
+        android:textSize="10sp"
+        android:textStyle="italic" />
+
+    <Button
+        android:id="@+id/vButton"
+        style="@style/AppTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/cButton"
+        android:layout_alignBottom="@+id/cButton"
+        android:layout_alignParentLeft="true"
+        android:text="@string/vButton"
+        android:textSize="10sp"
+        android:textStyle="italic" />
+
+    <Button
+        android:id="@+id/pButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/vButton"
+        android:layout_toRightOf="@+id/aButton"
+        android:text="@string/pButton"
+        android:textSize="10sp"
+        android:textStyle="italic" />
 
 </RelativeLayout>
