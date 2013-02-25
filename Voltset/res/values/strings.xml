@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="voltages">Volts</string>
     <string name="staticLabel_measure">Measuring:</string>
-    <string name="vButton">voltage</string>
+    <string name="vButton">Voltage</string>
     <string name="cButton">Current</string>
     <string name="aButton">Ampere</string>
     <string name="pButton">Power</string>
