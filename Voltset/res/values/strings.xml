@@ -9,5 +9,6 @@
     <string name="cButton">Current</string>
     <string name="aButton">Ampere</string>
     <string name="pButton">Power</string>
+    <string name="qButton">Quit</string>
 
 </resources>

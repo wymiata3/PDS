@@ -45,6 +45,7 @@ public final class R {
         public static final int app_name=0x7f050000;
         public static final int cButton=0x7f050005;
         public static final int pButton=0x7f050007;
+        public static final int qButton=0x7f050008;
         public static final int staticLabel_measure=0x7f050003;
         public static final int vButton=0x7f050004;
         public static final int voltages=0x7f050002;
