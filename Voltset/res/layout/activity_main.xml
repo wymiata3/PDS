@@ -1,77 +1,52 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
+<?xml version="1.0" encoding="utf-8"?>
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="22dp" >
-
-        <TextView
-            android:id="@+id/lblMeasurement"
+<RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/staticLabel_measure" />
-
-        <TextView
-            android:id="@+id/lblCurrentMeasurement"
+            android:id="@+id/imageClimax"
+            android:src="@drawable/upmeter"
+            android:layout_centerHorizontal="true" android:layout_alignParentTop="true"
+            android:layout_marginTop="76dp" android:longClickable="true"/>
+    <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="@string/voltages" />
-
-    </LinearLayout>
-
+            android:id="@+id/imageArrow"
+            android:src="@drawable/downmeter" android:layout_alignParentLeft="true" android:layout_marginLeft="69dp"
+            android:layout_alignBottom="@+id/imageClimax"/>
+    <EditText
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/simText" android:layout_centerHorizontal="true" android:layout_alignParentTop="true"
+            android:layout_marginTop="13dp" android:numeric="integer|signed|decimal" android:maxLength="5"
+            android:singleLine="true"/>
     <Button
-        android:id="@+id/cButton"
-        style="@style/AppTheme"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="65dp"
-        android:layout_toRightOf="@+id/vButton"
-        android:text="@string/cButton"
-        android:textSize="10sp"
-        android:textStyle="italic" />
-
-    <Button
-        android:id="@+id/aButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/cButton"
-        android:layout_alignBottom="@+id/cButton"
-        android:layout_toRightOf="@+id/cButton"
-        android:text="@string/aButton"
-        android:textSize="10sp"
-        android:textStyle="italic" />
-
-    <Button
-        android:id="@+id/vButton"
-        style="@style/AppTheme"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/cButton"
-        android:layout_alignBottom="@+id/cButton"
-        android:layout_alignParentLeft="true"
-        android:text="@string/vButton"
-        android:textSize="10sp"
-        android:textStyle="italic" />
-
-    <Button
-        android:id="@+id/pButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/vButton"
-        android:layout_toRightOf="@+id/aButton"
-        android:text="@string/pButton"
-        android:textSize="10sp"
-        android:textStyle="italic" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Simulate"
+            android:id="@+id/simButton" android:layout_alignLeft="@+id/imageClimax" android:layout_below="@+id/imageClimax"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:id="@+id/mVoltsText"
+            android:inputType="number|numberDecimal|numberSigned"
+            android:singleLine="true" android:layout_centerHorizontal="true" android:layout_alignTop="@+id/imageArrow"
+            android:numeric="integer|signed|decimal"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Previous:"
+            android:id="@+id/prevTextStatic"
+            android:layout_alignRight="@+id/mVoltsText" android:layout_below="@+id/mVoltsText"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:id="@+id/prevText"
+            android:layout_toRightOf="@+id/mVoltsText" android:layout_below="@+id/mVoltsText"
+            android:singleLine="true" android:numeric="integer|signed|decimal"/>
 
 </RelativeLayout>

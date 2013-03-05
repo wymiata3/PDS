@@ -3,91 +3,97 @@ package com.ku.voltset;
 import com.example.helloworld.R;
 
 import android.os.Bundle;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends Activity {
-	Button lastPressedButton = null;
-	int buttons[] = { R.id.aButton, R.id.cButton, R.id.pButton, R.id.vButton }; //Buttons IDs
-
+public class MainActivity extends Activity implements OnClickListener,AnimationListener {
+	private double lastMeasurement = 0.000;
+	private ImageView image;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		//Get buttons
-		Button buttonVoltages = (Button) findViewById(R.id.vButton);
-		Button buttonCurrent = (Button) findViewById(R.id.cButton);
-		Button buttonAmpere = (Button) findViewById(R.id.aButton);
-		Button buttonPower = (Button) findViewById(R.id.pButton);
 
-		buttonVoltages.setEnabled(false);
-
-		//Add Listeners
-		buttonVoltages.setOnClickListener(voltageListener);
-		buttonCurrent.setOnClickListener(currentListener);
-		buttonAmpere.setOnClickListener(ampereListener);
-		buttonPower.setOnClickListener(powerListener);
+		image = (ImageView) findViewById(R.id.imageArrow);
+		Button simButton = (Button) findViewById(R.id.simButton);
+		simButton.setOnClickListener(this);
 	}
-
-	private void enableButClicked(Button pressed) {
-		for (int j = 0; j < 4; j++) {
-			if (pressed.getId() == buttons[j]) {//If clicked, disable
-				pressed.setEnabled(false);
-				continue;
-			}
-			if(!findViewById(buttons[j]).isEnabled()) //Not enabled? Enable
-				findViewById(buttons[j]).setEnabled(true);
-		}
-	}
-
-	private OnClickListener voltageListener = new OnClickListener() { // Change text to Volts
-		public void onClick(View v) {
-			TextView tv = (TextView) findViewById(R.id.lblCurrentMeasurement);
-			tv.setText("Volts");
-			lastPressedButton = (Button) findViewById(R.id.vButton);
-			enableButClicked(lastPressedButton);
-		}
-	};
-
-	private OnClickListener powerListener = new OnClickListener() {
-		public void onClick(View v) {
-			TextView tv = (TextView) findViewById(R.id.lblCurrentMeasurement); //Change text to Power
-			tv.setText("Power");
-			lastPressedButton = (Button) findViewById(R.id.pButton);
-			enableButClicked(lastPressedButton);
-		}
-	};
-
-	private OnClickListener ampereListener = new OnClickListener() {// Change text to Ampere
-		public void onClick(View v) {
-			TextView tv = (TextView) findViewById(R.id.lblCurrentMeasurement);
-			tv.setText("Ampere");
-			lastPressedButton = (Button) findViewById(R.id.aButton);
-			enableButClicked(lastPressedButton);
-		}
-	};
-
-	private OnClickListener currentListener = new OnClickListener() { // Change text to Current
-
-		@Override
-		public void onClick(View v) {
-			TextView tv = (TextView) findViewById(R.id.lblCurrentMeasurement);
-			tv.setText("Current");
-			lastPressedButton = (Button) findViewById(R.id.cButton);
-			enableButClicked(lastPressedButton);
-		}
-
-	};
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+	public void onClick(View view) {
+
+		if (view.getId() == R.id.simButton) {
+			
+			EditText editText = (EditText) findViewById(R.id.simText);
+			TextView prevText = (TextView) findViewById(R.id.prevText);
+			TextView mVoltsText = (TextView) findViewById(R.id.mVoltsText);
+			if(editText.getText().length()==0){
+				Toast.makeText(getApplicationContext(), "Input can't be empty", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			if (lastMeasurement == 0.000) {
+				lastMeasurement = Double.valueOf(editText.getText().toString());
+			}
+			else
+				lastMeasurement = Double.valueOf(mVoltsText.getText().toString());
+			prevText.setText(String.valueOf(lastMeasurement));
+			mVoltsText.setText(editText.getText().toString());
+			//Animation start
+			float Xaxis=0.835366f;
+			float Yaxis=0.676692f;
+			RotateAnimation rotateAnimation1 = new RotateAnimation(0, 180,
+					Animation.RELATIVE_TO_SELF, Xaxis,
+					Animation.RELATIVE_TO_SELF, Yaxis);
+			rotateAnimation1.setInterpolator(new LinearInterpolator());
+			rotateAnimation1.setDuration(2500);
+			rotateAnimation1.setRepeatCount(0);
+			image.startAnimation(rotateAnimation1);
+			rotateAnimation1.setAnimationListener(this);
+		}
 	}
 
+	@Override
+	public void onAnimationEnd(Animation animation) {
+		animation.setFillAfter(true);
+	}
+
+	@Override
+	public void onAnimationRepeat(Animation animation) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAnimationStart(Animation animation) {
+		
+		
+	}
 }

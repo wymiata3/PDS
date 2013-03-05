@@ -21,17 +21,20 @@ public final class R {
         public static final int activity_vertical_margin=0x7f040001;
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
+        public static final int downmeter=0x7f020000;
+        public static final int ic_launcher=0x7f020001;
+        public static final int signalmeter=0x7f020002;
+        public static final int upmeter=0x7f020003;
     }
     public static final class id {
-        public static final int aButton=0x7f080005;
         public static final int action_settings=0x7f080007;
-        public static final int cButton=0x7f080003;
-        public static final int lblCurrentMeasurement=0x7f080002;
-        public static final int lblMeasurement=0x7f080001;
-        public static final int linearLayout1=0x7f080000;
-        public static final int pButton=0x7f080006;
-        public static final int vButton=0x7f080004;
+        public static final int imageArrow=0x7f080001;
+        public static final int imageClimax=0x7f080000;
+        public static final int mVoltsText=0x7f080004;
+        public static final int prevText=0x7f080006;
+        public static final int prevTextStatic=0x7f080005;
+        public static final int simButton=0x7f080003;
+        public static final int simText=0x7f080002;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
