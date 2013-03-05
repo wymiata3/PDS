@@ -69,20 +69,30 @@ public class MainActivity extends Activity implements OnClickListener,AnimationL
 			//Animation start
 			float Xaxis=0.835366f;
 			float Yaxis=0.676692f;
-			RotateAnimation rotateAnimation1 = new RotateAnimation(0, 180,
+			RotateAnimation rotateAnimation1 = new RotateAnimation(0, Float.valueOf(editText.getText().toString()),
 					Animation.RELATIVE_TO_SELF, Xaxis,
 					Animation.RELATIVE_TO_SELF, Yaxis);
 			rotateAnimation1.setInterpolator(new LinearInterpolator());
 			rotateAnimation1.setDuration(2500);
 			rotateAnimation1.setRepeatCount(0);
-			image.startAnimation(rotateAnimation1);
+			
 			rotateAnimation1.setAnimationListener(this);
+			image.clearAnimation();
+			image.invalidate();
+			rotateAnimation1.cancel();
+			rotateAnimation1.reset();
+			image.startAnimation(rotateAnimation1);
+			    
+			
 		}
 	}
 
 	@Override
 	public void onAnimationEnd(Animation animation) {
 		animation.setFillAfter(true);
+		
+		
+		
 	}
 
 	@Override
@@ -93,7 +103,6 @@ public class MainActivity extends Activity implements OnClickListener,AnimationL
 
 	@Override
 	public void onAnimationStart(Animation animation) {
-		
 		
 	}
 }
