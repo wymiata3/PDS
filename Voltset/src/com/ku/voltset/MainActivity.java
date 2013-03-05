@@ -59,6 +59,11 @@ public class MainActivity extends Activity implements OnClickListener,AnimationL
 				Toast.makeText(getApplicationContext(), "Input can't be empty", Toast.LENGTH_SHORT).show();
 				return;
 			}
+			if((Float.valueOf(editText.getText().toString())<0) || (Float.valueOf(editText.getText().toString())>180))
+			{
+				Toast.makeText(getApplicationContext(), "Unaccepted value (0-180)", Toast.LENGTH_SHORT).show();
+				return;
+			}
 			if (lastMeasurement == 0.000) {
 				lastMeasurement = Double.valueOf(editText.getText().toString());
 			}
