@@ -1,52 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-<RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+    <RelativeLayout
+        android:id="@+id/r1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="76dp" >
+
+        <ImageView
             android:id="@+id/imageClimax"
-            android:src="@drawable/upmeter"
-            android:layout_centerHorizontal="true" android:layout_alignParentTop="true"
-            android:layout_marginTop="76dp" android:longClickable="true"/>
-    <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:longClickable="true"
+            android:src="@drawable/upmeter" />
+
+        <ImageView
             android:id="@+id/imageArrow"
-            android:src="@drawable/downmeter" android:layout_alignParentLeft="true" android:layout_marginLeft="69dp"
-            android:layout_alignBottom="@+id/imageClimax"/>
-    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="53dp"
+            android:layout_marginTop="66dp"
+            android:src="@drawable/downmeter" />
+
+        <TextView
+            android:id="@+id/prevTextStatic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/prevText"
+            android:text="Previous:" />
+
+        <TextView
+            android:id="@+id/prevText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/imageArrow"
+            android:layout_centerVertical="true"
+            android:clickable="false"
+            android:gravity="right"
+            android:numeric="integer|signed|decimal"
+            android:singleLine="true"
+            android:text="0.00" />
+
+        <TextView
+            android:id="@+id/mVoltsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="19dp"
+            android:inputType="number|numberDecimal|numberSigned"
+            android:numeric="integer|signed|decimal"
+            android:singleLine="true"
+            android:text="0.00" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/lHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="13dp" >
+
+        <EditText
+            android:id="@+id/simText"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:id="@+id/simText" android:layout_centerHorizontal="true" android:layout_alignParentTop="true"
-            android:layout_marginTop="13dp" android:numeric="integer|signed|decimal" android:maxLength="5"
-            android:singleLine="true"/>
+            android:inputType="number|numberDecimal"
+            android:maxLength="5"
+            android:numeric="integer|signed|decimal"
+            android:singleLine="true" />
+
+    </LinearLayout>
+
     <Button
-            android:layout_width="wrap_content"
+        android:id="@+id/simButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/r1"
+        android:layout_below="@+id/r1"
+        android:text="Simulate" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="36dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/buttonSettings"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
-            android:text="Simulate"
-            android:id="@+id/simButton" android:layout_alignLeft="@+id/imageClimax" android:layout_below="@+id/imageClimax"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0.00"
-            android:id="@+id/mVoltsText"
-            android:inputType="number|numberDecimal|numberSigned"
-            android:singleLine="true" android:layout_centerHorizontal="true" android:layout_alignTop="@+id/imageArrow"
-            android:numeric="integer|signed|decimal"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Previous:"
-            android:id="@+id/prevTextStatic"
-            android:layout_alignRight="@+id/mVoltsText" android:layout_below="@+id/mVoltsText"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0.00"
-            android:id="@+id/prevText"
-            android:layout_toRightOf="@+id/mVoltsText" android:layout_below="@+id/mVoltsText"
-            android:singleLine="true" android:numeric="integer|signed|decimal"/>
+            android:layout_gravity="right|center_vertical"
+            android:background="@drawable/settingsicon"
+            android:enabled="true" />
+    </LinearLayout>
 
 </RelativeLayout>
