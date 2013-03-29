@@ -1,0 +1,65 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".Startup" >
+
+    <Button
+        android:id="@+id/basicReading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="19dp"
+        android:text="@string/readingButton" />
+
+    <Button
+        android:id="@+id/advancedReading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/basicReading"
+        android:layout_alignRight="@+id/basicReading"
+        android:layout_below="@+id/basicReading"
+        android:text="@string/advancedReading" />
+
+    <Button
+        android:id="@+id/profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/advancedReading"
+        android:layout_alignRight="@+id/advancedReading"
+        android:layout_below="@+id/advancedReading"
+        android:text="@string/profile" />
+
+    <Button
+        android:id="@+id/vault"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/profile"
+        android:layout_alignRight="@+id/profile"
+        android:layout_below="@+id/profile"
+        android:text="@string/vault" />
+
+    <Button
+        android:id="@+id/conf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/vault"
+        android:layout_alignRight="@+id/vault"
+        android:layout_below="@+id/vault"
+        android:text="@string/conf" />
+
+    <Button
+        android:id="@+id/quit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/conf"
+        android:layout_alignRight="@+id/conf"
+        android:layout_below="@+id/conf"
+        android:text="@string/quit" />
+
+</RelativeLayout>
