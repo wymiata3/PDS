@@ -10,5 +10,17 @@
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_simple">SimpleActivity</string>
+    <string name="previous">Previous</string>
+    <string name="initValue">0.00</string>
+    <string name="simHintInput">Voltage measurement</string>
+    <string name="simString">Simulate</string>
+    <string name="title_activity_startup">Startup</string>
+    <string name="readingButton">Basic Reading</string>
+    <string name="advancedReading">Advanced Reading</string>
+    <string name="profile">Go to my profile</string>
+    <string name="vault">The Vault</string>
+    <string name="conf">Configurations</string>
+    <string name="quit">Quit</string>
 
 </resources>

@@ -1,8 +1,8 @@
 package com.ku.voltset;
 
-import com.example.helloworld.R;
-import com.example.helloworld.R.layout;
-import com.example.helloworld.R.menu;
+import com.ku.voltset.R;
+import com.ku.voltset.R.layout;
+import com.ku.voltset.R.menu;
 
 import android.os.Bundle;
 import android.app.Activity;

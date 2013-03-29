@@ -12,7 +12,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Animation Duration:"
-                android:id="@+id/textView1" android:layout_gravity="left|center_vertical"/>
+                android:id="@+id/dcVolt" android:layout_gravity="left|center_vertical"/>
         <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent" android:layout_gravity="left|center_vertical">
@@ -31,7 +31,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Slow"
-                    android:id="@+id/textView2"
+                    android:id="@+id/acVolt"
                     android:layout_alignRight="@+id/seekBar" android:layout_alignBottom="@+id/seekBar"/>
         </RelativeLayout>
     </LinearLayout>
