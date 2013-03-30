@@ -33,18 +33,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		getMenuInflater().inflate(R.menu.settings, menu);
 		return true;
 	}
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-	    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-	        Intent mainActivity = new Intent(SettingsActivity.this,MainActivity.class);    
-	        mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-	        mainActivity.putExtra("duration",duration);
-	        startActivity(mainActivity);
-	        return true;
-	    }
 
-	    return super.onKeyDown(keyCode, event);
-	}
 
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {

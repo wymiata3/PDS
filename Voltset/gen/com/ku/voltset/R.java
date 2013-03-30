@@ -33,25 +33,23 @@ public final class R {
     }
     public static final class id {
         public static final int acVolt=0x7f0a000a;
-        public static final int action_settings=0x7f0a0013;
-        public static final int advancedReading=0x7f0a000e;
-        public static final int basicReading=0x7f0a000d;
-        public static final int buttonSettings=0x7f0a0008;
-        public static final int conf=0x7f0a0011;
-        public static final int dcVolt=0x7f0a0009;
-        public static final int imageArrow=0x7f0a0002;
-        public static final int imageClimax=0x7f0a0001;
-        public static final int lHorizontal=0x7f0a0006;
-        public static final int mVoltsText=0x7f0a0005;
-        public static final int prevText=0x7f0a0004;
-        public static final int prevTextStatic=0x7f0a0003;
-        public static final int profile=0x7f0a000f;
-        public static final int quit=0x7f0a0012;
-        public static final int r1=0x7f0a0000;
-        public static final int seekBar=0x7f0a000b;
-        public static final int simButton=0x7f0a0007;
-        public static final int textView=0x7f0a000c;
-        public static final int vault=0x7f0a0010;
+        public static final int action_settings=0x7f0a0011;
+        public static final int advancedReading=0x7f0a000c;
+        public static final int basicReading=0x7f0a000b;
+        public static final int buttonSettings=0x7f0a0000;
+        public static final int conf=0x7f0a000f;
+        public static final int dcVolt=0x7f0a0007;
+        public static final int imageArrow=0x7f0a0003;
+        public static final int imageClimax=0x7f0a0002;
+        public static final int mVoltsText=0x7f0a0006;
+        public static final int prevText=0x7f0a0005;
+        public static final int prevTextStatic=0x7f0a0004;
+        public static final int profile=0x7f0a000d;
+        public static final int quit=0x7f0a0010;
+        public static final int r1=0x7f0a0001;
+        public static final int seekBar=0x7f0a0008;
+        public static final int textView=0x7f0a0009;
+        public static final int vault=0x7f0a000e;
     }
     public static final class integer {
         public static final int maxAnimation=0x7f060000;
@@ -71,26 +69,21 @@ public final class R {
     }
     public static final class string {
         public static final int action_settings=0x7f070001;
-        public static final int advancedReading=0x7f070010;
+        public static final int advancedReading=0x7f070008;
         public static final int app_name=0x7f070000;
-        public static final int conf=0x7f070013;
-        public static final int hello_world=0x7f070008;
-        public static final int initValue=0x7f07000b;
-        public static final int previous=0x7f07000a;
-        public static final int profile=0x7f070011;
-        public static final int quit=0x7f070014;
-        public static final int readingButton=0x7f07000f;
-        public static final int simHintInput=0x7f07000c;
-        public static final int simString=0x7f07000d;
-        public static final int staticLabel_measure=0x7f070003;
-        public static final int title_activity_settings=0x7f070004;
-        public static final int title_activity_simple=0x7f070009;
-        public static final int title_activity_startup=0x7f07000e;
-        public static final int title_section1=0x7f070005;
-        public static final int title_section2=0x7f070006;
-        public static final int title_section3=0x7f070007;
-        public static final int vault=0x7f070012;
-        public static final int voltages=0x7f070002;
+        public static final int conf=0x7f07000b;
+        public static final int dialog_negative=0x7f07000f;
+        public static final int dialog_positive=0x7f07000e;
+        public static final int dialog_rescan=0x7f07000d;
+        public static final int initValue=0x7f070005;
+        public static final int previous=0x7f070004;
+        public static final int profile=0x7f070009;
+        public static final int quit=0x7f07000c;
+        public static final int readingButton=0x7f070007;
+        public static final int staticLabel_measure=0x7f070002;
+        public static final int title_activity_settings=0x7f070003;
+        public static final int title_activity_startup=0x7f070006;
+        public static final int vault=0x7f07000a;
     }
     public static final class style {
         /** 
