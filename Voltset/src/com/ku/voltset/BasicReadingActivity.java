@@ -44,7 +44,7 @@ public class BasicReadingActivity extends Activity implements OnClickListener {
 		Button settingsButton = (Button) findViewById(R.id.buttonSettings);
 		image = (ImageView) findViewById(R.id.imageArrow);
 		duration = this.getIntent().getIntExtra("duration", -1);
-		this.serial = this.getIntent().getStringExtra("serial_number");
+		serial = this.getIntent().getStringExtra("serial_number");
 		settingsButton.setOnClickListener(this);
 		mVoltsText = (TextView) findViewById(R.id.mVoltsText);
 		prevText = (TextView) findViewById(R.id.prevText);
@@ -148,14 +148,14 @@ public class BasicReadingActivity extends Activity implements OnClickListener {
 				} catch (YAPI_Exception e) {
 					e.printStackTrace();
 				}
-				YVoltage ac_sensor = YVoltage.FindVoltage(serial + ".voltage2");//AC sensor, to be taken by HardwareController
-				try {
-					TextView view = (TextView) findViewById(R.id.acVolt);
-					view.setText(String.format("%.1f %s",
-							ac_sensor.getCurrentValue(), ac_sensor.getUnit()));
-				} catch (YAPI_Exception e) {
-					e.printStackTrace();
-				}
+//				YVoltage ac_sensor = YVoltage.FindVoltage(serial + ".voltage2");//AC sensor, to be taken by HardwareController
+//				try {
+//					TextView view = (TextView) findViewById(R.id.acVolt);
+//					view.setText(String.format("%.1f %s",
+//							ac_sensor.getCurrentValue(), ac_sensor.getUnit()));
+//				} catch (YAPI_Exception e) {
+//					e.printStackTrace();
+//				}
 			}
 			handler.postDelayed(this, 2000);//Run again in 2sec
 		}
