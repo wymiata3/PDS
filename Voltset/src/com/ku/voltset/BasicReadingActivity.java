@@ -3,7 +3,6 @@ package com.ku.voltset;
 import com.yoctopuce.YoctoAPI.*;
 
 import com.ku.voltset.R;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.app.Activity;

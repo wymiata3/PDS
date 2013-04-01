@@ -1,17 +1,12 @@
 package com.ku.voltset;
 
 import com.ku.voltset.R;
-import com.ku.voltset.R.layout;
-import com.ku.voltset.R.menu;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Intent;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.Toast;
 
 public class SettingsActivity extends Activity implements OnSeekBarChangeListener {
 	private int duration;
