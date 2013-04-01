@@ -142,7 +142,15 @@ public class BasicReadingActivity extends Activity implements OnClickListener {
 								dc_sensor.getUnit())
 								+ "V");
 					} else {
-						// TODO rotate back image
+						rotate = new RotateAnimation(
+								Float.valueOf(currentMeasurement * 36),0,
+								Animation.RELATIVE_TO_SELF, Xaxis,
+								Animation.RELATIVE_TO_SELF, Yaxis);
+						rotate.setInterpolator(new LinearInterpolator());
+						rotate.setDuration(duration);
+						rotate.setRepeatCount(0);
+						rotate.setAnimationListener(animationListener);
+						image.startAnimation(rotate);
 					}
 
 				} catch (YAPI_Exception e) {
