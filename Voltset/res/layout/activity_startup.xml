@@ -94,7 +94,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="21dp"
-                android:contentDescription="info"
+                android:contentDescription="@strings/infoIcon"
                 android:src="@drawable/info" />
         </RelativeLayout>
     </ScrollView>

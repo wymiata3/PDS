@@ -83,6 +83,7 @@ public final class R {
         public static final int dialog_negative=0x7f07000f;
         public static final int dialog_positive=0x7f07000e;
         public static final int dialog_rescan=0x7f07000d;
+        public static final int infoIcon=0x7f070010;
         public static final int initValue=0x7f070005;
         public static final int previous=0x7f070004;
         public static final int profile=0x7f070009;
