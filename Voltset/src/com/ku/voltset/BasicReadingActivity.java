@@ -57,7 +57,7 @@ public class BasicReadingActivity extends Activity implements OnClickListener {
 	public void onClick(View view) { // button clicks, on activity
 		if (view.getId() == R.id.buttonSettings) {// touch on settings
 			Intent settingsActivity = new Intent(this, SettingsActivity.class);
-			settingsActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			settingsActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			if (duration == -1)
 				duration = 2500;
 			settingsActivity.putExtra("duration", duration);
