@@ -18,6 +18,7 @@
             android:layout_gravity="right|center_vertical"
             android:background="@drawable/settingsicon"
             android:enabled="true" />
+
     </LinearLayout>
 
     <RelativeLayout
@@ -78,5 +79,15 @@
             android:singleLine="true"
             android:text="@string/initValue" />
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/r1"
+        android:layout_below="@+id/r1"
+        android:layout_marginRight="47dp"
+        android:layout_marginTop="76dp"
+        android:text="Button" />
 
 </RelativeLayout>

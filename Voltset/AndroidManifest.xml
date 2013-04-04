@@ -6,7 +6,9 @@
 
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-feature android:name="com.android.future.usb" />
+
     <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-sdk
         android:minSdkVersion="12"
@@ -41,6 +43,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="com.ku.voltset.services.HardwareController_service"
+            android:enabled="true" />
     </application>
 
 </manifest>

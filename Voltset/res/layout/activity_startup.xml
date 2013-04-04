@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="wrap_content"
@@ -6,12 +6,12 @@
 
     <ScrollView
         android:id="@+id/scollView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="460dp"
             android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
@@ -71,32 +71,26 @@
                 android:layout_alignRight="@+id/conf"
                 android:layout_below="@+id/conf"
                 android:text="@string/quit" />
-        </RelativeLayout>
-    </ScrollView>
 
-    <ScrollView
-        android:id="@+id/scrollViewBottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" >
-
-        <RelativeLayout
-            android:id="@+id/relativeLayout1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <ImageView
-                android:id="@+id/infoIcon"
+            <RelativeLayout
+                android:id="@+id/relativeLayout1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginRight="21dp"
-                android:contentDescription="@string/infoIcon"
-                android:src="@drawable/info" />
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignRight="@+id/quit" >
+
+                <ImageView
+                    android:id="@+id/infoIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="21dp"
+                    android:contentDescription="@string/infoIcon"
+                    android:src="@drawable/info" />
+            </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
 
-</RelativeLayout>
+</FrameLayout>
