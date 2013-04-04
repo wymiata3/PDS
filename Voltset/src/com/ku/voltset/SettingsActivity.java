@@ -16,6 +16,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		setContentView(R.layout.activity_settings);
 		int duration= this.getIntent().getIntExtra("duration",0);
 		this.duration=duration;
+		//TODO implemet loging for passing to other activites
 		SeekBar durationLength=(SeekBar)findViewById(R.id.seekBar);
 		durationLength.setProgress(duration);
 		durationLength.setOnSeekBarChangeListener(this);
@@ -32,7 +33,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-		duration=progress;
+		this.duration=progress;
 	}
 
 	@Override

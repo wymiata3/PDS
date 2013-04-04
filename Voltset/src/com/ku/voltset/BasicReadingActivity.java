@@ -134,6 +134,7 @@ public class BasicReadingActivity extends Activity implements OnClickListener {
 	 */
 	final Runnable r = new Runnable() {
 		public void run() {
+			
 			if (serial != null) {// So we finally have a serial, measure!
 				YVoltage dc_sensor = YVoltage.FindVoltage(serial + ".voltage1"); // get
 																					// the

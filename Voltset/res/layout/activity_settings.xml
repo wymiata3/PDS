@@ -33,6 +33,15 @@
                     android:text="Slow"
                     android:id="@+id/acVolt"
                     android:layout_alignRight="@+id/seekBar" android:layout_alignBottom="@+id/seekBar"/>
+
+            <CheckBox
+                android:id="@+id/cbLog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/seekBar"
+                android:text="Enable Logging" />
+
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>
