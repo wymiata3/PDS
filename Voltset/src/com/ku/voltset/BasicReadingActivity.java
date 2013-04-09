@@ -46,7 +46,7 @@ public class BasicReadingActivity extends Activity implements OnClickListener {
 	TextView mVoltsText; // Current measurement
 	TextView prevText;// Previous measurement
 	Logger log;
-
+	//only for test
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -144,7 +144,6 @@ public class BasicReadingActivity extends Activity implements OnClickListener {
 																					// taken
 																					// serialized/parced
 																					// HardwareController
-
 				try {
 					currentMeasurement = Float.parseFloat((String.format(
 							"%.1f", dc_sensor.getCurrentValue())));// We want
@@ -203,15 +202,13 @@ public class BasicReadingActivity extends Activity implements OnClickListener {
 				} catch (YAPI_Exception e) {
 					e.printStackTrace();
 				}
-				// YVoltage ac_sensor = YVoltage.FindVoltage(serial +
-				// ".voltage2");//AC sensor, to be taken by HardwareController
-				// try {
-				// TextView view = (TextView) findViewById(R.id.acVolt);
-				// view.setText(String.format("%.1f %s",
-				// ac_sensor.getCurrentValue(), ac_sensor.getUnit()));
-				// } catch (YAPI_Exception e) {
-				// e.printStackTrace();
-				// }
+//				 YVoltage ac_sensor = YVoltage.FindVoltage(serial +
+//				 ".voltage2");//AC sensor, to be taken by HardwareController
+//				 try {
+//					 acTxtView.setText(String.valueOf(ac_sensor.getCurrentValue()));
+//				 } catch (YAPI_Exception e) {
+//					 e.printStackTrace();
+//				 }
 			}
 			handler.postDelayed(this, 2000);// Run again in 2sec
 		}
