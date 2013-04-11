@@ -20,8 +20,8 @@ public class HardwareController {
 	private String serial;
 	Context context;
 	Handler hHardwareControler;
-	VoltSet activity;
-	public HardwareController(Context context,VoltSet activity) {
+	StartupActivity activity;
+	public HardwareController(Context context,StartupActivity activity) {
 		this.context = context; // Application context
 		hHardwareControler = new Handler(); // handler to scan device
 		hHardwareControler.postDelayed(scanner, 2000); // run every 2 seconds

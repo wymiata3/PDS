@@ -1,21 +1,13 @@
 package com.ku.voltset.services;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import com.ku.voltset.R;
 import com.yoctopuce.YoctoAPI.YAPI;
 import com.yoctopuce.YoctoAPI.YAPI_Exception;
 import com.yoctopuce.YoctoAPI.YModule;
 
-import android.app.ActivityManager;
-import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
+import android.annotation.SuppressLint;
 import android.app.Service;
-import android.app.ActivityManager.RunningTaskInfo;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
@@ -55,7 +47,7 @@ public class HardwareController_service extends Service {
 
 	@Override
 	public void onStart(Intent intent, int startid) {
-		Log.d(TAG, "onStart");
+		Log.d(TAG, "onStartHCService");
 		hHardwareControler = new Handler();
 		hHardwareControler.postDelayed(scanner, 2000);
 	}
@@ -124,6 +116,7 @@ public class HardwareController_service extends Service {
 		return serial;
 	}
 
+	@SuppressLint("HandlerLeak")
 	class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {

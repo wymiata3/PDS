@@ -16,10 +16,10 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
-            tools:context=".VoltSet" >
+            tools:context=".StartupActivity" >
 
             <Button
-                android:id="@+id/basicReading"
+                android:id="@+id/btnMeasure"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -28,48 +28,39 @@
                 android:text="@string/readingButton" />
 
             <Button
-                android:id="@+id/advancedReading"
+                android:id="@+id/btnProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/basicReading"
-                android:layout_alignRight="@+id/basicReading"
-                android:layout_below="@+id/basicReading"
-                android:text="@string/advancedReading" />
-
-            <Button
-                android:id="@+id/profile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/advancedReading"
-                android:layout_alignRight="@+id/advancedReading"
-                android:layout_below="@+id/advancedReading"
+                android:layout_alignLeft="@+id/btnMeasure"
+                android:layout_alignRight="@+id/btnMeasure"
+                android:layout_below="@+id/btnMeasure"
                 android:text="@string/profile" />
 
             <Button
-                android:id="@+id/vault"
+                android:id="@+id/btnVault"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/profile"
-                android:layout_alignRight="@+id/profile"
-                android:layout_below="@+id/profile"
+                android:layout_alignLeft="@+id/btnProfile"
+                android:layout_alignRight="@+id/btnProfile"
+                android:layout_below="@+id/btnProfile"
                 android:text="@string/vault" />
 
             <Button
-                android:id="@+id/conf"
+                android:id="@+id/btnConf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/vault"
-                android:layout_alignRight="@+id/vault"
-                android:layout_below="@+id/vault"
+                android:layout_alignLeft="@+id/btnVault"
+                android:layout_alignRight="@+id/btnVault"
+                android:layout_below="@+id/btnVault"
                 android:text="@string/conf" />
 
             <Button
-                android:id="@+id/quit"
+                android:id="@+id/btnQuit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/conf"
-                android:layout_alignRight="@+id/conf"
-                android:layout_below="@+id/conf"
+                android:layout_alignLeft="@+id/btnConf"
+                android:layout_alignRight="@+id/btnConf"
+                android:layout_below="@+id/btnConf"
                 android:text="@string/quit" />
 
             <RelativeLayout
@@ -78,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignRight="@+id/quit" >
+                android:layout_alignRight="@+id/btnQuit" >
 
                 <ImageView
                     android:id="@+id/infoIcon"

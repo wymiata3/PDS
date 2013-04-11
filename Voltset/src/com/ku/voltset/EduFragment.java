@@ -1,30 +1,21 @@
 package com.ku.voltset;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import com.yoctopuce.YoctoAPI.*;
 
 import com.ku.voltset.R;
 import android.os.Bundle;
 import android.os.Handler;
-import android.app.Activity;
-import android.content.Intent;
-import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +24,7 @@ import android.widget.Toast;
  * @author chmod
  * 
  */
-public class BasicReadingActivity extends Activity implements OnClickListener {
+public class EduFragment extends Fragment implements OnClickListener {
 	float lastMeasurement = 0.0f;
 	float currentMeasurement = 0.0f;
 	ImageView image; // Arrow image
@@ -45,61 +36,30 @@ public class BasicReadingActivity extends Activity implements OnClickListener {
 	RotateAnimation rotate = null; // Rotate animation
 	TextView mVoltsText; // Current measurement
 	TextView prevText;// Previous measurement
-	Logger log;
-	//only for test
+	View mRoot;
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// Fancy init stuff
-		setContentView(R.layout.activity_main);
-		Button settingsButton = (Button) findViewById(R.id.buttonSettings);
-		image = (ImageView) findViewById(R.id.imageArrow);
-		duration = this.getIntent().getIntExtra("duration", -1);
-		serial = this.getIntent().getStringExtra("serial_number");
-		settingsButton.setOnClickListener(this);
-		mVoltsText = (TextView) findViewById(R.id.mVoltsText);
-		prevText = (TextView) findViewById(R.id.prevText);
-		log = new Logger(this);
-		log.setFile("VoltSet.csv");
+	}
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		//Show fragment_edu layout
+		mRoot = inflater.inflate(R.layout.fragment_edu, container, false);
+		//Parse image
+		image = (ImageView) mRoot.findViewById(R.id.imageArrow);
+		//Parse text text with current measurement
+		mVoltsText = (TextView) mRoot.findViewById(R.id.mVoltsText);
+		//Parse text with previous measurement
+		prevText = (TextView) mRoot.findViewById(R.id.prevText);
+		//Register the handler for every 500ms
 		handler = new Handler();
 		handler.postDelayed(r, 500); // Start measuring at start of activity
-		
-		//Testing purposes button only.
-		Button testButton = (Button) findViewById(R.id.button1);
-		testButton.setOnClickListener(this);
+		return mRoot;
 	}
 
 	@Override
 	public void onClick(View view) { // button clicks, on activity
-		if (view.getId() == R.id.buttonSettings) {// touch on settings
-			Intent settingsActivity = new Intent(this, SettingsActivity.class);
-			settingsActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			if (duration == -1)
-				duration = 2500;
-			settingsActivity.putExtra("duration", duration);
-			startActivity(settingsActivity);
-			overridePendingTransition(R.anim.left_to_right,
-					R.anim.right_to_left);
-		}
-		if (view.getId() == R.id.button1) {
-			try {
-				FileInputStream fstream = new FileInputStream(log.getFile());
-				DataInputStream in = new DataInputStream(fstream);
-				BufferedReader br = new BufferedReader(
-						new InputStreamReader(in));
-				String strLine;
-				// Read File Line By Line
-				while ((strLine = br.readLine()) != null) {
-					// Print the content on the console
-					Toast.makeText(getApplicationContext(), strLine, 1000).show();
-				}
-				
-				// Close the input stream
-				in.close();
-			} catch (IOException io) {
-				io.printStackTrace();
-			}
-		}
 	}
 
 	/**
@@ -151,7 +111,7 @@ public class BasicReadingActivity extends Activity implements OnClickListener {
 																	// values
 					if (currentMeasurement < 0) { // alert to reverse the
 													// polarity
-						Toast.makeText(getApplicationContext(),
+						Toast.makeText(mRoot.getContext(),
 								"Reverse your cables!", Toast.LENGTH_SHORT)
 								.show();
 						handler.postDelayed(this, 2000);
@@ -163,7 +123,7 @@ public class BasicReadingActivity extends Activity implements OnClickListener {
 							mVoltsText.setText("0.0V");
 						}
 					} else if (currentMeasurement == lastMeasurement) {
-						log.write("EVENT:"+getTimeStamp()+" Measurement:" + currentMeasurement + "DC");
+//						log.write("EVENT:"+getTimeStamp()+" Measurement:" + currentMeasurement + "DC");
 					} else if (currentMeasurement > lastMeasurement) { // Probably
 																		// new
 																		// measurement,
@@ -213,4 +173,10 @@ public class BasicReadingActivity extends Activity implements OnClickListener {
 			handler.postDelayed(this, 2000);// Run again in 2sec
 		}
 	};
+	public String getSerial() {
+		return serial;
+	}
+	public void setSerial(String serial) {
+		this.serial = serial;
+	}
 }

@@ -1,22 +1,10 @@
 package com.ku.voltset;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 import com.ku.voltset.services.HardwareController_service;
 import com.yoctopuce.YoctoAPI.YAPI;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -34,9 +22,8 @@ import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-public class VoltSet extends Activity implements OnClickListener {
+public class StartupActivity extends Activity implements OnClickListener {
 	HardwareController hc;
 	final Context context = this;
 	AlphaAnimation aa;
@@ -44,17 +31,21 @@ public class VoltSet extends Activity implements OnClickListener {
 	Messenger mService = null;
 	boolean mIsBound;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
-
 	@Override
 	protected void onStart() {
 		super.onStart();
+		//TODO Unused service, to be done
 		// doBindService();
-		Log.d("YOCTOPUS_SERVICE", "startt");
+		Log.d("YOCTOPUS_SERVICE", "onStartVoltSet");
 		if (hc == null) {
 			hc = new HardwareController(context, this);
 		}
 	}
-
+	
+	/**
+	 * @author chmod
+	 * Handles messages from service
+	 */
 	static class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
@@ -103,12 +94,13 @@ public class VoltSet extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_startup);
-		Button basicReading = (Button) findViewById(R.id.basicReading);
+		setContentView(R.layout.activity_startup); 
+		//Parse elements
+		Button basicReading = (Button) findViewById(R.id.btnMeasure);
 		basicReading.setOnClickListener(this);
-		Button conf = (Button) findViewById(R.id.conf);
+		Button conf = (Button) findViewById(R.id.btnConf);
 		conf.setOnClickListener(this);
-		Button quit = (Button) findViewById(R.id.quit);
+		Button quit = (Button) findViewById(R.id.btnQuit);
 		quit.setOnClickListener(this);
 		infoIcon = (ImageView) findViewById(R.id.infoIcon);
 		infoIcon.setEnabled(false);
@@ -127,26 +119,25 @@ public class VoltSet extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.basicReading) {
-			if (hc != null && !hc.isSerialNull()) {
-				Intent basicReadingActivity = new Intent(this,
-						BasicReadingActivity.class);
-				basicReadingActivity
-						.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-				basicReadingActivity.putExtra("duration", 2500);
-				basicReadingActivity.putExtra("serial_number", hc.getSerial());
-				startActivity(basicReadingActivity);
-				overridePendingTransition(R.anim.left_to_right,
+		if (v.getId() == R.id.btnMeasure) {//User clicked Measurement
+			//if (hc != null && !hc.isSerialNull()) {
+				Intent mainActivity = new Intent(this,
+						MainActivity.class);
+				mainActivity
+						.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);//Bring activity to front
+				mainActivity.putExtra("serial_number", hc.getSerial());//Pass the serial to activity
+				startActivity(mainActivity);//And now start
+				overridePendingTransition(R.anim.left_to_right, //with animation
 						R.anim.right_to_left);
-			} else {
-				Toast.makeText(getApplicationContext(),
-						"Device not found, can't proceed", Toast.LENGTH_SHORT)
-						.show();
-				return;
-			}
+			//} else {
+			//	Toast.makeText(getApplicationContext(),
+			//			"Device not found, can't proceed", Toast.LENGTH_SHORT)
+			//			.show();
+			//	return;
+			//}
 
 		}
-		if (v.getId() == R.id.conf) {
+		if (v.getId() == R.id.btnConf) {//User clicked conf
 			Intent settingsActivity = new Intent(this, SettingsActivity.class);
 			settingsActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			settingsActivity.putExtra("duration", 2500);
@@ -154,7 +145,7 @@ public class VoltSet extends Activity implements OnClickListener {
 			overridePendingTransition(R.anim.left_to_right,
 					R.anim.right_to_left);
 		}
-		if (v.getId() == R.id.quit) {
+		if (v.getId() == R.id.btnQuit) {//user clicked quit
 			hc.terminate();
 			hc = null;
 			finish();
@@ -162,6 +153,7 @@ public class VoltSet extends Activity implements OnClickListener {
 
 	}
 
+	//Connection between service and activity
 	private ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			// This is called when the connection with the service has been
@@ -209,7 +201,7 @@ public class VoltSet extends Activity implements OnClickListener {
 		// Establish a connection with the service. We use an explicit
 		// class name because there is no reason to be able to let other
 		// applications replace our component.
-		bindService(new Intent(VoltSet.this, HardwareController_service.class),
+		bindService(new Intent(StartupActivity.this, HardwareController_service.class),
 				mConnection, Context.BIND_AUTO_CREATE);
 		mIsBound = true;
 		Log.d("YOCTOPUS_SERVICE", "Binding.");

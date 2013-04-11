@@ -780,6 +780,7 @@ public class YAnButton extends YFunction
                      callback.yNewValue(this, newval);
                  }
              } catch (YAPI_Exception ex) {
+            	 //
              }
          }
     }
