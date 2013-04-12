@@ -22,8 +22,7 @@
     <string name="conf">Configurations</string>
     <string name="quit">Quit</string>
     <string name="dialog_rescan">Device not found. Rescan?</string>
-    <string name="dialog_positive">Yes</string>
-    <string name="dialog_negative">No</string>
+    <string name="dialog_close">Close</string>
     <string name="infoIcon">info</string>
     <string name="app_id">147486155427446</string>
 

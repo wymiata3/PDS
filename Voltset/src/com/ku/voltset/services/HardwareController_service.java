@@ -9,6 +9,7 @@ import com.yoctopuce.YoctoAPI.YModule;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -21,10 +22,12 @@ public class HardwareController_service extends Service {
 	private static final String TAG = "YOCTOPUS_SERVICE";
 	private String serial;
 	Handler hHardwareControler;
-	public static final int MSG_SET_VALUE = 3;
 	public static final int MSG_REGISTER_CLIENT = 1;
 	public static final int MSG_UNREGISTER_CLIENT = 2;
+	public static final int MSG_SET_STRING_VALUE = 3;
+	private static final int interval=500; //Scan for device every 500 ms. We need to ensure each time device is connected.
 	ArrayList<Messenger> mClients = new ArrayList<Messenger>();
+	final Messenger mMessenger = new Messenger(new IncomingHandler());
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -34,13 +37,12 @@ public class HardwareController_service extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		// Display a notification about us starting.
+		hHardwareControler = new Handler();
+		hHardwareControler.postDelayed(scanner, interval);
 	}
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(getApplicationContext(), "My Service Stopped",
-				Toast.LENGTH_LONG).show();
 		Log.d(TAG, "onDestroy");
 		hHardwareControler.removeCallbacks(scanner);
 	}
@@ -48,8 +50,6 @@ public class HardwareController_service extends Service {
 	@Override
 	public void onStart(Intent intent, int startid) {
 		Log.d(TAG, "onStartHCService");
-		hHardwareControler = new Handler();
-		hHardwareControler.postDelayed(scanner, 2000);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class HardwareController_service extends Service {
 		@Override
 		public void run() {
 			scan(); // Scan
-			hHardwareControler.postDelayed(scanner, 2000);
+			hHardwareControler.postDelayed(scanner, interval);
 
 		}
 	};
@@ -92,16 +92,29 @@ public class HardwareController_service extends Service {
 		} catch (YAPI_Exception yapi) {
 			yapi.printStackTrace();
 		}
-		if (this.serial != null) {// Device found stop callbacks
-			hHardwareControler.removeCallbacks(scanner);
-			Toast.makeText(this, "Device found", Toast.LENGTH_SHORT).show();
-		} else {
-			Toast.makeText(this, "Device not found", Toast.LENGTH_SHORT).show();
+		if (!isSerialNull()) {// Device found inform activity about that
 			for (int i = mClients.size() - 1; i >= 0; i--) {
 				try {
-					Log.d("YOCTOPUS_SERVICE","MPIKE");
-					mClients.get(i).send(
-							Message.obtain(null, MSG_SET_VALUE, 54545, 2220));
+					Bundle bundle = new Bundle();
+					bundle.putString("serial", getSerial());
+					Message msg = Message.obtain(null, MSG_SET_STRING_VALUE);
+					msg.setData(bundle);
+					mClients.get(i).send(msg);
+				} catch (RemoteException e) {
+					// The client is dead. Remove it from the list;
+					// we are going through the list from back to front
+					// so this is safe to do inside the loop.
+					mClients.remove(i);
+				}
+			}
+		} else { // Device not found, panic!
+			for (int i = mClients.size() - 1; i >= 0; i--) {
+				try {
+					Bundle bundle = new Bundle();
+					bundle.putString("serial", "null");
+					Message msg = Message.obtain(null, MSG_SET_STRING_VALUE);
+					msg.setData(bundle);
+					mClients.get(i).send(msg);
 				} catch (RemoteException e) {
 					// The client is dead. Remove it from the list;
 					// we are going through the list from back to front
@@ -127,30 +140,15 @@ public class HardwareController_service extends Service {
 			case MSG_UNREGISTER_CLIENT:
 				mClients.remove(msg.replyTo);
 				break;
-			case MSG_SET_VALUE:
-				if (isSerialNull())
-					mValue = 0;
-				else
-					mValue = 1;
-				for (int i = mClients.size() - 1; i >= 0; i--) {
-					try {
-						mClients.get(i).send(
-								Message.obtain(null, MSG_SET_VALUE, mValue, 0));
-					} catch (RemoteException e) {
-						// The client is dead. Remove it from the list;
-						// we are going through the list from back to front
-						// so this is safe to do inside the loop.
-						mClients.remove(i);
-					}
-				}
-				break;
 			default:
 				super.handleMessage(msg);
 			}
 		}
 	}
 
-	int mValue = 0;
-	final Messenger mMessenger = new Messenger(new IncomingHandler());
+
+	public void setSerial(String serial) {
+		this.serial = serial;
+	}
 
 }

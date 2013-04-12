@@ -45,7 +45,7 @@ public final class R {
     public static final class id {
         public static final int ACDClayout=0x7f0c0013;
         public static final int acVolt=0x7f0c0004;
-        public static final int action_settings=0x7f0c0029;
+        public static final int action_settings=0x7f0c0035;
         public static final int bottomLayout=0x7f0c001b;
         public static final int btnConf=0x7f0c000b;
         public static final int btnMeasure=0x7f0c0008;
@@ -78,8 +78,20 @@ public final class R {
         public static final int tab3=0x7f0c0020;
         public static final int tbtnVoice=0x7f0c001a;
         public static final int textView=0x7f0c0003;
+        public static final int textView1=0x7f0c0029;
+        public static final int textView10=0x7f0c0030;
+        public static final int textView11=0x7f0c0031;
+        public static final int textView12=0x7f0c0032;
+        public static final int textView13=0x7f0c0033;
+        public static final int textView14=0x7f0c0034;
+        public static final int textView2=0x7f0c002e;
+        public static final int textView3=0x7f0c002a;
+        public static final int textView4=0x7f0c002b;
+        public static final int textView5=0x7f0c002c;
         public static final int textView6=0x7f0c001f;
         public static final int textView7=0x7f0c0021;
+        public static final int textView8=0x7f0c002d;
+        public static final int textView9=0x7f0c002f;
         public static final int txtAC=0x7f0c0015;
         public static final int txtDC=0x7f0c0014;
         public static final int txtHold=0x7f0c0018;
@@ -98,6 +110,7 @@ public final class R {
         public static final int fragment_diy=0x7f030003;
         public static final int fragment_edu=0x7f030004;
         public static final int fragment_pros=0x7f030005;
+        public static final int infodialog=0x7f030006;
     }
     public static final class menu {
         public static final int main=0x7f0b0000;
@@ -107,13 +120,12 @@ public final class R {
     }
     public static final class string {
         public static final int action_settings=0x7f080006;
-        public static final int app_id=0x7f080015;
+        public static final int app_id=0x7f080014;
         public static final int app_name=0x7f080005;
         public static final int conf=0x7f08000f;
-        public static final int dialog_negative=0x7f080013;
-        public static final int dialog_positive=0x7f080012;
+        public static final int dialog_close=0x7f080012;
         public static final int dialog_rescan=0x7f080011;
-        public static final int infoIcon=0x7f080014;
+        public static final int infoIcon=0x7f080013;
         public static final int initValue=0x7f08000a;
         public static final int initialText=0x7f080003;
         public static final int presets=0x7f080004;
