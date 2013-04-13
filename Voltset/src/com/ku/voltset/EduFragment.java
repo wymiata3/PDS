@@ -37,6 +37,11 @@ public class EduFragment extends Fragment implements OnClickListener {
 	TextView mVoltsText; // Current measurement
 	TextView prevText;// Previous measurement
 	View mRoot;
+	Logger log=null;
+	static final int interval=500; //Every 500ms measure
+	static final int threshold=(1000/interval)*3; //Seconds to reach before saying thats the correct value so as to save it in previous measurement
+	int seconds=0;
+	private static final String file="VoltSet.csv"; //Our log file
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,7 +59,9 @@ public class EduFragment extends Fragment implements OnClickListener {
 		prevText = (TextView) mRoot.findViewById(R.id.prevText);
 		//Register the handler for every 500ms
 		handler = new Handler();
-		handler.postDelayed(r, 500); // Start measuring at start of activity
+		handler.postDelayed(r, interval); // Start measuring at start of activity
+		log=new Logger(getActivity());
+		log.setFile(file);
 		return mRoot;
 	}
 
@@ -114,7 +121,8 @@ public class EduFragment extends Fragment implements OnClickListener {
 						Toast.makeText(mRoot.getContext(),
 								"Reverse your cables!", Toast.LENGTH_SHORT)
 								.show();
-						handler.postDelayed(this, 2000);
+						handler.postDelayed(this, interval);
+						seconds=0; //zero it we restart
 						return;
 					} else if (currentMeasurement == 0) {// No more measuring
 						if (rotate != null) {
@@ -123,7 +131,13 @@ public class EduFragment extends Fragment implements OnClickListener {
 							mVoltsText.setText("0.0V");
 						}
 					} else if (currentMeasurement == lastMeasurement) {
-//						log.write("EVENT:"+getTimeStamp()+" Measurement:" + currentMeasurement + "DC");
+						seconds+=1;
+						if(seconds>=threshold){
+							lastMeasurement = Float.parseFloat((String.format(
+									"%.1f", dc_sensor.getCurrentValue())));
+							prevText.setText(lastMeasurement+"V");
+							seconds=0;
+						}
 					} else if (currentMeasurement > lastMeasurement) { // Probably
 																		// new
 																		// measurement,
@@ -138,13 +152,11 @@ public class EduFragment extends Fragment implements OnClickListener {
 						rotate.setRepeatCount(0);
 						rotate.setAnimationListener(animationListener);
 						image.startAnimation(rotate);
-						lastMeasurement = Float.parseFloat((String.format(
-								"%.1f", dc_sensor.getCurrentValue())));
-						prevText.setText(mVoltsText.getText().toString() + "V");
 						mVoltsText.setText(String.format("%.1f %s",
 								dc_sensor.getCurrentValue(),
 								dc_sensor.getUnit())
 								+ "V");
+						log.write("Time:"+getTimeStamp()+",Measurement:" + currentMeasurement + "DC");
 
 					} else {						
 						
@@ -157,6 +169,7 @@ public class EduFragment extends Fragment implements OnClickListener {
 						rotate.setRepeatCount(0);
 						rotate.setAnimationListener(animationListener);
 						image.startAnimation(rotate);
+						seconds=0;//zero it, cables unplugged
 					}
 
 				} catch (YAPI_Exception e) {
@@ -170,7 +183,7 @@ public class EduFragment extends Fragment implements OnClickListener {
 //					 e.printStackTrace();
 //				 }
 			}
-			handler.postDelayed(this, 2000);// Run again in 2sec
+			handler.postDelayed(this, interval);// Run again in 2sec
 		}
 	};
 	public String getSerial() {
