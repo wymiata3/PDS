@@ -25,9 +25,13 @@ public class HardwareController_service extends Service {
 	public static final int MSG_REGISTER_CLIENT = 1;
 	public static final int MSG_UNREGISTER_CLIENT = 2;
 	public static final int MSG_SET_STRING_VALUE = 3;
-	private static final int interval=500; //Scan for device every 500 ms. We need to ensure each time device is connected.
+	public static final int MSG_GET_YOCTO_VALUES = 4;
+	private static final int interval = 500; // Scan for device every 500 ms. We
+												// need to ensure each time
+												// device is connected.
 	ArrayList<Messenger> mClients = new ArrayList<Messenger>();
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
+	YModule module = null;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -75,8 +79,8 @@ public class HardwareController_service extends Service {
 		try {
 			YAPI.EnableUSBHost(this); // Enable usb host mode
 			YAPI.RegisterHub("usb");
-			YModule module = YModule.FirstModule(); // Get the first module and
-													// loop
+			module = YModule.FirstModule(); // Get the first module and
+											// loop
 			while (module != null) {
 				if (module.get_productName().equalsIgnoreCase("Yocto-Volt")) { // Product
 																				// is
@@ -140,15 +144,44 @@ public class HardwareController_service extends Service {
 			case MSG_UNREGISTER_CLIENT:
 				mClients.remove(msg.replyTo);
 				break;
+			case MSG_GET_YOCTO_VALUES://Activity asks for values
+				for (int i = mClients.size() - 1; i >= 0; i--) {
+					try {
+						//place them in a bundle
+						Bundle bundle = new Bundle();
+						bundle.putString("LogicalName", module.getLogicalName());
+						bundle.putString("Luminosity", String.format("%d%%", module.getLuminosity()));
+						bundle.putString("UpTime", module.getUpTime() / 1000 + " sec");
+						bundle.putString("UsbCurrent", module.getUsbCurrent() + " mA");
+						bundle.putString("Beacon", (module.getBeacon() == YModule.BEACON_ON) ? "on" : "off");
+						Message message = Message.obtain(null,
+								MSG_GET_YOCTO_VALUES);
+						//and send
+						msg.setData(bundle);
+						mClients.get(i).send(message);
+					} catch (RemoteException yapi) {
+						// The client is dead. Remove it from the list;
+						// we are going through the list from back to front
+						// so this is safe to do inside the loop.
+						mClients.remove(i);
+					} catch (YAPI_Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				break;
 			default:
 				super.handleMessage(msg);
 			}
 		}
 	}
 
-
 	public void setSerial(String serial) {
 		this.serial = serial;
+	}
+
+	public YModule getModule() {
+		return module;
 	}
 
 }
