@@ -136,7 +136,7 @@ public class MainActivity extends FragmentActivity implements
 			// below) with the page number as its lone argument.
 			Fragment fragment=null;
 			if(position==0){
-				fragment = new DIYFragment(	);
+				fragment = new DIYFragment();
 			}
 			else if (position==1){
 				fragment= new ProFragment();
