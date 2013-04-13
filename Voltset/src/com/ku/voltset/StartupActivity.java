@@ -2,6 +2,7 @@ package com.ku.voltset;
 
 import com.ku.voltset.services.HardwareController_service;
 import com.yoctopuce.YoctoAPI.YAPI;
+import com.yoctopuce.YoctoAPI.YAPI_Exception;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -124,6 +125,12 @@ public class StartupActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_startup);
+		try {
+			YAPI.EnableUSBHost(this); // Enable usb host mode
+			YAPI.RegisterHub("usb");
+		} catch (YAPI_Exception ypai) {
+			ypai.printStackTrace();
+		}
 		if (!mIsBound)
 			doBindService();
 		// Parse elements
@@ -160,10 +167,9 @@ public class StartupActivity extends FragmentActivity implements
 			if (yocto_serial != null) {
 				Intent mainActivity = new Intent(this, MainActivity.class);
 				// Bring activity to front
-				mainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				//mainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 				// Provide a serial number to avoid the unlikely chance of
 				// unplugging device within the threshold of 500ms
-				mainActivity.putExtra("serial_number", yocto_serial);
 				startActivity(mainActivity);// And now start
 				// with animation
 				overridePendingTransition(R.anim.left_to_right,
@@ -176,13 +182,12 @@ public class StartupActivity extends FragmentActivity implements
 			}
 
 		}
-		if (v.getId() == R.id.btnShare)
-		{
+		if (v.getId() == R.id.btnShare) {
 			Intent share = new Intent(this, Share_function.class);
 			// Bring activity to front
 			share.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			startActivity(share);// And now start
-			
+
 		}
 		if (v.getId() == R.id.btnConf) {// User clicked conf
 			Intent settingsActivity = new Intent(this, SettingsActivity.class);
@@ -193,6 +198,7 @@ public class StartupActivity extends FragmentActivity implements
 					R.anim.right_to_left);
 		}
 		if (v.getId() == R.id.btnQuit) {// user clicked quit
+			doUnbindService();
 			finish();
 		}
 		if (v.getId() == R.id.infoIcon) {// user clicked info
