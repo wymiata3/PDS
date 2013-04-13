@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true" android:layout_alignParentTop="true">
+
+        <EditText
+            android:id="@+id/ToText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:text="To:" >
+
+            <requestFocus />
+        </EditText>
+
+        <EditText
+            android:id="@+id/SubjectText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:text="Subject:" />
+
+        <EditText
+            android:id="@+id/MessageText"
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:ems="10"
+            android:text="Message:" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="left|center_vertical" >
+
+            <Button
+                android:id="@+id/SendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:text="Send" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</RelativeLayout>
