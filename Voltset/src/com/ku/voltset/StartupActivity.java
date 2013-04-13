@@ -167,7 +167,7 @@ public class StartupActivity extends FragmentActivity implements
 			if (yocto_serial != null) {
 				Intent mainActivity = new Intent(this, MainActivity.class);
 				// Bring activity to front
-				//mainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//				mainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 				// Provide a serial number to avoid the unlikely chance of
 				// unplugging device within the threshold of 500ms
 				startActivity(mainActivity);// And now start

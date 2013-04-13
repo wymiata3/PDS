@@ -34,7 +34,7 @@ public class MainActivity extends FragmentActivity implements
 	private static final String TAG = "MainActivity";
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	final Context context=this;
-
+	Fragment fragment=null;
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -89,7 +89,6 @@ public class MainActivity extends FragmentActivity implements
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
-		
 	}
 
 	@Override
@@ -134,7 +133,7 @@ public class MainActivity extends FragmentActivity implements
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a DummySectionFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
-			Fragment fragment=null;
+			
 			if(position==0){
 				fragment = new DIYFragment();
 			}
@@ -145,11 +144,8 @@ public class MainActivity extends FragmentActivity implements
 				EduFragment edu= new EduFragment();
 				edu.setSerial(serial_number);
 				fragment=edu;
+				//TODO pass parameters
 			}
-			
-//			Bundle args = new Bundle();
-//			args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-//			fragment.setArguments(args);
 			return fragment;
 		}
 
@@ -199,6 +195,16 @@ public class MainActivity extends FragmentActivity implements
 					serial_number=message;
 				}
 				break;
+			case HardwareController_service.MSG_DC_VALUE:
+				String dc=msg.getData().getString("dc");
+				String holded=msg.getData().getString("holded");
+				DIYFragment diyFragment=(DIYFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:"+R.id.pager+":0");
+				diyFragment.updateMeasureText(dc);
+				if(holded!=null)
+				{
+					diyFragment.updateHolded(holded);
+				}
+				break;
 			default:
 				super.handleMessage(msg);
 			}
@@ -224,7 +230,7 @@ public class MainActivity extends FragmentActivity implements
 				mService = new Messenger(service);
 				Log.d(TAG, "Attached.");
 
-				// We want to monitor the service for as long as we are
+				// We want to monitserialor the service for as long as we are
 				// connected to it.
 				try {
 					Message msg = Message.obtain(null,

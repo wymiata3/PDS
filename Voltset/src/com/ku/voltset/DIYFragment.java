@@ -9,10 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DIYFragment extends Fragment {
 	private View mRoot;
-
+	private TextView txtView;
 	public DIYFragment() {
 
 	}
@@ -34,8 +35,16 @@ public class DIYFragment extends Fragment {
         mTabHost.addTab(mTabHost.newTabSpec("tab_test3").setIndicator("TAB3").setContent(R.id.guide));
 
         mTabHost.setCurrentTab(0);
-        TextView tv1=(TextView)mRoot.findViewById(R.id.txtHold);
-        tv1.setText("Holded:1.534V");
 		return mRoot;
 	}
+	public void updateMeasureText(String measurement)
+	{
+		txtView=(TextView)mRoot.findViewById(R.id.txtMeasurement);
+		txtView.setText(measurement);
+	}
+	public void updateHolded(String holded){
+		txtView=(TextView)mRoot.findViewById(R.id.txtHold);
+		txtView.setText("Holded:"+holded+"V");
+	}
+	
 }
