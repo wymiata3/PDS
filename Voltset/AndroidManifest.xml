@@ -30,7 +30,8 @@
         </activity>
         <activity
             android:name="com.ku.voltset.StartupActivity"
-            android:label="@string/title_activity_startup" >
+            android:label="@string/title_activity_startup" 
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
