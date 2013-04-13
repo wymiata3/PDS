@@ -180,8 +180,8 @@ public class MainActivity extends FragmentActivity implements
 			switch (msg.what) {
 			case HardwareController_service.MSG_SET_STRING_VALUE:
 				String message = msg.getData().getString("serial");
-				//TODO handle message = null	
-				//TODO handle message = serial
+				//TODO handle message if = null	
+				//TODO handle message if = serial
 				break;
 			default:
 				super.handleMessage(msg);

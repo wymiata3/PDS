@@ -45,7 +45,7 @@ public final class R {
     public static final class id {
         public static final int ACDClayout=0x7f0c0013;
         public static final int acVolt=0x7f0c0004;
-        public static final int action_settings=0x7f0c0035;
+        public static final int action_settings=0x7f0c0033;
         public static final int bottomLayout=0x7f0c001b;
         public static final int btnConf=0x7f0c000b;
         public static final int btnMeasure=0x7f0c0008;
@@ -54,9 +54,12 @@ public final class R {
         public static final int btnRange=0x7f0c0019;
         public static final int btnVault=0x7f0c000a;
         public static final int cbLog=0x7f0c0005;
+        public static final int data=0x7f0c001e;
         public static final int dcVolt=0x7f0c0001;
+        public static final int guide=0x7f0c0020;
         public static final int imageArrow=0x7f0c0025;
         public static final int imageClimax=0x7f0c0024;
+        public static final int info=0x7f0c001c;
         public static final int infoIcon=0x7f0c000e;
         public static final int innerLLHoriz=0x7f0c0017;
         public static final int linearLayout1=0x7f0c0022;
@@ -73,30 +76,25 @@ public final class R {
         public static final int root=0x7f0c0006;
         public static final int scollView=0x7f0c0007;
         public static final int seekBar=0x7f0c0002;
-        public static final int tab1=0x7f0c001c;
-        public static final int tab2=0x7f0c001e;
-        public static final int tab3=0x7f0c0020;
+        public static final int switch1=0x7f0c0032;
         public static final int tbtnVoice=0x7f0c001a;
         public static final int textView=0x7f0c0003;
-        public static final int textView1=0x7f0c0029;
-        public static final int textView10=0x7f0c0030;
-        public static final int textView11=0x7f0c0031;
-        public static final int textView12=0x7f0c0032;
-        public static final int textView13=0x7f0c0033;
-        public static final int textView14=0x7f0c0034;
-        public static final int textView2=0x7f0c002e;
-        public static final int textView3=0x7f0c002a;
-        public static final int textView4=0x7f0c002b;
-        public static final int textView5=0x7f0c002c;
-        public static final int textView6=0x7f0c001f;
         public static final int textView7=0x7f0c0021;
-        public static final int textView8=0x7f0c002d;
-        public static final int textView9=0x7f0c002f;
         public static final int txtAC=0x7f0c0015;
         public static final int txtDC=0x7f0c0014;
         public static final int txtHold=0x7f0c0018;
+        public static final int txtLogicalName=0x7f0c002a;
+        public static final int txtLogicalNameV=0x7f0c002e;
+        public static final int txtLuminosity=0x7f0c002b;
+        public static final int txtLumonosityV=0x7f0c002f;
         public static final int txtMeasurement=0x7f0c0012;
         public static final int txtPresets=0x7f0c001d;
+        public static final int txtSerial=0x7f0c0029;
+        public static final int txtSerialV=0x7f0c002d;
+        public static final int txtUpTime=0x7f0c002c;
+        public static final int txtUpTimeV=0x7f0c0030;
+        public static final int txtUsbCurrent=0x7f0c001f;
+        public static final int txtUsbCurrentV=0x7f0c0031;
     }
     public static final class integer {
         public static final int maxAnimation=0x7f070000;

@@ -29,9 +29,9 @@ public class DIYFragment extends Fragment {
 		mRoot = inflater.inflate(R.layout.fragment_diy, container, false);
         TabHost mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
         mTabHost.setup();
-        mTabHost.addTab(mTabHost.newTabSpec("tab_test1").setIndicator("TAB1").setContent(R.id.tab1));
-        mTabHost.addTab(mTabHost.newTabSpec("tab_test2").setIndicator("TAB2").setContent(R.id.tab2));
-        mTabHost.addTab(mTabHost.newTabSpec("tab_test3").setIndicator("TAB3").setContent(R.id.tab3));
+        mTabHost.addTab(mTabHost.newTabSpec("tab_test1").setIndicator("TAB1").setContent(R.id.info));
+        mTabHost.addTab(mTabHost.newTabSpec("tab_test2").setIndicator("TAB2").setContent(R.id.data));
+        mTabHost.addTab(mTabHost.newTabSpec("tab_test3").setIndicator("TAB3").setContent(R.id.guide));
 
         mTabHost.setCurrentTab(0);
         TextView tv1=(TextView)mRoot.findViewById(R.id.txtHold);
