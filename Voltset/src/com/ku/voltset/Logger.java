@@ -9,7 +9,9 @@ import java.io.OutputStreamWriter;
 import android.content.Context;
 import android.util.Log;
 
+
 public class Logger {
+	private static final String TAG = "Logger";
 	File toWrite = null;
 	File root = null;
 	Context context;
@@ -27,8 +29,12 @@ public class Logger {
 	 */
 	public void setFile(String filename) {
 		if (root != null) {
-			Log.d("YOCTOPUS_SERVICE", "root is null!");
 			toWrite = new File(root, filename);
+		}
+		else
+		{
+			Log.d(TAG, "root is null!");
+			return;
 		}
 	}
 
