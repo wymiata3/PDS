@@ -41,7 +41,6 @@ public class HardwareController_service extends Service {
 		super.onCreate();
 		hHardwareControler = new Handler();
 		hHardwareControler.postDelayed(scanner, interval);
-		setSerial("foooooobar");
 	}
 
 	@Override
