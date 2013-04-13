@@ -17,7 +17,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		int duration= this.getIntent().getIntExtra("duration",0);
 		this.setDuration(duration);
 		//TODO 
-		//implement loging for passing to other activites
+		//implement duration so as to pass to other activities
 		SeekBar durationLength=(SeekBar)findViewById(R.id.seekBar);
 		durationLength.setProgress(duration);
 		durationLength.setOnSeekBarChangeListener(this);

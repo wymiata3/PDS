@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import com.ku.voltset.R;
 import com.ku.voltset.services.HardwareController_service;
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
@@ -23,6 +24,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -31,7 +33,7 @@ public class MainActivity extends FragmentActivity implements
 	String serial_number=null;
 	private static final String TAG = "MainActivity";
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
-
+	final Context context=this;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -174,14 +176,28 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	static class IncomingHandler extends Handler {
+	@SuppressLint("HandlerLeak")
+	class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case HardwareController_service.MSG_SET_STRING_VALUE:
 				String message = msg.getData().getString("serial");
-				//TODO handle message if = null	
-				//TODO handle message if = serial
+				if(message.equalsIgnoreCase("null")){
+					//PANIC
+					//Device is unplugged
+					//inform user
+					Toast.makeText(context, "Error! Device unplugged", Toast.LENGTH_LONG).show();
+					Intent startupActivity = new Intent(context, StartupActivity.class);
+					startupActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					startActivity(startupActivity);
+					//and try to kill and unbind
+					finish();
+					doUnbindService();
+				}
+				else{//update the serial number
+					serial_number=message;
+				}
 				break;
 			default:
 				super.handleMessage(msg);

@@ -37,7 +37,8 @@ public class StartupActivity extends FragmentActivity implements
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	String yocto_serial = null;
 	Bundle yocto_values = null;// holds device characteristics
-	private static final String file="VoltSet.csv"; //Our log file
+	private static final String file = "VoltSet.csv"; // Our log file
+
 	/**
 	 * @author chmod Handles messages from service
 	 */
@@ -140,7 +141,7 @@ public class StartupActivity extends FragmentActivity implements
 		Logger log = new Logger(this.getApplicationContext());
 		log.setFile(file);
 		log.logRotate(25L, 100);
-		log=null; //Not used anymore
+		log = null; // Not used anymore
 
 	}
 
@@ -156,13 +157,14 @@ public class StartupActivity extends FragmentActivity implements
 		if (v.getId() == R.id.btnMeasure) {// User clicked Measurement
 			if (yocto_serial != null) {
 				Intent mainActivity = new Intent(this, MainActivity.class);
-				mainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);// Bring
-																				// activity
-																				// to
-																				// front
+				// Bring activity to front
+				mainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				// Provide a serial number to avoid the unlikely chance of
+				// unplugging device within the threshold of 500ms
+				mainActivity.putExtra("serial_number", yocto_serial);
 				startActivity(mainActivity);// And now start
-				overridePendingTransition(R.anim.left_to_right, // with
-																// animation
+				// with animation
+				overridePendingTransition(R.anim.left_to_right,
 						R.anim.right_to_left);
 			} else { // dont progress to next activity is serial is null
 				Toast.makeText(getApplicationContext(),
