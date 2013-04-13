@@ -10,7 +10,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -37,7 +36,8 @@ public class StartupActivity extends FragmentActivity implements
 	boolean mIsBound = false;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	String yocto_serial = null;
-	Bundle yocto_values=null;//holds device characteristics
+	Bundle yocto_values = null;// holds device characteristics
+	private static final String file="VoltSet.csv"; //Our log file
 	/**
 	 * @author chmod Handles messages from service
 	 */
@@ -56,14 +56,16 @@ public class StartupActivity extends FragmentActivity implements
 				} else // device found
 				{
 					yocto_serial = message; // get the serial
-					runFadeInAnimationOn(context,infoIcon).setFillAfter(true);//make it fancy
+					runFadeInAnimationOn(context, infoIcon).setFillAfter(true);// make
+																				// it
+																				// fancy
 					infoIcon.setEnabled(true); // enable the info
 				}
 				break;
-				//we asked for values
+			// we asked for values
 			case HardwareController_service.MSG_GET_YOCTO_VALUES:
-				//parse them and place in bundle
-				yocto_values= msg.getData();
+				// parse them and place in bundle
+				yocto_values = msg.getData();
 				break;
 			default:
 				super.handleMessage(msg);
@@ -84,19 +86,17 @@ public class StartupActivity extends FragmentActivity implements
 	}
 
 	// Unused animations, future maybe?
-	 public static Animation runFadeOutAnimationOn(Context ctx, View target)
-	 {
-	 Animation animation = AnimationUtils.loadAnimation(ctx,
-	 R.anim.fadeout);
-	 target.startAnimation(animation);
-	 return animation;
-	 }
-	 public static Animation runFadeInAnimationOn(Context ctx, View target) {
-	 Animation animation = AnimationUtils.loadAnimation(ctx,
-	 R.anim.fedein);
-	 target.startAnimation(animation);
-	 return animation;
-	 }
+	public static Animation runFadeOutAnimationOn(Context ctx, View target) {
+		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fadeout);
+		target.startAnimation(animation);
+		return animation;
+	}
+
+	public static Animation runFadeInAnimationOn(Context ctx, View target) {
+		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fedein);
+		target.startAnimation(animation);
+		return animation;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -133,14 +133,15 @@ public class StartupActivity extends FragmentActivity implements
 		Button quit = (Button) findViewById(R.id.btnQuit);
 		quit.setOnClickListener(this);
 		infoIcon = (ImageView) findViewById(R.id.infoIcon);
-		runFadeOutAnimationOn(context,infoIcon).setFillAfter(true);	
+		runFadeOutAnimationOn(context, infoIcon).setFillAfter(true);
 		infoIcon.setEnabled(false);
 		infoIcon.setOnClickListener(this);
 		// try to rotate log if too big or too old
-		Logger log = new Logger(this);
-		log.setFile("VoltSet.csv");
+		Logger log = new Logger(this.getApplicationContext());
+		log.setFile(file);
 		log.logRotate(25L, 100);
-		
+		log=null; //Not used anymore
+
 	}
 
 	@Override
@@ -184,18 +185,18 @@ public class StartupActivity extends FragmentActivity implements
 		}
 		if (v.getId() == R.id.infoIcon) {// user clicked info
 			try {
-				//Ask service for device characteristics
+				// Ask service for device characteristics
 				Message msg = Message.obtain(null,
 						HardwareController_service.MSG_GET_YOCTO_VALUES);
 				msg.replyTo = mMessenger;
 				mService.send(msg);
-				//Instantiate new dialog
+				// Instantiate new dialog
 				InfoDialog info = new InfoDialog();
-				//To bundle insert also our serial
+				// To bundle insert also our serial
 				yocto_values.putString("serial", yocto_serial);
-				//Set the bundle as arguments 
+				// Set the bundle as arguments
 				info.setArguments(yocto_values);
-				//And show it
+				// And show it
 				info.show(getSupportFragmentManager(), "info");
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
