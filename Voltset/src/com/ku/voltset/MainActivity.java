@@ -54,8 +54,6 @@ public class MainActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		String serial_number= this.getIntent().getStringExtra("serial_number");
-		this.serial_number=serial_number;
 		doBindService();
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
