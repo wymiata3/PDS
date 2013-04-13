@@ -56,7 +56,7 @@ public class StartupActivity extends FragmentActivity implements
 				} else // device found
 				{
 					yocto_serial = message; // get the serial
-					runFadeInAnimationOn(context,infoIcon);
+					runFadeInAnimationOn(context,infoIcon).setFillAfter(true);//make it fancy
 					infoIcon.setEnabled(true); // enable the info
 				}
 				break;
@@ -133,7 +133,7 @@ public class StartupActivity extends FragmentActivity implements
 		Button quit = (Button) findViewById(R.id.btnQuit);
 		quit.setOnClickListener(this);
 		infoIcon = (ImageView) findViewById(R.id.infoIcon);
-		runFadeOutAnimationOn(context,infoIcon);	
+		runFadeOutAnimationOn(context,infoIcon).setFillAfter(true);	
 		infoIcon.setEnabled(false);
 		infoIcon.setOnClickListener(this);
 		// try to rotate log if too big or too old
