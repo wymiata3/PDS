@@ -3,10 +3,7 @@ package com.ku.voltset;
 import java.util.Locale;
 
 import com.ku.voltset.R;
-import com.ku.voltset.StartupActivity.IncomingHandler;
 import com.ku.voltset.services.HardwareController_service;
-import com.yoctopuce.YoctoAPI.YAPI;
-
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
@@ -183,7 +180,8 @@ public class MainActivity extends FragmentActivity implements
 			switch (msg.what) {
 			case HardwareController_service.MSG_SET_STRING_VALUE:
 				String message = msg.getData().getString("serial");
-				//TODO handle message = null				
+				//TODO handle message = null	
+				//TODO handle message = serial
 				break;
 			default:
 				super.handleMessage(msg);
@@ -208,7 +206,7 @@ public class MainActivity extends FragmentActivity implements
 				// service through an IDL interface, so get a client-side
 				// representation of that from the raw service object.
 				mService = new Messenger(service);
-				Log.d("YOCTOPUS_SERVICE", "Attached.");
+				Log.d(TAG, "Attached.");
 
 				// We want to monitor the service for as long as we are
 				// connected to it.
