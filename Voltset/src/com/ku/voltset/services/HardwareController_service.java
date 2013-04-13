@@ -79,6 +79,7 @@ public class HardwareController_service extends Service {
 			module = YModule.FirstModule(); // Get the first module and
 											// loop
 			while (module != null) {
+				this.serial=null;
 				// Product is Yocto-Volt
 				if (module.get_productName().equalsIgnoreCase("Yocto-Volt")) { 
 					serial = module.get_serialNumber(); // Grab the serial

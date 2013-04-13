@@ -131,6 +131,8 @@ public class StartupActivity extends FragmentActivity implements
 		basicReading.setOnClickListener(this);
 		Button conf = (Button) findViewById(R.id.btnConf);
 		conf.setOnClickListener(this);
+		Button share = (Button) findViewById(R.id.btnShare);
+		share.setOnClickListener(this);
 		Button quit = (Button) findViewById(R.id.btnQuit);
 		quit.setOnClickListener(this);
 		infoIcon = (ImageView) findViewById(R.id.infoIcon);
@@ -173,6 +175,14 @@ public class StartupActivity extends FragmentActivity implements
 				return;
 			}
 
+		}
+		if (v.getId() == R.id.btnShare)
+		{
+			Intent share = new Intent(this, Share_function.class);
+			// Bring activity to front
+			share.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			startActivity(share);// And now start
+			
 		}
 		if (v.getId() == R.id.btnConf) {// User clicked conf
 			Intent settingsActivity = new Intent(this, SettingsActivity.class);

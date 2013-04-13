@@ -35,14 +35,23 @@
                 android:layout_alignRight="@+id/btnMeasure"
                 android:layout_below="@+id/btnMeasure"
                 android:text="@string/profile" />
-
+            
+			<Button
+			    android:id="@+id/btnShare"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_alignLeft="@+id/btnProfile"
+			    android:layout_alignRight="@+id/btnProfile"
+			    android:layout_below="@+id/btnProfile"
+			    android:text="@string/share" />
+			
             <Button
                 android:id="@+id/btnVault"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/btnProfile"
-                android:layout_alignRight="@+id/btnProfile"
-                android:layout_below="@+id/btnProfile"
+                android:layout_alignLeft="@+id/btnShare"
+                android:layout_alignRight="@+id/btnShare"
+                android:layout_below="@+id/btnShare"
                 android:text="@string/vault" />
 
             <Button
