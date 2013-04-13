@@ -188,12 +188,14 @@ public class MainActivity extends FragmentActivity implements
 					//Device is unplugged
 					//inform user
 					Toast.makeText(context, "Error! Device unplugged", Toast.LENGTH_LONG).show();
-					Intent startupActivity = new Intent(context, StartupActivity.class);
-					startupActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-					startActivity(startupActivity);
 					//and try to kill and unbind
 					finish();
 					doUnbindService();
+					//switch to startup activity
+					Intent startupActivity = new Intent(context, StartupActivity.class);
+					startupActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					startActivity(startupActivity);
+
 				}
 				else{//update the serial number
 					serial_number=message;

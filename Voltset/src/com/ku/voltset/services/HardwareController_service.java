@@ -16,7 +16,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
 
 public class HardwareController_service extends Service {
 	private static final String TAG = "YOCTOPUS_SERVICE";
@@ -26,13 +25,12 @@ public class HardwareController_service extends Service {
 	public static final int MSG_UNREGISTER_CLIENT = 2;
 	public static final int MSG_SET_STRING_VALUE = 3;
 	public static final int MSG_GET_YOCTO_VALUES = 4;
-	private static final int interval = 500; // Scan for device every 500 ms. We
+	private static final int interval = 200; // Scan for device every 500 ms. We
 												// need to ensure each time
 												// device is connected.
 	ArrayList<Messenger> mClients = new ArrayList<Messenger>();
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	YModule module = null;
-
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mMessenger.getBinder();
@@ -43,6 +41,7 @@ public class HardwareController_service extends Service {
 		super.onCreate();
 		hHardwareControler = new Handler();
 		hHardwareControler.postDelayed(scanner, interval);
+		setSerial("foooooobar");
 	}
 
 	@Override
@@ -70,7 +69,6 @@ public class HardwareController_service extends Service {
 		public void run() {
 			scan(); // Scan
 			hHardwareControler.postDelayed(scanner, interval);
-
 		}
 	};
 
@@ -82,9 +80,8 @@ public class HardwareController_service extends Service {
 			module = YModule.FirstModule(); // Get the first module and
 											// loop
 			while (module != null) {
-				if (module.get_productName().equalsIgnoreCase("Yocto-Volt")) { // Product
-																				// is
-																				// Yocto-Volt
+				// Product is Yocto-Volt
+				if (module.get_productName().equalsIgnoreCase("Yocto-Volt")) { 
 					serial = module.get_serialNumber(); // Grab the serial
 														// number
 					this.serial = serial;
@@ -154,8 +151,7 @@ public class HardwareController_service extends Service {
 						bundle.putString("UpTime", module.getUpTime() / 1000 + " sec");
 						bundle.putString("UsbCurrent", module.getUsbCurrent() + " mA");
 						bundle.putString("Beacon", (module.getBeacon() == YModule.BEACON_ON) ? "on" : "off");
-						Message message = Message.obtain(null,
-								MSG_GET_YOCTO_VALUES);
+						Message message = Message.obtain(null,MSG_GET_YOCTO_VALUES);
 						//and send
 						msg.setData(bundle);
 						mClients.get(i).send(message);
@@ -165,7 +161,6 @@ public class HardwareController_service extends Service {
 						// so this is safe to do inside the loop.
 						mClients.remove(i);
 					} catch (YAPI_Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
