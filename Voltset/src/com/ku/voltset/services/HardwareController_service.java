@@ -16,6 +16,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
 
 public class HardwareController_service extends Service {
 	private static final String TAG = "YOCTOPUS_SERVICE";
@@ -25,7 +26,7 @@ public class HardwareController_service extends Service {
 	public static final int MSG_UNREGISTER_CLIENT = 2;
 	public static final int MSG_SET_STRING_VALUE = 3;
 	public static final int MSG_GET_YOCTO_VALUES = 4;
-	private static final int interval = 200; // Scan for device every 500 ms. We
+	private static final int interval = 1000; // Scan for device every 500 ms. We
 												// need to ensure each time
 												// device is connected.
 	ArrayList<Messenger> mClients = new ArrayList<Messenger>();
@@ -73,19 +74,19 @@ public class HardwareController_service extends Service {
 
 	public void scan() {
 		String serial = null;
+		this.serial=null;
 		try {
-			YAPI.EnableUSBHost(this); // Enable usb host mode
-			YAPI.RegisterHub("usb");
+			YAPI.UpdateDeviceList(); //Update device list
 			module = YModule.FirstModule(); // Get the first module and
 											// loop
+			
 			while (module != null) {
-				this.serial=null;
+				
 				// Product is Yocto-Volt
 				if (module.get_productName().equalsIgnoreCase("Yocto-Volt")) { 
 					serial = module.get_serialNumber(); // Grab the serial
 														// number
 					this.serial = serial;
-
 					break;
 				}
 				module = module.nextModule(); // next module if is null
