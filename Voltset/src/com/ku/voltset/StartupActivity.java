@@ -10,6 +10,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,8 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -53,6 +56,7 @@ public class StartupActivity extends FragmentActivity implements
 				} else // device found
 				{
 					yocto_serial = message; // get the serial
+					runFadeInAnimationOn(context,infoIcon);
 					infoIcon.setEnabled(true); // enable the info
 				}
 				break;
@@ -80,19 +84,19 @@ public class StartupActivity extends FragmentActivity implements
 	}
 
 	// Unused animations, future maybe?
-	// public static Animation runFadeOutAnimationOn(Activity ctx, View target)
-	// {
-	// Animation animation = AnimationUtils.loadAnimation(ctx,
-	// R.anim.fadeout);
-	// target.startAnimation(animation);
-	// return animation;
-	// }
-	// public static Animation runFadeInAnimationOn(Activity ctx, View target) {
-	// Animation animation = AnimationUtils.loadAnimation(ctx,
-	// R.anim.fedein);
-	// target.startAnimation(animation);
-	// return animation;
-	// }
+	 public static Animation runFadeOutAnimationOn(Context ctx, View target)
+	 {
+	 Animation animation = AnimationUtils.loadAnimation(ctx,
+	 R.anim.fadeout);
+	 target.startAnimation(animation);
+	 return animation;
+	 }
+	 public static Animation runFadeInAnimationOn(Context ctx, View target) {
+	 Animation animation = AnimationUtils.loadAnimation(ctx,
+	 R.anim.fedein);
+	 target.startAnimation(animation);
+	 return animation;
+	 }
 
 	/*
 	 * (non-Javadoc)
@@ -129,12 +133,14 @@ public class StartupActivity extends FragmentActivity implements
 		Button quit = (Button) findViewById(R.id.btnQuit);
 		quit.setOnClickListener(this);
 		infoIcon = (ImageView) findViewById(R.id.infoIcon);
+		runFadeOutAnimationOn(context,infoIcon);	
 		infoIcon.setEnabled(false);
 		infoIcon.setOnClickListener(this);
 		// try to rotate log if too big or too old
 		Logger log = new Logger(this);
 		log.setFile("VoltSet.csv");
 		log.logRotate(25L, 100);
+		
 	}
 
 	@Override
