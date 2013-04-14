@@ -164,7 +164,7 @@ public class StartupActivity extends FragmentActivity implements
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.btnMeasure) {// User clicked Measurement
-			if (yocto_serial != null) {
+			if (yocto_serial!=null) {
 				Intent mainActivity = new Intent(this, MainActivity.class);
 				// Bring activity to front
 //				mainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

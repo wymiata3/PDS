@@ -3,6 +3,8 @@ package com.ku.voltset.services;
 import java.util.ArrayList;
 
 import com.yoctopuce.YoctoAPI.YAPI;
+import com.yoctopuce.YoctoAPI.YAPI.DeviceArrivalCallback;
+import com.yoctopuce.YoctoAPI.YAPI.DeviceRemovalCallback;
 import com.yoctopuce.YoctoAPI.YAPI_Exception;
 import com.yoctopuce.YoctoAPI.YModule;
 import com.yoctopuce.YoctoAPI.YVoltage;
@@ -23,6 +25,7 @@ public class HardwareController_service extends Service {
 	private static final String TAG = "YOCTOPUS_SERVICE";
 	String serial;
 	Handler hHardwareControler;
+	Handler measuringController;
 	public static final int MSG_REGISTER_CLIENT = 1;
 	public static final int MSG_UNREGISTER_CLIENT = 2;
 	public static final int MSG_SET_STRING_VALUE = 3;
@@ -37,11 +40,14 @@ public class HardwareController_service extends Service {
 														// as to save it in
 														// previous measurement
 	int seconds = 0;
+	boolean dcVolt = false;
 	ArrayList<Messenger> mClients = new ArrayList<Messenger>();
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	YModule module = null;
-	double currentMeasurement = 0.00f;
-	double lastMeasurement = 0.00f;
+	String currentMeasurement = "0.00";
+	String lastMeasurement = "0.00";
+	YVoltage dc_sensor;
+	Bundle bundle;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -52,13 +58,19 @@ public class HardwareController_service extends Service {
 	public void onCreate() {
 		super.onCreate();
 		hHardwareControler = new Handler();
+		measuringController = new Handler();
 		hHardwareControler.postDelayed(scanner, interval);
+		// Register handlers
+		YAPI.RegisterDeviceRemovalCallback(drc);
+		YAPI.RegisterDeviceArrivalCallback(dac);
 	}
 
 	@Override
 	public void onDestroy() {
 		Log.d(TAG, "onDestroy");
 		hHardwareControler.removeCallbacks(scanner);
+		if (measuringController != null)
+			measuringController.removeCallbacks(measurer);
 	}
 
 	@Override
@@ -75,33 +87,38 @@ public class HardwareController_service extends Service {
 		return serial == null;
 	}
 
-	Runnable scanner = new Runnable() {
+	Runnable measurer = new Runnable() {
 		@Override
 		public void run() {
-			scan(); // Scan
 			if (!isSerialNull()) {
 				try {
-					YVoltage dc_sensor = YVoltage.FindVoltage(getSerial()
-							+ ".voltage1");
-					if (currentMeasurement > 0.01f)
-						seconds += 1;
-					lastMeasurement = currentMeasurement;
-					currentMeasurement = dc_sensor.getCurrentValue();
-					Bundle bundle = new Bundle();
-					bundle.putString("dc",
-							String.format("%.3f", currentMeasurement));
-					if (seconds >= threshold
-							&& currentMeasurement == lastMeasurement
-							&& currentMeasurement > 0.001f) {
-						bundle.putString("holded",
-								String.format("%.3f", currentMeasurement));
-						seconds = 0;
-					}
+					// if (currentMeasurement > 0.01f)
+					// seconds += 1;
+					// lastMeasurement = currentMeasurement;
+					currentMeasurement = String.format("%.3f",
+							dc_sensor.getCurrentValue());
+					bundle = new Bundle();
+					bundle.putString("dc", currentMeasurement);
+					// if (seconds == threshold
+					// && String.format("%.3f",
+					// currentMeasurement).equalsIgnoreCase(String.format("%.3f",
+					// lastMeasurement))
+					// && currentMeasurement > 0.001f) {
+					// bundle.putString("holded",
+					// String.format("%.3f", currentMeasurement));
+					// seconds = 0;
+					// }
+					// else
+					// {
+					// bundle.putString("holded","0.00");
+					// }
 					for (int i = mClients.size() - 1; i >= 0; i--) {
 						try {
 							Message msg = Message.obtain(null, MSG_DC_VALUE);
 							msg.setData(bundle);
 							mClients.get(i).send(msg);
+							Log.d("MESSAGER", "MESSAGE SEND"
+									+ currentMeasurement);
 						} catch (RemoteException e) {
 							// The client is dead. Remove it from the list;
 							// we are going through the list from back to
@@ -114,53 +131,29 @@ public class HardwareController_service extends Service {
 					e.printStackTrace();
 				}
 			}
+			measuringController.postDelayed(measurer, interval);
+		}
+	};
+	Runnable scanner = new Runnable() {
+		@Override
+		public void run() {
+			scan(); // Scan
 			hHardwareControler.postDelayed(scanner, interval);
 		}
 	};
 
-	public void scan() {
-		String serial = null;
-		this.serial = null;
-		try {
-			YAPI.UpdateDeviceList(); // Update device list
-			module = YModule.FirstModule(); // Get the first module and
-											// loop
-
-			while (module != null) {
-
-				// Product is Yocto-Volt
-				if (module.get_productName().equalsIgnoreCase("Yocto-Volt")) {
-					serial = module.get_serialNumber(); // Grab the serial
-														// number
-					this.serial = serial;
-					break;
-				}
-				module = module.nextModule(); // next module if is null
-			}
-		} catch (YAPI_Exception yapi) {
-			yapi.printStackTrace();
-		}
-		if (!isSerialNull()) {// Device found inform activity about that
-			for (int i = mClients.size() - 1; i >= 0; i--) {
-				try {
-					Bundle bundle = new Bundle();
-					bundle.putString("serial", getSerial());
-					Message msg = Message.obtain(null, MSG_SET_STRING_VALUE);
-					msg.setData(bundle);
-					mClients.get(i).send(msg);
-				} catch (RemoteException e) {
-					// The client is dead. Remove it from the list;
-					// we are going through the list from back to front
-					// so this is safe to do inside the loop.
-					mClients.remove(i);
-				}
-			}
-		} else { // Device not found, panic!
+	DeviceRemovalCallback drc = new DeviceRemovalCallback() {
+		@Override
+		public void yDeviceRemoval(YModule module) {
+			serial = null;
+			 // Device not found, panic!
+			measuringController.removeCallbacks(measurer);
 			for (int i = mClients.size() - 1; i >= 0; i--) {
 				try {
 					Bundle bundle = new Bundle();
 					bundle.putString("serial", "null");
-					Message msg = Message.obtain(null, MSG_SET_STRING_VALUE);
+					Message msg = Message
+							.obtain(null, MSG_SET_STRING_VALUE);
 					msg.setData(bundle);
 					mClients.get(i).send(msg);
 				} catch (RemoteException e) {
@@ -170,6 +163,53 @@ public class HardwareController_service extends Service {
 					mClients.remove(i);
 				}
 			}
+		}
+	};
+	DeviceArrivalCallback dac = new DeviceArrivalCallback() {
+
+		@Override
+		public void yDeviceArrival(YModule lmodule) {
+			try {
+				if (lmodule.get_productName().equalsIgnoreCase("Yocto-Volt")) {
+					serial = lmodule.get_serialNumber(); // Grab the serial
+					dcVolt=false;
+					hHardwareControler.postDelayed(scanner, interval);
+					// number
+				}
+			} catch (YAPI_Exception yapi) {
+				yapi.printStackTrace();
+			}
+		}
+	};
+
+	public void scan() {
+		try {
+			YAPI.UpdateDeviceList(); // Update device list
+			if (serial!=null) {// Device found inform activity about that
+				if (dcVolt == false) {
+					dc_sensor = YVoltage.FindVoltage(getSerial() + ".voltage1");
+					measuringController.postDelayed(measurer, interval);
+					dcVolt = true;
+				}
+				for (int i = mClients.size() - 1; i >= 0; i--) {
+					try {
+						bundle = new Bundle();
+						bundle.putString("serial", getSerial());
+						Message msg = Message
+								.obtain(null, MSG_SET_STRING_VALUE);
+						msg.setData(bundle);
+						mClients.get(i).send(msg);
+
+					} catch (RemoteException e) {
+						// The client is dead. Remove it from the list;
+						// we are going through the list from back to front
+						// so this is safe to do inside the loop.
+						mClients.remove(i);
+					}
+				}
+			} 
+		} catch (YAPI_Exception yapi) {
+			yapi.printStackTrace();
 		}
 	}
 
@@ -227,10 +267,6 @@ public class HardwareController_service extends Service {
 
 	public void setSerial(String serial) {
 		this.serial = serial;
-	}
-
-	public YModule getModule() {
-		return module;
 	}
 
 }

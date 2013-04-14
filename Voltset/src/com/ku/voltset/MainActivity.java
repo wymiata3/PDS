@@ -197,13 +197,13 @@ public class MainActivity extends FragmentActivity implements
 				break;
 			case HardwareController_service.MSG_DC_VALUE:
 				String dc=msg.getData().getString("dc");
-				String holded=msg.getData().getString("holded");
+//				String holded=msg.getData().getString("holded");
 				DIYFragment diyFragment=(DIYFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:"+R.id.pager+":0");
 				diyFragment.updateMeasureText(dc);
-				if(holded!=null)
-				{
-					diyFragment.updateHolded(holded);
-				}
+//				if(holded!=null)
+//				{
+//					diyFragment.updateHolded(holded);
+//				}
 				break;
 			default:
 				super.handleMessage(msg);
