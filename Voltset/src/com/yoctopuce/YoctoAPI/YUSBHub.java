@@ -3,6 +3,7 @@ package com.yoctopuce.YoctoAPI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -118,11 +119,11 @@ public class YUSBHub extends YGenericHub
 		ArrayList<String>  toRemove = new ArrayList<String>(_devsFromAndroidRef.keySet());
 		boolean hasRequestedPermission=false;
 		
-		YAPI.Log(String.format("ANDROID: USB manager know %d devices\n",connectedDevices.size()));
+		YAPI.Log(String.format(Locale.ENGLISH,"ANDROID: USB manager know %d devices\n",connectedDevices.size()));
 		
 		while (deviceIterator.hasNext()) {
 			UsbDevice device = deviceIterator.next();
-			YAPI.Log(String.format("ANDROID: %s (0x%04x:0x%04x)\n",device.getDeviceName(),device.getVendorId(),device.getProductId()));
+			YAPI.Log(String.format(Locale.ENGLISH,"ANDROID: %s (0x%04x:0x%04x)\n",device.getDeviceName(),device.getVendorId(),device.getProductId()));
 
 			if (device.getVendorId() != YAPI.YOCTO_VENDORID) {
 				continue;
@@ -183,14 +184,13 @@ public class YUSBHub extends YGenericHub
 	}
 
 	@Override	
-	public String devRequest(YDevice device, String request, Boolean async) throws YAPI_Exception
+	 public byte[] devRequest(YDevice device, String req_first_line, byte[] req_head_and_body, Boolean async) throws YAPI_Exception
 	{
 		String serial = device.getSerialNumber();
 		if(!_devsFromSerial.containsKey(serial))
 			throw new YAPI_Exception(YAPI.NOT_SUPPORTED, "Device has been unpluged");
 		YUSBDevice d=_devsFromSerial.get(serial);
-		String res= d.sendRequest(request,async);
-		return res;
+		return  d.sendRequest(req_first_line,req_head_and_body,async);
 	}
 	
 	

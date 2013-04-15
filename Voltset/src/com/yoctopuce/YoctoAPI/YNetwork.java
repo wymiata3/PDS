@@ -1,6 +1,6 @@
 /*********************************************************************
  *
- * $Id: YNetwork.java 9884 2013-02-19 07:49:26Z mvuilleu $
+ * $Id: YNetwork.java 10550 2013-03-20 11:34:02Z mvuilleu $
  *
  * Implements yFindNetwork(), the high-level API for Network functions
  *
@@ -810,7 +810,7 @@ public class YNetwork extends YFunction
     public int set_callbackMethod( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("callbackMethod",rest_val);
         return YAPI.SUCCESS;
     }
@@ -873,7 +873,7 @@ public class YNetwork extends YFunction
     public int set_callbackEncoding( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("callbackEncoding",rest_val);
         return YAPI.SUCCESS;
     }
@@ -1024,7 +1024,7 @@ public class YNetwork extends YFunction
     public int set_callbackMinDelay( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("callbackMinDelay",rest_val);
         return YAPI.SUCCESS;
     }
@@ -1078,7 +1078,7 @@ public class YNetwork extends YFunction
     public int set_callbackMaxDelay( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("callbackMaxDelay",rest_val);
         return YAPI.SUCCESS;
     }

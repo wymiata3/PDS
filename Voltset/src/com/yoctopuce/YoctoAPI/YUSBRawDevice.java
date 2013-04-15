@@ -119,11 +119,9 @@ public class YUSBRawDevice implements Runnable {
 		if (_intf == null) {
 			throw new YAPI_Exception(YAPI.IO_ERROR, "Device is gone");
 		}
-		ByteBuffer pkt = ypkt.getRawPkt();
-		if (pkt.capacity() != YUSBPkt.USB_PKT_SIZE) {
-			throw new YAPI_Exception(YAPI.IO_ERROR, "Invalid packet size");
-		}
-		pkt.rewind();
+		//ByteBuffer pkt = ypkt.getRawPkt();
+	
+		//pkt.rewind();
 
 		UsbEndpoint endpointOUT = null;
 		for (int e = 0; e < _intf.getEndpointCount(); e++) {
@@ -140,8 +138,7 @@ public class YUSBRawDevice implements Runnable {
 
 		/* Send the request to get the push button status */
 		int result;
-		byte outpkt[] = new byte[64];
-		pkt.get(outpkt);
+		byte outpkt[] = ypkt.getRawPkt();
 		int retry = 15;
 		do {
 			result = _connection.bulkTransfer(endpointOUT, outpkt,

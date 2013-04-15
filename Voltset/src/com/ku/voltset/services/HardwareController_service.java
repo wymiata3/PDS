@@ -94,16 +94,20 @@ public class HardwareController_service extends Service {
 		@Override
 		public void run() {
 			if (serial != null) {
-
 				try {
-
 					// we currently have measurement
 					if (Double.valueOf(currentMeasurement) > 0.01)
-						seconds += 1;
+						seconds += 2;
 					lastMeasurement = currentMeasurement; // get the last
-					currentMeasurement = String.format("%.3f", // format it to
-																// 0.### digits
-							dc_sensor.getCurrentValue());
+					if (module.isOnline())
+						// format it to 0.### digits
+						currentMeasurement = String.format("%.3f",
+								dc_sensor.getCurrentValue());
+					else {
+						Toast.makeText(getApplicationContext(), "module.. offline?", 1000).show();
+						measuringController.postDelayed(measurer, interval);
+						return;
+					}
 					// discard zero values, its spam
 					if (Double.valueOf(currentMeasurement) == 0
 							&& zeroSended == true) {
@@ -119,7 +123,7 @@ public class HardwareController_service extends Service {
 																// bundle
 					if (!currentMeasurement.equalsIgnoreCase(lastMeasurement))
 						seconds = 0; // zero it if not same
-					if (seconds == threshold // 3sec
+					if (seconds >= threshold // 3sec
 							&& currentMeasurement
 									.equalsIgnoreCase(lastMeasurement) // same
 																		// value
@@ -173,7 +177,7 @@ public class HardwareController_service extends Service {
 		@Override
 		public void yDeviceRemoval(YModule module) {
 			serial = null; // nullify
-
+			hHardwareControler.removeCallbacks(scanner);
 			measuringController.removeCallbacks(measurer);
 			for (int i = mClients.size() - 1; i >= 0; i--) {
 				try {
@@ -306,5 +310,4 @@ public class HardwareController_service extends Service {
 			}
 		}
 	}
-
 }

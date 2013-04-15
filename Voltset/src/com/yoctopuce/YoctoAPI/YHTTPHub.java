@@ -332,21 +332,27 @@ class YHTTPHub extends YGenericHub {
                     _yreq._requestReserve();
                     String notUrl;
                     if(_notifyPos<0){
-                        notUrl = "GET /not.byn\r\n\r\n";
+                        notUrl = "GET /not.byn\r\n";
                     }else {
-                        notUrl = String.format("GET /not.byn?abs=%d\r\n\r\n",_notifyPos);
+                        notUrl = String.format("GET /not.byn?abs=%d\r\n",_notifyPos);
                     }
-                    _yreq._requestStart(notUrl);
+                    _yreq._requestStart(notUrl,null);
+                    String fifo="";
                     do {
                         _yreq._requestProcesss();
-                        String line;
-                        do {
-                            line =_yreq.requestReadLine();
-                            if(line.length()>0){
+                        byte[] partial =_yreq.getPartialResult();
+                        if (partial!=null){
+                            fifo += new String(partial);
+                        }
+                        int pos;
+                        do{
+                            pos    = fifo.indexOf("\n");
+                            if( pos>0){
+                                String line = fifo.substring(0, pos+1);
                                 handleNetNotification(line);
+                                fifo = fifo.substring(pos+1);
                             }
-
-                        }while(line.length()>0);
+                        }while(pos>0);
                     }while (!isInterrupted());
                     _yreq._requestStop();
                     _yreq._requestRelease();
@@ -395,7 +401,7 @@ class YHTTPHub extends YGenericHub {
         yHTTPRequest req =  new yHTTPRequest(this,"updateDeviceList "+_http_host);
 
 
-        String yreq = req.RequestSync("GET /api.json\r\n\r\n");
+        String yreq = new String(req.RequestSync("GET /api.json\r\n",null));
         HashMap<String, ArrayList<YPEntry>> yellowPages = new HashMap<String, ArrayList<YPEntry>>();
         ArrayList<WPEntry> whitePages = new ArrayList<WPEntry>();
 
@@ -458,20 +464,20 @@ class YHTTPHub extends YGenericHub {
     }
 
     @Override
-    public String devRequest(YDevice device, String str_request, Boolean async) throws YAPI_Exception
+    public byte[] devRequest(YDevice device,String req_first_line, byte[] req_head_and_body, Boolean async) throws YAPI_Exception
     {
         if (!_httpReqByDev.containsKey(device)){
             _httpReqByDev.put(device, new yHTTPRequest(this,"Device "+device.getSerialNumber()));
         }
         yHTTPRequest req = _httpReqByDev.get(device);
         if (!async) {
-            return req.RequestSync(str_request);
+            return req.RequestSync(req_first_line,req_head_and_body);
         } else {
             if(_writeProtected && !_http_user.equals("admin")){
                 throw new YAPI_Exception(YAPI.UNAUTHORIZED,"Access denied: admin credentials required");
             }
-            req.RequestAsync(str_request);
-            return "";
+            req.RequestAsync(req_first_line,req_head_and_body);
+            return null;
         }
     }
 }

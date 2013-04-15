@@ -12,6 +12,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -40,7 +41,8 @@ public class MainActivity extends FragmentActivity implements
 	EduFragment eduFragment = null;
 	private static final String file = "VoltSet.csv"; // Our log file
 	Logger log;
-	
+	Boolean alreadyColoredAC = false;
+	Boolean alreadyColoredDC = false;
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -204,13 +206,12 @@ public class MainActivity extends FragmentActivity implements
 				break;
 			case HardwareController_service.MSG_DC_VALUE:
 				try {
-					String dc = "";
-					if(log==null)
-					{
-						 log= new Logger(context);
-						 log.setFile(file);
+					String voltage = "";
+					if (log == null) {
+						log = new Logger(context);
+						log.setFile(file);
 					}
-					dc = msg.getData().getString("dc");
+					voltage = msg.getData().getString("dc");
 					String holded = msg.getData().getString("holded");
 					if (diyFragment == null)
 						diyFragment = (DIYFragment) getSupportFragmentManager()
@@ -222,14 +223,55 @@ public class MainActivity extends FragmentActivity implements
 										"android:switcher:" + R.id.pager + ":2");
 
 					if (diyFragment.isVisible()) {
-						diyFragment.updateMeasureText(dc);
-						log.write("T:"+getTimeStamp()+"|M:" + dc + "DC");//Log event to file, T:time, M:measurement
+						diyFragment.updateMeasureText(voltage);
+						// Log event to file, T:time, M:measurement
+						log.write("T:" + getTimeStamp() + "|M:" + voltage
+								+ "DC");
+						// Colorize
+						// AC
+						if (alreadyColoredAC == false) {
+							if (Double.valueOf(voltage) > 50) {// Assume it's AC
+								diyFragment.setColorAC(Color.RED);
+								diyFragment.setColorDC(getResources().getColor(
+										R.color.generalColor));
+							}
+							alreadyColoredAC = true;
+						}
+						// DC
+						if (alreadyColoredDC == false) {
+							if (Double.valueOf(voltage) > 0
+									&& Double.valueOf(voltage) < 50) {
+								diyFragment.setColorDC(Color.RED);
+								diyFragment.setColorAC(getResources().getColor(
+										R.color.generalColor));
+							}
+							alreadyColoredDC = true;
+						}
+						 // No color
+						//Ensure we run only once!
+						if (alreadyColoredAC == true
+								|| alreadyColoredDC == true) {
+							if (Double.valueOf(voltage) == 0) {
+								diyFragment.setColorDC(getResources().getColor(
+										R.color.generalColor));
+								diyFragment.setColorAC(getResources().getColor(
+										R.color.generalColor));
+								alreadyColoredAC = false;
+								alreadyColoredDC = false;
+							}
+						}
+						// Colorize end
 						if (holded != null) {
-							diyFragment.updateHolded(holded);
+							{
+								diyFragment.updateHolded(holded);
+							}
+
 						}
 					} else if (eduFragment.isVisible()) {
-						eduFragment.updateMeasureText(dc);
-						log.write("T:"+getTimeStamp()+"|M:" + dc + "DC");//Log event to file, T:time, M:measurement
+						eduFragment.updateMeasureText(voltage);
+						// Log event to file, T:time, M:measurement
+						log.write("T:" + getTimeStamp() + "|M:" + voltage
+								+ "DC");
 						if (holded != null) {
 							eduFragment.updateHolded(holded);
 							eduFragment.rotateArrowUpwards(holded);

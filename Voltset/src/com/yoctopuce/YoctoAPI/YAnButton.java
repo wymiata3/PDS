@@ -1,6 +1,6 @@
 /*********************************************************************
  *
- * $Id: YAnButton.java 9787 2013-02-08 15:07:03Z mvuilleu $
+ * $Id: YAnButton.java 10471 2013-03-19 10:39:56Z seb $
  *
  * Implements yFindAnButton(), the high-level API for AnButton functions
  *
@@ -361,7 +361,7 @@ public class YAnButton extends YFunction
     public int set_calibrationMax( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("calibrationMax",rest_val);
         return YAPI.SUCCESS;
     }
@@ -425,7 +425,7 @@ public class YAnButton extends YFunction
     public int set_calibrationMin( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("calibrationMin",rest_val);
         return YAPI.SUCCESS;
     }
@@ -487,7 +487,7 @@ public class YAnButton extends YFunction
     public int set_sensitivity( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("sensitivity",rest_val);
         return YAPI.SUCCESS;
     }
@@ -620,7 +620,7 @@ public class YAnButton extends YFunction
     public int set_pulseCounter( long  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("pulseCounter",rest_val);
         return YAPI.SUCCESS;
     }
@@ -780,7 +780,6 @@ public class YAnButton extends YFunction
                      callback.yNewValue(this, newval);
                  }
              } catch (YAPI_Exception ex) {
-            	 //
              }
          }
     }

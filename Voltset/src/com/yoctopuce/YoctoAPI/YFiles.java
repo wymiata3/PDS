@@ -39,8 +39,9 @@
 
 package com.yoctopuce.YoctoAPI;
 
-  //--- (globals)
-  //--- (end of globals)
+  //--- (generated code: globals)
+import java.util.ArrayList;
+  //--- (end of generated code: globals)
 /**
  * YFiles Class: Files function interface
  * 
@@ -51,7 +52,7 @@ package com.yoctopuce.YoctoAPI;
  */
 public class YFiles extends YFunction
 {
-    //--- (definitions)
+    //--- (generated code: definitions)
     private YFiles.UpdateCallback _valueCallbackFiles;
     /**
      * invalid logicalName value
@@ -69,7 +70,7 @@ public class YFiles extends YFunction
      * invalid freeSpace value
      */
     public static final int FREESPACE_INVALID = YAPI.INVALID_UNSIGNED;
-    //--- (end of definitions)
+    //--- (end of generated code: definitions)
 
     /**
      * UdateCallback for Files
@@ -85,7 +86,7 @@ public class YFiles extends YFunction
 
 
 
-    //--- (YFiles implementation)
+    //--- (generated code: YFiles implementation)
 
     /**
      * Returns the logical name of the filesystem.
@@ -219,6 +220,115 @@ public class YFiles extends YFunction
 
     { return get_freeSpace(); }
 
+    public byte[] sendCommand(String command)  throws YAPI_Exception
+    {
+        String url;
+        url =  String.format("files.json?a=%s",command);
+        return _download(url);
+        
+    }
+
+    /**
+     * Reinitializes the filesystem to its clean, unfragmented, empty state.
+     * All files previously uploaded are permanently lost.
+     * 
+     * @return YAPI.SUCCESS if the call succeeds.
+     * 
+     * @throws YAPI_Exception
+     */
+    public int format_fs()  throws YAPI_Exception
+    {
+        byte[] json;
+        String res;
+        json = sendCommand("format"); 
+        res  = _json_get_key(json, "res");
+        if (!(res.equals("ok"))) { throw new YAPI_Exception( YAPI.IO_ERROR,  "format failed");};
+        return YAPI.SUCCESS;
+        
+    }
+
+    /**
+     * Returns a list of YFileRecord objects that describe files currently loaded
+     * in the filesystem.
+     * 
+     * @param pattern : an optional filter pattern, using star and question marks
+     *         as wildcards. When an empty pattern is provided, all file records
+     *         are returned.
+     * 
+     * @return a list of YFileRecord objects, containing the file path
+     *         and name, byte size and 32-bit CRC of the file content.
+     * 
+     * @throws YAPI_Exception
+     */
+    public ArrayList<YFileRecord> get_list(String pattern)  throws YAPI_Exception
+    {
+        byte[] json;
+        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<YFileRecord> res = new ArrayList<YFileRecord>();
+        json = sendCommand(String.format("dir&f=%s",pattern));
+        list = _json_get_array(json);
+        for (String y :list) { res.add(new YFileRecord(y));};
+        return res;
+        
+    }
+
+    /**
+     * Downloads the requested file and returns a binary buffer with its content.
+     * 
+     * @param pathname : path and name of the new file to load
+     * 
+     * @return a binary buffer with the file content
+     * 
+     * @throws YAPI_Exception
+     */
+    public byte[] download(String pathname)  throws YAPI_Exception
+    {
+        return _download(pathname);
+        
+    }
+
+    /**
+     * Uploads a file to the filesystem, to the specified full path name.
+     * If a file already exists with the same path name, its content is overwritten.
+     * 
+     * @param pathname : path and name of the new file to create
+     * @param content : binary buffer with the content to set
+     * 
+     * @return YAPI.SUCCESS if the call succeeds.
+     * 
+     * @throws YAPI_Exception
+     */
+    public int upload(String pathname,byte[] content)  throws YAPI_Exception
+    {
+        return _upload(pathname,content);
+        
+    }
+
+    /**
+     * Deletes a file, given by its full path name, from the filesystem.
+     * Because of filesystem fragmentation, deleting a file may not always
+     * free up the whole space used by the file. However, rewriting a file
+     * with the same path name will always reuse any space not freed previously.
+     * If you need to ensure that no space is taken by previously deleted files,
+     * you can use format_fs to fully reinitialize the filesystem.
+     * 
+     * @param pathname : path and name of the file to remove.
+     * 
+     * @return YAPI.SUCCESS if the call succeeds.
+     * 
+     * @throws YAPI_Exception
+     */
+    public int remove(String pathname)  throws YAPI_Exception
+    {
+        byte[] json;
+        String res;
+        json = sendCommand(String.format("del&f=%s",pathname)); 
+        res  = _json_get_key(json, "res");
+        if (!(res.equals("ok"))) { throw new YAPI_Exception( YAPI.IO_ERROR,  "unable to remove file");};
+        return YAPI.SUCCESS;
+        
+    }
+
     /**
      * Continues the enumeration of filesystems started using yFirstFiles().
      * 
@@ -335,6 +445,6 @@ public class YFiles extends YFunction
          }
     }
 
-    //--- (end of YFiles implementation)
+    //--- (end of generated code: YFiles implementation)
 };
 

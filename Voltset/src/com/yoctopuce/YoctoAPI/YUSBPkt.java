@@ -9,7 +9,7 @@ public class YUSBPkt  {
 	// generic pkt definitions
 	public static final int USB_PKT_SIZE=64;
 	protected static final int USB_PKT_STREAM_HEAD=2;
-	protected static final int YPKT_USB_VERSION_BCD=0x0204;
+	protected static final int YPKT_USB_VERSION_BCD=0x0205;
 	// pkt type definitions
 	protected static final int YPKT_STREAM=0;
 	protected static final int YPKT_CONF=1;
@@ -22,8 +22,7 @@ public class YUSBPkt  {
 	protected static final int YSTREAM_TCP_CLOSE=2;
 	protected static final int YSTREAM_NOTICE=3;
 	protected int      		_pktno	= 0;
-	protected ByteBuffer    _pkt    ;
-	protected ArrayList<StreamHead> _streams = new ArrayList<StreamHead>();
+	protected ArrayList<StreamHead> _streams = new ArrayList<YUSBPkt.StreamHead>();
 	
 	
 
@@ -57,9 +56,7 @@ public class YUSBPkt  {
 	    private int  _pktNumber;
 	    private int  _streamType;
 	    private int  _pktType;
-	    private int  _size;
-	    private int  _dataofs;
-	    private ByteBuffer _data;
+	    private byte[] _data;
 	    
 	    int getPktNumber() {
 			return _pktNumber;
@@ -79,61 +76,68 @@ public class YUSBPkt  {
 		void setPktType(int pktType) {
 			this._pktType = pktType;
 		}
-		int getSize() {
-			return _size;
+		int getContentSize() {
+			return _data.length;
 		}
-		void setSize(int size) {
-			this._size = size;
+		
+		int getSize(){
+		    return _data.length+USB_PKT_STREAM_HEAD;
 		}
 		
 		byte getData(int ofs)
 		{
 			if(_data==null)
 				return (byte) 0xff;
-			return _data.get(ofs+_dataofs);
+			return _data[ofs];
 		}
 		
 		String getNullTerminedString(int ofs,int maxlen)
 		{
 			if(_data==null)
 				return "";
-			int pos=ofs+_dataofs;
+			int pos=ofs;
 			int len=0;
 			while(len<maxlen){
-				if(_data.get(pos+len)==0)
+				if(_data[pos+len]==0)
 					break;
 				len++;
 			}
-			return new String(_data.array(),pos,len);
+			return new String(_data,pos,len);
 		}
 		
-		String getDataAsString()
+		String getDataAsString_dtc()
 		{
-			if(_data==null)
-				return "";
-			return new String(_data.array(),_dataofs,_size);
+		    byte[] data =this.getDataAsByteArray();
+		    return new String(data);//FIXME : handle encoding
 		}
-		
-	
-		public StreamHead(int pktNumber, int pktType, int streamType, int size,ByteBuffer data) {
-			super();
+
+	    byte[] getDataAsByteArray()
+        {
+            return _data;
+        }
+
+	    
+	    //buffer must point to the begining of the contenent of the stream
+		public StreamHead(int pktNumber, int pktType, int streamType, int size,ByteBuffer buffer) 
+		{
+        
 			this._pktNumber = pktNumber;
 			this._streamType = streamType;
 			this._pktType = pktType;
-			this._size = size;
-			this._dataofs =0;
-			this._data = data;
+		    if(buffer==null){
+			    this._data=new byte[0];
+			} else {
+    			this._data = new byte[size];
+    			buffer.get(this._data);
+			}
 		}
 		
 		public StreamHead(int pktNumber, int pktType, int streamType, int size) 
 		{
-			super();
 			this._pktNumber = pktNumber;
 			this._streamType = streamType;
 			this._pktType = pktType;
-			this._size = size;
-			this._dataofs =0;
-			this._data = null;
+            this._data = new byte[size];
 		}
 
 		
@@ -144,40 +148,33 @@ public class YUSBPkt  {
 			this._streamType = (b>>3);
 			b = pkt.get()&0xff;			
 			this._pktType = b&3;
-			this._size = b>>2;
-			this._data = pkt;
-			this._dataofs =pkt.position();
+            this._data = new byte[b>>2];
+            pkt.get(this._data);
 		}
 		
-		
-		void  pushIntoPkt(ByteBuffer pkt) throws YAPI_Exception
-		{
-			if (_size+USB_PKT_STREAM_HEAD > pkt.remaining()){
-				throw new YAPI_Exception(YAPI.IO_ERROR,"no more space in packet");
-			}		
-			byte firstbyte = (byte)((_pktNumber&7) | (( _streamType & 0x1f ) <<3));
-			byte secbyte   = (byte) (_pktType | ((_size & 0x3f ) <<2));
-			pkt.put(firstbyte);
-			pkt.put(secbyte);
-			if(_data==null) {
-				pkt.position(pkt.position()+_size);
-			}else {
-				for(int i=0;i<_size;i++){
-					pkt.put(this._data.get(this._dataofs+i));
-				}
-			}
-		}
+	
 
+	    public int popFromPkt(byte[] res, int pos)
+        {
+	        res[pos++] = (byte)((_pktNumber&7) | (( _streamType & 0x1f ) <<3));
+	        res[pos++] = (byte) (_pktType | ((_data.length & 0x3f ) <<2));
+            if(_data.length>0) {
+                System.arraycopy(_data, 0, res, pos, _data.length);
+            }
+            return _data.length+USB_PKT_STREAM_HEAD;
+        }
+		
 		String dump()
 		{
 			return String.format("Stream: type=%d stream/cmd=%d size=%d (pktno=%d)\n",
-			           this._pktType,this._streamType,this._size,this._pktNumber);
+			           this._pktType,this._streamType,this._data.length,this._pktNumber);
 		}
+    
 	}
 	
-	protected static class ConfPktReset
+	protected static class ConfPktResetDecoder
 	{
-		public ConfPktReset(StreamHead s)
+		public ConfPktResetDecoder(StreamHead s)
 		{
 			api= s.getData(0) + ((int)s.getData(1)<<8);
 			ok = s.getData(2);
@@ -190,9 +187,9 @@ public class YUSBPkt  {
 		public int nbiface;
 	}
 	
-	protected static class ConfPktStart
+	protected static class ConfPktStartDecoder
 	{
-		public ConfPktStart(StreamHead s)
+		public ConfPktStartDecoder(StreamHead s)
 		{
 			nbiface = s.getData(0);
 		}
@@ -201,7 +198,7 @@ public class YUSBPkt  {
 		
 	}
 
-	protected static class Notification
+	protected static class NotificationDecoder
 	{
 		//notifications type
 		protected static final int NOTIFY_1STBYTE_MAXTINY=63  ;
@@ -237,19 +234,19 @@ public class YUSBPkt  {
 		private String  funcval=null;
 		private int     funydx;
 
-		public Notification(StreamHead s,YUSBDevice dev) throws YAPI_Exception
+		public NotificationDecoder(StreamHead s,YUSBDevice dev) throws YAPI_Exception
 		{
 			int firstByte = s.getData(0);
 		    if(firstByte <= NOTIFY_1STBYTE_MAXTINY) {
 		    	notType =NotType.FUNCVAL;
 		    	serial=dev.getSerial();
 		    	funcid= dev.getFuncidFromYdx(serial,firstByte);
-		    	funcval=s.getNullTerminedString(1,s.getSize()-1);
+		    	funcval=s.getNullTerminedString(1,s.getContentSize()-1);
 		    }else if (firstByte >= NOTIFY_1STBYTE_MINSMALL) {
 		    	notType = NotType.FUNCVAL;
 		    	serial = dev.getSerialFromYdx(s.getData(1));
 		    	funcid= dev.getFuncidFromYdx(serial,firstByte-NOTIFY_1STBYTE_MINSMALL);
-		    	funcval=s.getNullTerminedString(2,s.getSize()-2);		    	
+		    	funcval=s.getNullTerminedString(2,s.getContentSize()-2);		    	
 		    }else {
 		    	serial = s.getNullTerminedString(0,	YAPI.YOCTO_SERIAL_LEN);
 		    	int p=YAPI.YOCTO_SERIAL_LEN+1;
@@ -449,20 +446,14 @@ public class YUSBPkt  {
 	
 
 	
-	
+	// create new pkt with his own buffer
 	public YUSBPkt() 
 	{
-		_pkt =ByteBuffer.allocate(USB_PKT_SIZE);
-	}
-	
-	public YUSBPkt(ByteBuffer rawpkt)
-	{
-		_pkt = rawpkt;
 	}
 	
 	public void clear()
 	{
-		_pkt.clear();
+	    _streams.clear();
 		_pktno =0;
 	}
 	
@@ -476,30 +467,29 @@ public class YUSBPkt  {
 
 	
 	
-	public ByteBuffer getRawPkt() throws YAPI_Exception
+	public byte[] getRawPkt() throws YAPI_Exception
 	{
-		_pkt.clear();
+	    byte[] res = new byte[USB_PKT_SIZE];
+	    int pos=0;
+	    //pad end of packet with empty data
+	    this.FillPktWithEmpty();
 		for(StreamHead s : _streams) {
-			s.pushIntoPkt(_pkt);
+			pos += s.popFromPkt(res,pos);
 		}
-		return _pkt;
+		return res;
 	}
 	
 
-	void parse() throws YAPI_Exception
+	void parse(ByteBuffer raw_in_pkt) throws YAPI_Exception
 	{
-		_pkt.rewind();
-		if(_pkt.remaining()!=USB_PKT_SIZE) {
+		raw_in_pkt.rewind();
+		if(raw_in_pkt.limit()!=USB_PKT_SIZE) {
 			throw new YAPI_Exception(YAPI.IO_ERROR,"invalid packet size");
 		}
 		_streams.clear();
-		while(_pkt.remaining()>0){
-			//YAPI.Log("ParsePkt :"+_pkt+"\n");
-			StreamHead header=new StreamHead(_pkt);
+		while(raw_in_pkt.position() <raw_in_pkt.limit()){
+			StreamHead header=new StreamHead(raw_in_pkt);
 			_pktno = header.getPktNumber();
-			//YAPI.Log(String.format("head: type=%d stream/cmd=%d size=%d (pktno=%d)\n",
-			//		header.getPktType(),header.getStreamType(),header.getSize(),header.getPktNumber()));
-			_pkt.position(_pkt.position()+header.getSize());
 			_streams.add(header);
 		}
 	}
@@ -533,11 +523,11 @@ public class YUSBPkt  {
 		return false;
 	}
 
-	public ConfPktReset getConfPktReset()
+	public ConfPktResetDecoder getConfPktReset()
 	{
 		if(!isConfPktReset())
 			return null;
-		ConfPktReset reset = new ConfPktReset(_streams.get(0));
+		ConfPktResetDecoder reset = new ConfPktResetDecoder(_streams.get(0));
 		return reset;
 				
 	}
@@ -549,11 +539,11 @@ public class YUSBPkt  {
 		return false;
 	}
 
-	public ConfPktStart getConfPktStart()
+	public ConfPktStartDecoder getConfPktStart()
 	{
 		if(!isConfPktStart())
 			return null;
-		ConfPktStart start = new ConfPktStart(_streams.get(0));
+		ConfPktStartDecoder start = new ConfPktStartDecoder(_streams.get(0));
 		return start;
 	}
 
@@ -579,33 +569,39 @@ public class YUSBPkt  {
 	protected void  pushStream(int type, int size, ByteBuffer data) throws YAPI_Exception
 	{
 		StreamHead header = new StreamHead(_pktno, YPKT_STREAM, type, size,data);
-		header.pushIntoPkt(_pkt);
+		_streams.add(header);
 	}
 
 	protected void  pushEmptyStream(int size) throws YAPI_Exception
 	{
 		
 		StreamHead header = new StreamHead(_pktno, YPKT_STREAM, YSTREAM_EMPTY, size);
-		header.pushIntoPkt(_pkt);
+		_streams.add(header);
 	}
 
 	
 	protected void  pushConf(int type, ByteBuffer data) throws YAPI_Exception
 	{
-		int size = data.limit();
-		if(_pkt.position()!=0){
+		int size = data.remaining();
+		if(_streams.size()!=0){
 			throw new YAPI_Exception(YAPI.IO_ERROR,"Conf packet can only be sent on empty packet");			
 		}			
 		StreamHead header = new StreamHead(_pktno, YPKT_CONF, type, size,data);
-		header.pushIntoPkt(_pkt);
+		_streams.add(header);
+		this.FillPktWithEmpty();
 	}
 	
 	
-	public int getMaxTcpSize()
+	public int getMaxTcpSize_slow()
 	{
-		int remain =_pkt.remaining() - USB_PKT_STREAM_HEAD;
-		if(remain< 0)
-			return 0;
+	    
+		int remain = USB_PKT_SIZE-USB_PKT_STREAM_HEAD;
+		for (StreamHead stream : _streams) {
+            int size = stream.getSize();
+            if (size >= remain)
+                return 0;
+            remain-=size;
+        }
 		return remain;
 	}
 	
@@ -615,6 +611,7 @@ public class YUSBPkt  {
 		ByteBuffer confpkt = ByteBuffer.allocate(4);
 		confpkt.putShort((short) YPKT_USB_VERSION_BCD);
 		confpkt.put((byte) 1);
+		confpkt.flip();
 		pushConf(USB_CONF_RESET, confpkt);
 	}
 
@@ -623,23 +620,34 @@ public class YUSBPkt  {
 		setPktno(0);
 		ByteBuffer confpkt = ByteBuffer.allocate(4);
 		confpkt.put((byte) 1);
+        confpkt.flip();
 		pushConf(USB_CONF_START, confpkt);
 	}
 
-	public int pushTCP(String tcp) throws YAPI_Exception
+	public int pushTCP(byte[] tcp,int start, int len) throws YAPI_Exception
 	{
-		int len =getMaxTcpSize()< tcp.length()?getMaxTcpSize(): tcp.length();
-		pushStream(YSTREAM_TCP, len,ByteBuffer.wrap(tcp.getBytes()));
-		return len;
+	    int avail =getMaxTcpSize_slow();
+		int contentlen =avail< len ? avail: len;
+		pushStream(YSTREAM_TCP, contentlen,ByteBuffer.wrap(tcp,start,contentlen));
+		return contentlen;
 	}
 
-	public void finishPkt() throws YAPI_Exception
+	
+	
+   public void pushTCPClose() throws YAPI_Exception
+    {
+        pushStream(YSTREAM_TCP_CLOSE, 0,null);
+    }
+
+	
+	private void FillPktWithEmpty() throws YAPI_Exception
 	{
-		if(_pkt.position() < USB_PKT_SIZE-USB_PKT_STREAM_HEAD){
-			pushEmptyStream(USB_PKT_SIZE-USB_PKT_STREAM_HEAD - _pkt.position() );
+	    int avail =getMaxTcpSize_slow();
+		if(avail> USB_PKT_STREAM_HEAD){
+			pushEmptyStream(avail-USB_PKT_STREAM_HEAD);
 		}
 	}
-
+   
 	
 
 }

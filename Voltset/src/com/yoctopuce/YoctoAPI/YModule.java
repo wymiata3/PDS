@@ -338,7 +338,7 @@ public class YModule extends YFunction {
     public int set_persistentSettings( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("persistentSettings",rest_val);
         return YAPI.SUCCESS;
     }
@@ -419,7 +419,7 @@ public class YModule extends YFunction {
     public int set_luminosity( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("luminosity",rest_val);
         return YAPI.SUCCESS;
     }
@@ -576,7 +576,7 @@ public class YModule extends YFunction {
     public int set_rebootCountdown( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Integer.toString(newval);
         _setAttr("rebootCountdown",rest_val);
         return YAPI.SUCCESS;
     }
@@ -597,7 +597,7 @@ public class YModule extends YFunction {
     public int reboot(int secBeforeReboot)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",secBeforeReboot);
+        rest_val = Integer.toString(secBeforeReboot);
         _setAttr("rebootCountdown",rest_val);
         return YAPI.SUCCESS;
     }
@@ -614,7 +614,7 @@ public class YModule extends YFunction {
     public int triggerFirmwareUpdate(int secBeforeReboot)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",-secBeforeReboot);
+        rest_val = Integer.toString(-secBeforeReboot);
         _setAttr("rebootCountdown",rest_val);
         return YAPI.SUCCESS;
     }
@@ -646,7 +646,8 @@ public class YModule extends YFunction {
     { return get_usbBandwidth(); }
 
     /**
-     * Changes the number of USB interfaces used by the module.
+     * Changes the number of USB interfaces used by the module. You must reboot the module
+     * after changing this setting.
      * 
      * @param newval : either YModule.USBBANDWIDTH_SIMPLE or YModule.USBBANDWIDTH_DOUBLE, according to the
      * number of USB interfaces used by the module
@@ -658,13 +659,14 @@ public class YModule extends YFunction {
     public int set_usbBandwidth( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("usbBandwidth",rest_val);
         return YAPI.SUCCESS;
     }
 
     /**
-     * Changes the number of USB interfaces used by the module.
+     * Changes the number of USB interfaces used by the module. You must reboot the module
+     * after changing this setting.
      * 
      * @param newval : either Y_USBBANDWIDTH_SIMPLE or Y_USBBANDWIDTH_DOUBLE, according to the number of
      * USB interfaces used by the module
@@ -676,6 +678,33 @@ public class YModule extends YFunction {
     public int setUsbBandwidth( int newval)  throws YAPI_Exception
 
     { return set_usbBandwidth(newval); }
+
+    /**
+     * Downloads the specified built-in file and returns a binary buffer with its content.
+     * 
+     * @param pathname : name of the new file to load
+     * 
+     * @return a binary buffer with the file content
+     * 
+     * @throws YAPI_Exception
+     */
+    public byte[] download(String pathname)  throws YAPI_Exception
+    {
+        return _download(pathname);
+        
+    }
+
+    /**
+     * Returns the icon of the module. The icon is a PNG image and does not
+     * exceeds 1536 bytes.
+     * 
+     * @return a binary buffer with module icon, in png format.
+     */
+    public byte[] get_icon2d()  throws YAPI_Exception
+    {
+        return _download("icon2d.png");
+        
+    }
 
     /**
      * Continues the module enumeration started using yFirstModule().

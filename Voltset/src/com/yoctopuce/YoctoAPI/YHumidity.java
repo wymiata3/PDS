@@ -1,6 +1,6 @@
 /*********************************************************************
  *
- * $Id: YHumidity.java 9921 2013-02-20 09:39:16Z seb $
+ * $Id: YHumidity.java 10471 2013-03-19 10:39:56Z seb $
  *
  * Implements yFindHumidity(), the high-level API for Humidity functions
  *
@@ -38,9 +38,9 @@
  *********************************************************************/
 
 package com.yoctopuce.YoctoAPI;
-import java.util.ArrayList;
 
   //--- (globals)
+import java.util.ArrayList;
   //--- (end of globals)
 /**
  * YHumidity Class: Humidity function interface
@@ -253,7 +253,7 @@ public class YHumidity extends YFunction
     public int set_lowestValue( double  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",Math.round(newval*65536.0));
+        rest_val = Long.toString(Math.round(newval*65536.0));
         _setAttr("lowestValue",rest_val);
         return YAPI.SUCCESS;
     }
@@ -307,7 +307,7 @@ public class YHumidity extends YFunction
     public int set_highestValue( double  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",Math.round(newval*65536.0));
+        rest_val = Long.toString(Math.round(newval*65536.0));
         _setAttr("highestValue",rest_val);
         return YAPI.SUCCESS;
     }

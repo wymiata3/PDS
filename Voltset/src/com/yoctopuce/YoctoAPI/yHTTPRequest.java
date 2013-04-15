@@ -20,18 +20,19 @@ class yHTTPRequest implements Runnable{
 
     public static final long MAX_REQUEST_MS = 60*1000;
 
-    private YHTTPHub       _hub;
-    private String         _request;
-    private Socket         _socket  = null;
-    private PrintWriter    _out     = null;
-    private BufferedReader _in      = null;
-    private State          _state= State.AVAIL;
-    private boolean        _eof;
+    private YHTTPHub                _hub;
+    private Socket                  _socket  = null;
+    private BufferedOutputStream    _out     = null;
+    private BufferedInputStream     _in      = null;
+    private State                   _state= State.AVAIL;
+    private boolean                 _eof;
+    private String                  _firstLine;
+    private byte[]                  _rest_of_request;
     @SuppressWarnings("unused")
-	private String         _dbglabel;
-    private String         _header;
-
-    private final StringBuilder _result = new StringBuilder(1024);
+    private String                  _dbglabel;
+    private final StringBuilder     _header = new StringBuilder(1024);
+    private Boolean                 _header_found;
+    private final ByteArrayOutputStream _result = new ByteArrayOutputStream(1024);
 
     yHTTPRequest(YHTTPHub hub,String dbglabel)
     {
@@ -64,23 +65,31 @@ class yHTTPRequest implements Runnable{
 
 
 
-    void _requestStart(String request) throws YAPI_Exception
+    void _requestStart(String firstLine,byte[] rest_of_request) throws YAPI_Exception
     {
-        int pos=request.indexOf('\r');
-        if (pos>0) request = request.substring(0, pos);
-        _request = request;
-
-        request += "\r\n"+_hub.getAuthorization(request)+"Connection: close\r\n\r\n";
+        byte[] full_request;
+        _firstLine =firstLine;
+        _rest_of_request =rest_of_request;
+        if(rest_of_request == null){
+            String str_request = firstLine+_hub.getAuthorization(firstLine)+"Connection: close\r\n\r\n";
+            full_request = str_request.getBytes();
+        }else{
+            String str_request = firstLine+_hub.getAuthorization(firstLine)+"Connection: close\r\n";
+            int len = str_request.length();
+            full_request = new byte[len + rest_of_request.length];
+            System.arraycopy(str_request.getBytes(), 0, full_request, 0, len);
+            System.arraycopy(rest_of_request, 0, full_request, len, rest_of_request.length);
+        }
         try {
             _socket  = new Socket(_hub.getHttpHost(), _hub.getHttpPort());
             _socket.setTcpNoDelay(true);
-            _out     = new PrintWriter(_socket.getOutputStream(), true);
-            _in      = new BufferedReader(new InputStreamReader(
-                                        _socket.getInputStream()));
-            _result.setLength(0);
-            _header=null;
+            _out     = new BufferedOutputStream(_socket.getOutputStream());
+            _in      = new BufferedInputStream(_socket.getInputStream());
+            _result.reset();
+            _header.setLength(0);
+            _header_found=false;
             _eof=false;
-	    _out.print(request);
+	    _out.write(full_request);
             _out.flush();
         }
         catch (UnknownHostException e)
@@ -118,7 +127,7 @@ class yHTTPRequest implements Runnable{
     void _requestReset() throws YAPI_Exception
     {
         _requestStop();
-        _requestStart(_request);
+        _requestStart(_firstLine,_rest_of_request);
     }
 
 
@@ -132,7 +141,7 @@ class yHTTPRequest implements Runnable{
 
         do {
             retry=false;
-            char[] buffer = new char[1024];
+            byte[] buffer = new byte[1024];
             try {
                 read = _in.read(buffer,0,buffer.length);
             } catch (IOException e) {
@@ -143,24 +152,31 @@ class yHTTPRequest implements Runnable{
                 _eof=true;
             }else if(read>0){
                 synchronized(_result) {
-                    _result.append(buffer, 0, read);
-                    if( _header == null ) {
-                        int pos =_result.indexOf("\r\n\r\n");
+                    if( !_header_found ) {
+                        String partial_head = new String(buffer,0,read);
+                        _header.append(partial_head);
+                        int pos =_header.indexOf("\r\n\r\n");
                         if( pos > 0 ) {
-                            String header_str = _result.substring(0,pos+4);
-                            if ( !header_str.startsWith("OK\r\n") ) {
-                                int lpos = header_str.indexOf("\r\n");
-                                if(!header_str.startsWith("HTTP/1.1 "))
+                            pos+=4;
+                            try {
+                                _result.write(_header.substring(pos).getBytes("ISO-8859-1"));
+                            } catch (IOException ex) {
+                                throw new YAPI_Exception(YAPI.IO_ERROR,ex.getLocalizedMessage());
+                            }
+                            _header_found = true;
+                            _header.setLength(pos);
+                            if ( _header.indexOf("OK\r\n")!=0 ) {
+                                int lpos = _header.indexOf("\r\n");
+                                if(_header.indexOf("HTTP/1.1 ")!=0)
                                     throw new YAPI_Exception(YAPI.IO_ERROR,"Invalid HTTP response header");
 
-                                String parts[] = header_str.substring(9, lpos).split(" ");
+                                String parts[] = _header.substring(9, lpos).split(" ");
                                 if(parts[0].equals("401")){
-
                                     if(!_hub.needRetryWithAuth()) {
                                         // No credential provided, give up immediately
                                         throw new YAPI_Exception(YAPI.UNAUTHORIZED,"Authentication required");
                                     } else {
-                                        _hub.parseWWWAuthenticate(header_str);
+                                        _hub.parseWWWAuthenticate(_header.toString());
                                         _requestReset();
                                         retry=true;
                                         break;
@@ -172,9 +188,9 @@ class yHTTPRequest implements Runnable{
                                 }
                             }
                             _hub.authSucceded();
-                            _header = header_str;
-                            _result.delete(0, pos+4);
                         }
+                    }else {
+                        _result.write(buffer, 0, read);
                     }
 
                 }
@@ -184,50 +200,45 @@ class yHTTPRequest implements Runnable{
     }
 
 
-    String requestReadLine() throws YAPI_Exception
+    byte[] getPartialResult() throws YAPI_Exception
     {
-        String res="";
+        byte[] res=null;
         synchronized(_result) {
-            if(_header==null)
-                return "";
-            if(_result.length()==0){
+            if(!_header_found)
+                return null;
+            if(_result.size()==0){
                 if(_eof)
                     throw new YAPI_Exception(YAPI.NO_MORE_DATA,"end of file reached");
-                return "";
+                return null;
             }
-
-            int pos    = _result.indexOf("\n");
-            if( pos>0){
-                res = _result.substring(0, pos+1);
-                _result.delete(0, pos+1);
-            }else if(_eof){
-                res = _result.substring(0);
-                _result.setLength(0);
-            }
+            res = _result.toByteArray();
+            _result.reset();
         }
         return res;
     }
 
 
 
-    String RequestSync(String str_request) throws YAPI_Exception
+
+    byte[] RequestSync(String req_first_line, byte[] req_head_and_body) throws YAPI_Exception
     {
-        String res;
+        byte[] res;
         _requestReserve();
         try {
-           _requestStart(str_request);
+            _requestStart(req_first_line, req_head_and_body);
             int read;
             do {
                 read = _requestProcesss();
-            }while (read>=0);
-            synchronized(_result){
-                res=_result.toString();
-                _result.setLength(0);
+            } while (read >= 0);
+            synchronized (_result) {
+                res = _result.toByteArray();
+                _result.reset();
             }
         } catch (YAPI_Exception ex) {
             _requestStop();
             _requestRelease();
-            throw  ex;
+            throw ex;
+
         }
         _requestStop();
         _requestRelease();
@@ -241,11 +252,11 @@ class yHTTPRequest implements Runnable{
     public void run()
     {
         try {
-           _requestProcesss();
+            _requestProcesss();
             int read;
             do {
                 read = _requestProcesss();
-            }while (read>=0);
+            } while (read >= 0);
         } catch (YAPI_Exception ex) {
         }
         _requestStop();
@@ -253,11 +264,11 @@ class yHTTPRequest implements Runnable{
     }
 
 
-    void RequestAsync(String str_request) throws YAPI_Exception
+    void RequestAsync(String req_first_line, byte[] req_head_and_body) throws YAPI_Exception
     {
         _requestReserve();
         try {
-           _requestStart(str_request);
+           _requestStart(req_first_line,req_head_and_body);
            Thread t = new Thread(this);
            t.start();
         } catch (YAPI_Exception ex) {

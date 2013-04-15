@@ -1,6 +1,6 @@
 /*********************************************************************
  *
- * $Id: YLed.java 9080 2012-12-11 22:41:19Z seb $
+ * $Id: YLed.java 10471 2013-03-19 10:39:56Z seb $
  *
  * Implements yFindLed(), the high-level API for Led functions
  *
@@ -274,7 +274,7 @@ public class YLed extends YFunction
     public int set_luminosity( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("luminosity",rest_val);
         return YAPI.SUCCESS;
     }
@@ -331,7 +331,7 @@ public class YLed extends YFunction
     public int set_blinking( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("blinking",rest_val);
         return YAPI.SUCCESS;
     }

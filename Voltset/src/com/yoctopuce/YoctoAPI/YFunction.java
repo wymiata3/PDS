@@ -2,7 +2,12 @@ package com.yoctopuce.YoctoAPI;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * YFunction Class (virtual class, used internally)
@@ -188,15 +193,116 @@ public class YFunction {
         try {
             attrname = URLEncoder.encode(attr, "ISO-8859-1");
             extra = "/" + attrname + "?" + attrname + "=" + URLEncoder.encode(newval, "ISO-8859-1");
+            extra = extra.replaceAll("%21", "!")
+                    .replaceAll("%23", "#").replaceAll("%24", "$")
+                    .replaceAll("%27", "'").replaceAll("%28", "(").replaceAll("%29", ")")
+                    .replaceAll("%2C", ",").replaceAll("%2F", "/")
+                    .replaceAll("%3A", ":").replaceAll("%3B", ";").replaceAll("%3F", "?")
+                    .replaceAll("%40", "@").replaceAll("%5B", "[").replaceAll("%5D", "]");
         } catch (UnsupportedEncodingException ex) {
             throw new YAPI_Exception(YAPI.INVALID_ARGUMENT, "Unsupported Encoding");
         }
         YAPI.funcRequest(_className, _func, extra);
-        _expiration = YAPI.GetTickCount();
+        if (_expiration!=0) {
+            _expiration = YAPI.GetTickCount();
+        }
     }
 
 
- 
+
+    private byte[] _request(String req_first_line,byte[] req_head_and_body) throws YAPI_Exception
+    {
+        YDevice dev = YAPI.funcGetDevice(_className, _func);
+        return dev.requestHTTP(req_first_line,req_head_and_body, false);
+    }
+
+    protected int _upload(String path, byte[] content) throws YAPI_Exception
+    {
+        Random randomGenerator = new Random();
+        String boundary;
+        String request = "POST /upload.html HTTP/1.1\r\n";
+        String mp_header = "Content-Disposition: form-data; name=\""+path+"\"; filename=\"api\"\r\n"+
+                    "Content-Type: application/octet-stream\r\n"+
+                    "Cobntent-Transfer-Encoding: binary\r\n\r\n";
+        // find a valid boundary
+        do {
+            boundary = String.format("Zz%06xzZ", randomGenerator.nextInt(0x1000000));
+        } while(mp_header.indexOf(boundary)>=0 && YAPI._find_in_bytes(content,boundary.getBytes())>=0);
+        //construct header parts
+        String header_start = "Content-Type: multipart/form-data; boundary="+boundary+"\r\n\r\n--"+boundary+"\r\n"+mp_header;
+        String header_stop="\r\n--"+boundary+"--\r\n";
+        byte[] head_body = new byte[header_start.length()+ content.length+ header_stop.length()];
+        int pos=0;int len=header_start.length();
+        System.arraycopy(header_start.getBytes(), 0, head_body, pos, len);
+
+        pos+=len;len=content.length;
+        System.arraycopy(content, 0, head_body, pos, len);
+
+        pos+=len;len=header_stop.length();
+        System.arraycopy(header_stop.getBytes(), 0, head_body, pos, len);
+        _request(request,head_body);
+        return YAPI.SUCCESS;
+    }
+
+    protected int _upload(String pathname, String content) throws YAPI_Exception
+    {
+        try {
+            return this._upload(pathname, content.getBytes(YAPI.DefaultEncoding));
+        } catch (UnsupportedEncodingException e) {
+            throw new YAPI_Exception(YAPI.INVALID_ARGUMENT, e.getLocalizedMessage());
+        }
+    }
+
+    protected byte[] _download(String url) throws YAPI_Exception
+    {
+        String   request = "GET /"+url+" HTTP/1.1\r\n\r\n";
+        return  _request(request,null);
+    }
+
+
+    protected String _json_get_key(byte[] json, String key) throws YAPI_Exception
+    {
+        JSONObject obj = null;
+        try {
+            obj =new JSONObject(new String(json,"ISO-8859-1"));
+        } catch (JSONException ex) {
+            throw new YAPI_Exception(YAPI.IO_ERROR,ex.getLocalizedMessage());
+        } catch (UnsupportedEncodingException ex) {
+            throw new YAPI_Exception(YAPI.IO_ERROR,ex.getLocalizedMessage());
+        }
+        if(obj.has(key))
+            try {
+            return obj.getString(key);
+        } catch (JSONException ex) {
+            throw new YAPI_Exception(YAPI.IO_ERROR,ex.getLocalizedMessage());
+        }
+        throw new YAPI_Exception(YAPI.INVALID_ARGUMENT,"No key "+key+"in JSON struct");
+    }
+
+    protected ArrayList<String> _json_get_array(byte[] json) throws YAPI_Exception
+    {
+        JSONArray array = null;
+        try {
+            array =new JSONArray(new String(json,"ISO-8859-1"));
+        } catch (JSONException ex) {
+            throw new YAPI_Exception(YAPI.IO_ERROR,ex.getLocalizedMessage());
+        } catch (UnsupportedEncodingException ex) {
+            throw new YAPI_Exception(YAPI.IO_ERROR,ex.getLocalizedMessage());
+        }
+        ArrayList<String> list = new ArrayList<String>();
+        int len = array.length();
+        for (int i=0;i<len;i++){
+            try {
+                list.add(array.get(i).toString());
+            } catch (JSONException ex) {
+                throw new YAPI_Exception(YAPI.IO_ERROR,ex.getLocalizedMessage());
+            }
+        }
+        return list;
+    }
+
+    
+    
     protected boolean hasCallbackRegistered()
     {
         return _valueCallback != null;

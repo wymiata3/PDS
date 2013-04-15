@@ -1,6 +1,6 @@
 /*********************************************************************
  *
- * $Id: YWatchdog.java 9155 2012-12-18 17:23:12Z seb $
+ * $Id: YWatchdog.java 10471 2013-03-19 10:39:56Z seb $
  *
  * Implements yFindWatchdog(), the high-level API for Watchdog functions
  *
@@ -370,7 +370,7 @@ public class YWatchdog extends YFunction
     public int set_pulseTimer( long  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("pulseTimer",rest_val);
         return YAPI.SUCCESS;
     }
@@ -392,7 +392,7 @@ public class YWatchdog extends YFunction
     public int pulse(int ms_duration)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",ms_duration);
+        rest_val = Long.toString(ms_duration);
         _setAttr("pulseTimer",rest_val);
         return YAPI.SUCCESS;
     }
@@ -635,7 +635,7 @@ public class YWatchdog extends YFunction
     public int set_triggerDelay( long  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("triggerDelay",rest_val);
         return YAPI.SUCCESS;
     }
@@ -690,7 +690,7 @@ public class YWatchdog extends YFunction
     public int set_triggerDuration( long  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("triggerDuration",rest_val);
         return YAPI.SUCCESS;
     }

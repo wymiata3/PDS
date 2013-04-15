@@ -1,6 +1,6 @@
 /*********************************************************************
  *
- * $Id: YVSource.java 9080 2012-12-11 22:41:19Z seb $
+ * $Id: YVSource.java 10471 2013-03-19 10:39:56Z seb $
  *
  * Implements yFindVSource(), the high-level API for VSource functions
  *
@@ -296,7 +296,7 @@ public class YVSource extends YFunction
     public int set_voltage( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Integer.toString(newval);
         _setAttr("voltage",rest_val);
         return YAPI.SUCCESS;
     }
@@ -354,23 +354,6 @@ public class YVSource extends YFunction
     public int setFailure( int newval)  throws YAPI_Exception
 
     { return set_failure(newval); }
-
-    /**
-     * Resets the device Output. This function must be called after any
-     * error condition. After an error condition, voltage output will
-     * be set to none and cannot be changed until this function is called.
-     * 
-     * @return YAPI.SUCCESS if the call succeeds.
-     * 
-     * @throws YAPI_Exception
-     */
-    public int reset()  throws YAPI_Exception
-    {
-        String rest_val;
-        rest_val = "0";
-        _setAttr("failure",rest_val);
-        return YAPI.SUCCESS;
-    }
 
     /**
      * Returns TRUE if the  module is overheating.

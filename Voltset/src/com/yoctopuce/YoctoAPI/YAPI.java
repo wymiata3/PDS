@@ -1,7 +1,7 @@
 /**
  * *******************************************************************
  *
- * $Id: YAPI.java 9211 2012-12-27 09:21:19Z seb $
+ * $Id: YAPI.java 10722 2013-03-27 14:44:51Z seb $
  *
  * High-level programming interface, common to all modules
  *
@@ -88,6 +88,7 @@ public class YAPI {
     public static final int UNAUTHORIZED = -12;            // unauthorized access to password-protected device
 
   //--- (end of generated code: globals)
+    static final String   DefaultEncoding = "ISO-8859-1";
     
     // Yoctopuce generic constant
     static final int YOCTO_MANUFACTURER_LEN = 20;
@@ -352,7 +353,7 @@ public class YAPI {
             else
                 calibType = 10+npt;
         }
-        res = String.format("%d", calibType);
+        res = Integer.toString(calibType);
         if(calibType<=10){
             for (int i = 0; i < npt; i++) {
                 rawVal = (int) (rawValues.get(i) / resolution - calibrationOffset + .5);
@@ -455,6 +456,40 @@ public class YAPI {
 
     }
 
+    // helper function to find pattern in byte[]
+    static int _find_in_bytes(byte[] source, byte[] match)
+    {
+        // sanity checks
+        if (source == null || match == null) {
+            return -1;
+        }
+        if (source.length == 0 || match.length == 0) {
+            return -1;
+        }
+        int ret = -1;
+        int spos = 0;
+        int mpos = 0;
+        byte m = match[mpos];
+        for (; spos < source.length; spos++) {
+            if (m == source[spos]) {
+                // starting match
+                if (mpos == 0) {
+                    ret = spos;
+                } // finishing match
+                else if (mpos == match.length - 1) {
+                    return ret;
+                }
+                mpos++;
+                m = match[mpos];
+            } else {
+                ret = -1;
+                mpos = 0;
+                m = match[mpos];
+            }
+        }
+        return ret;
+    }
+    
     // Return a Device object for a specified URL, serial number or logical
     // device name
     // This function will not cause any network access
@@ -625,12 +660,9 @@ public class YAPI {
 
     }
 
-    // Load and parse the REST API for a function given by class name and
-    // identifier, possibly applying changes
-    // Device cache will be preloaded when loading function "module" and
-    // leveraged for other modules
-    // Return a strucure including errorType, errorMsg and result
-    static HashMap<String, String> funcRequest(String className, String func, String extra) throws YAPI_Exception
+
+
+    static YDevice funcGetDevice(String className, String func) throws YAPI_Exception
     {
         String resolved = null;
         try {
@@ -649,7 +681,6 @@ public class YAPI {
         func = resolved;
         int dotpos = func.indexOf('.');
         String devid = func.substring(0, dotpos);
-        String funcid = func.substring(dotpos + 1);
         YDevice dev = getDevice(devid);
         if (dev == null) {
             // try to force a device list update to check if the device arrived
@@ -662,8 +693,20 @@ public class YAPI {
             }
 
         }
-        JSONObject loadval = null;
+        return dev;
+    }
 
+
+    // Load and parse the REST API for a function given by class name and
+    // identifier, possibly applying changes
+    // Device cache will be preloaded when loading function "module" and
+    // leveraged for other modules
+    static HashMap<String, String> funcRequest(String className, String func, String extra) throws YAPI_Exception
+    {
+        YDevice dev = funcGetDevice(className, func);
+        JSONObject loadval = null;
+        int dotpos = func.indexOf('.');
+        String funcid = func.substring(dotpos + 1);
         if (extra.equals("")) {
             // use a cached API string, without reloading unless module is
             // requested
@@ -682,7 +725,7 @@ public class YAPI {
             // request specified function only to minimize traffic
             if (extra.equals("")) {
                 String httpreq = "GET /api/" + funcid + ".json";
-                String yreq = dev.requestHTTP(httpreq, false);
+                String yreq = new String(dev.requestHTTP(httpreq,null, false));
                 try {
                     loadval = new JSONObject(yreq);
                 } catch (JSONException ex) {
@@ -692,7 +735,7 @@ public class YAPI {
                 }
             } else {
                 String httpreq = "GET /api/" + funcid + extra;
-                dev.requestHTTP(httpreq, true);
+                dev.requestHTTP(httpreq,null, true);
                 return null;
             }
         }
@@ -748,7 +791,7 @@ public class YAPI {
      */
     public static String GetAPIVersion()
     {
-        return "1.01.10105";
+        return "1.01.10798";
     }
 
     /**

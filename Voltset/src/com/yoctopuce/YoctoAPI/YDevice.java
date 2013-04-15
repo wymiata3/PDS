@@ -104,7 +104,7 @@ public class YDevice {
         if (_cache_expiration > YAPI.GetTickCount()) {
             return _cache_json;
         }
-        String yreq = requestHTTP("GET /api.json", false);
+        String yreq = new String(requestHTTP("GET /api.json",null, false));
         this._cache_expiration = YAPI.GetTickCount() + YAPI.DefaultCacheValidity;
         this._cache_json = yreq;
         return yreq;
@@ -207,22 +207,18 @@ public class YDevice {
         return "";
     }
 
-    public String requestHTTP(String request, boolean async) throws YAPI_Exception
+    byte[] requestHTTP(String request,byte[] rest_of_request, boolean async) throws YAPI_Exception
     {
         String[] words = request.split(" ");
         if (words.length < 2) {
             throw new YAPI_Exception(YAPI.INVALID_ARGUMENT,
                     "Invalid request, not enough words; expected a method name and a URL");
-        } else if (words.length > 2) {
-            throw new YAPI_Exception(YAPI.INVALID_ARGUMENT,
-                    "Invalid request, too many words; make sure the URL is URI-encoded");
         }
         String relativeUrl=words[1];
         if (relativeUrl.charAt(0) != '/') {
             relativeUrl = "/" + relativeUrl;
         }
-        String shortRequest = String.format("%s %s%s", words[0],_wpRec.getNetworkUrl(),relativeUrl);
-
-        return _hub.devRequest(this,shortRequest, async);
+        String shortRequest = String.format("%s %s%s\r\n", words[0],_wpRec.getNetworkUrl(),relativeUrl);
+        return _hub.devRequest(this,shortRequest,rest_of_request, async);
     }
 }

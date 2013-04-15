@@ -1,6 +1,6 @@
 /*********************************************************************
  *
- * $Id: YServo.java 9080 2012-12-11 22:41:19Z seb $
+ * $Id: YServo.java 10471 2013-03-19 10:39:56Z seb $
  *
  * Implements yFindServo(), the high-level API for Servo functions
  *
@@ -223,7 +223,7 @@ public class YServo extends YFunction
     public int set_position( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Integer.toString(newval);
         _setAttr("position",rest_val);
         return YAPI.SUCCESS;
     }
@@ -282,7 +282,7 @@ public class YServo extends YFunction
     public int set_range( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("range",rest_val);
         return YAPI.SUCCESS;
     }
@@ -346,7 +346,7 @@ public class YServo extends YFunction
     public int set_neutral( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("neutral",rest_val);
         return YAPI.SUCCESS;
     }

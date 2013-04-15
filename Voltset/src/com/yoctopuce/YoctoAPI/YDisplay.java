@@ -39,8 +39,8 @@
 
 package com.yoctopuce.YoctoAPI; 
 
-  //--- (globals)
-  //--- (end of globals)
+  //--- (generated code: globals)
+  //--- (end of generated code: globals)
 /**
  * YDisplay Class: Display function interface
  * 
@@ -370,7 +370,7 @@ public class YDisplay extends YFunction
     public int set_brightness( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("brightness",rest_val);
         return YAPI.SUCCESS;
     }
@@ -431,7 +431,7 @@ public class YDisplay extends YFunction
     public int set_orientation( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("orientation",rest_val);
         return YAPI.SUCCESS;
     }
@@ -620,7 +620,7 @@ public class YDisplay extends YFunction
     { return set_command(newval); }
 
     /**
-     * Clears the display screen and reset all display layers to their default state.
+     * Clears the display screen and resets all display layers to their default state.
      * 
      * @return YAPI.SUCCESS if the call succeeds.
      * 
@@ -629,12 +629,13 @@ public class YDisplay extends YFunction
     public int resetAll()  throws YAPI_Exception
     {
         flushLayers(); 
-        return sendCommand(String.format("Z")); 
+        resetHiddenLayerFlags();
+        return sendCommand("Z"); 
         
     }
 
     /**
-     * Smoothly change the brightness of the screen to produce a fade-in or fade-out
+     * Smoothly changes the brightness of the screen to produce a fade-in or fade-out
      * effect.
      * 
      * @param brightness: the new screen brightness
@@ -653,24 +654,24 @@ public class YDisplay extends YFunction
 
     /**
      * Starts to record all display commands into a sequence, for later replay.
-     * The name used to store the sequence will be specified when calling
-     * stopSequence(), once the recording is complete.
+     * The name used to store the sequence is specified when calling
+     * saveSequence(), once the recording is complete.
      * 
      * @return YAPI.SUCCESS if the call succeeds.
      * 
      * @throws YAPI_Exception
      */
-    public int startSequence()  throws YAPI_Exception
+    public int newSequence()  throws YAPI_Exception
     {
         flushLayers();
-        _sequence = String.format(""); 
+        _sequence = ""; 
         _recording = true; 
         return YAPI.SUCCESS; 
         
     }
 
     /**
-     * Stops recording display commands and save the sequence into the specified
+     * Stops recording display commands and saves the sequence into the specified
      * file on the display internal memory. The sequence can be later replayed
      * using playSequence().
      * 
@@ -680,19 +681,20 @@ public class YDisplay extends YFunction
      * 
      * @throws YAPI_Exception
      */
-    public int stopSequence(String sequenceName)  throws YAPI_Exception
+    public int saveSequence(String sequenceName)  throws YAPI_Exception
     {
         flushLayers();
         _recording = false; 
-        //_files.upload(str_sequenceName, _sequence);
+        _upload(sequenceName, _sequence);
+        //We need to use YPRINTF("") for Objective-C 
         _sequence = String.format(""); 
         return YAPI.SUCCESS; 
         
     }
 
     /**
-     * Replay a display sequence previously recorded using
-     * startSequence() amd stopSequence().
+     * Replays a display sequence previously recorded using
+     * newSequence() and saveSequence().
      * 
      * @param sequenceName : the name of the newly created sequence
      * 
@@ -708,7 +710,7 @@ public class YDisplay extends YFunction
     }
 
     /**
-     * Wait for a specified delay (in milliseconds) before playing next
+     * Waits for a specified delay (in milliseconds) before playing next
      * commands in current sequence. This method can be used while
      * recording a display sequence, to insert a timed wait in the sequence
      * (without any immediate effect). It can also be used dynamically while
@@ -725,6 +727,82 @@ public class YDisplay extends YFunction
     {
         flushLayers(); 
         return sendCommand(String.format("W%d",delay_ms)); 
+        
+    }
+
+    /**
+     * Stops immediately any ongoing sequence replay.
+     * The display is left as is.
+     * 
+     * @return YAPI.SUCCESS if the call succeeds.
+     * 
+     * @throws YAPI_Exception
+     */
+    public int stopSequence()  throws YAPI_Exception
+    {
+        flushLayers();
+        return sendCommand("S"); 
+        
+    }
+
+    /**
+     * Uploads an arbitrary file (for instance a GIF file) to the display, to the
+     * specified full path name. If a file already exists with the same path name,
+     * its content is overwritten.
+     * 
+     * @param pathname : path and name of the new file to create
+     * @param content : binary buffer with the content to set
+     * 
+     * @return YAPI.SUCCESS if the call succeeds.
+     * 
+     * @throws YAPI_Exception
+     */
+    public int upload(String pathname,byte[] content)  throws YAPI_Exception
+    {
+        return _upload(pathname,content);
+        
+    }
+
+    /**
+     * Copies the whole content of a layer to another layer. The color and transparency
+     * of all the pixels from the destination layer are set to match the source pixels.
+     * This method only affects the displayed content, but does not change any
+     * property of the layer object.
+     * Note that layer 0 has no transparency support (it is always completely opaque).
+     * 
+     * @param srcLayerId : the identifier of the source layer (a number in range 0..layerCount-1)
+     * @param dstLayerId : the identifier of the destination layer (a number in range 0..layerCount-1)
+     * 
+     * @return YAPI.SUCCESS if the call succeeds.
+     * 
+     * @throws YAPI_Exception
+     */
+    public int copyLayerContent(int srcLayerId,int dstLayerId)  throws YAPI_Exception
+    {
+        flushLayers(); 
+        return sendCommand(String.format("o%d,%d",srcLayerId,dstLayerId)); 
+        
+    }
+
+    /**
+     * Swaps the whole content of two layers. The color and transparency of all the pixels from
+     * the two layers are swapped. This method only affects the displayed content, but does
+     * not change any property of the layer objects. In particular, the visibility of each
+     * layer stays unchanged. When used between onae hidden layer and a visible layer,
+     * this method makes it possible to easily implement double-buffering.
+     * Note that layer 0 has no transparency support (it is always completely opaque).
+     * 
+     * @param layerIdA : the first layer (a number in range 0..layerCount-1)
+     * @param layerIdB : the second layer (a number in range 0..layerCount-1)
+     * 
+     * @return YAPI.SUCCESS if the call succeeds.
+     * 
+     * @throws YAPI_Exception
+     */
+    public int swapLayerContent(int layerIdA,int layerIdB)  throws YAPI_Exception
+    {
+        flushLayers(); 
+        return sendCommand(String.format("E%d,%d",layerIdA,layerIdB)); 
         
     }
 
@@ -851,7 +929,7 @@ public class YDisplay extends YFunction
 
     /**
      * Returns a YDisplayLayer object that can be used to draw on the specified
-     * layer. The content will only be displayed when the layer is active on the
+     * layer. The content is displayed only when the layer is active on the
      * screen (and not masked by other overlapping layers).
      * 
      * @param layerId : the identifier of the layer (a number in range 0..layerCount-1)
@@ -866,7 +944,7 @@ public class YDisplay extends YFunction
             int nb_display_layer = this.get_layerCount();
             _allDisplayLayers = new YDisplayLayer[nb_display_layer];
             for(int i=0; i < nb_display_layer; i++) {
-                _allDisplayLayers[i] = new YDisplayLayer(this, Integer.toString(i));
+                _allDisplayLayers[i] = new YDisplayLayer(this, i);
             }
         }
         if(layerId < 0 || layerId >= _allDisplayLayers.length) {
@@ -890,6 +968,15 @@ public class YDisplay extends YFunction
             }
         }
         return YAPI.SUCCESS;
+    }
+    
+    public synchronized void resetHiddenLayerFlags() throws YAPI_Exception
+    {
+        if(_allDisplayLayers != null) {
+            for(int i = 0; i < _allDisplayLayers.length; i++) {
+                _allDisplayLayers[i].resetHiddenFlag();
+            }
+        }
     }
     
     /**

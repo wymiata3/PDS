@@ -1,6 +1,6 @@
 /*********************************************************************
  *
- * $Id: YLightSensor.java 9921 2013-02-20 09:39:16Z seb $
+ * $Id: YLightSensor.java 10471 2013-03-19 10:39:56Z seb $
  *
  * Implements yFindLightSensor(), the high-level API for LightSensor functions
  *
@@ -38,9 +38,9 @@
  *********************************************************************/
 
 package com.yoctopuce.YoctoAPI;
-import java.util.ArrayList;
 
   //--- (globals)
+import java.util.ArrayList;
   //--- (end of globals)
 /**
  * YLightSensor Class: LightSensor function interface
@@ -218,7 +218,7 @@ public class YLightSensor extends YFunction
     public int set_currentValue( double  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",Math.round(newval*65536.0));
+        rest_val = Long.toString(Math.round(newval*65536.0));
         _setAttr("currentValue",rest_val);
         return YAPI.SUCCESS;
     }
@@ -269,7 +269,7 @@ public class YLightSensor extends YFunction
     public int calibrate(double calibratedVal)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",Math.round(calibratedVal*65536.0));
+        rest_val = Long.toString(Math.round(calibratedVal*65536.0));
         _setAttr("currentValue",rest_val);
         return YAPI.SUCCESS;
     }
@@ -286,7 +286,7 @@ public class YLightSensor extends YFunction
     public int set_lowestValue( double  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",Math.round(newval*65536.0));
+        rest_val = Long.toString(Math.round(newval*65536.0));
         _setAttr("lowestValue",rest_val);
         return YAPI.SUCCESS;
     }
@@ -340,7 +340,7 @@ public class YLightSensor extends YFunction
     public int set_highestValue( double  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",Math.round(newval*65536.0));
+        rest_val = Long.toString(Math.round(newval*65536.0));
         _setAttr("highestValue",rest_val);
         return YAPI.SUCCESS;
     }

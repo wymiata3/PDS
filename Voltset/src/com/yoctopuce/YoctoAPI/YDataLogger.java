@@ -1,7 +1,7 @@
 /**
  * *******************************************************************
  *
- * $Id: YDataLogger.java 9787 2013-02-08 15:07:03Z mvuilleu $
+ * $Id: YDataLogger.java 10568 2013-03-21 08:42:03Z seb $
  *
  * Implements yFindDataLogger(), the high-level API for DataLogger functions
  *
@@ -80,7 +80,7 @@ public class YDataLogger extends YFunction {
         String result;
         YDevice dev = YAPI.getDevice(devid);
         try {
-            result = dev.requestHTTP(httpreq, false);
+            result = new String(dev.requestHTTP(httpreq,null, false));
         } catch (YAPI_Exception ex) {
             if (!_dataLoggerURL.equals("/dataLogger.json")) {
                 _dataLoggerURL = "/dataLogger.json";
@@ -431,7 +431,7 @@ public class YDataLogger extends YFunction {
     public int set_samplingInterval( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("samplingInterval",rest_val);
         return YAPI.SUCCESS;
     }
@@ -476,7 +476,7 @@ public class YDataLogger extends YFunction {
     public int set_timeUTC( long  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("timeUTC",rest_val);
         return YAPI.SUCCESS;
     }

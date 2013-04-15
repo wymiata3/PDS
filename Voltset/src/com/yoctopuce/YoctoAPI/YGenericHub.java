@@ -70,5 +70,5 @@ abstract class YGenericHub {
 
     abstract void updateDeviceList(boolean forceupdate) throws YAPI_Exception;
 
-    abstract public String devRequest(YDevice device, String str_request, Boolean async) throws YAPI_Exception;
+    abstract public byte[] devRequest(YDevice device,String req_first_line,byte[] req_head_and_body, Boolean async) throws YAPI_Exception;
 }

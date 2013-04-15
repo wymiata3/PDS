@@ -1,6 +1,6 @@
 /*********************************************************************
  *
- * $Id: YDualPower.java 9921 2013-02-20 09:39:16Z seb $
+ * $Id: YDualPower.java 10471 2013-03-19 10:39:56Z seb $
  *
  * Implements yFindDualPower(), the high-level API for DualPower functions
  *
@@ -253,7 +253,7 @@ public class YDualPower extends YFunction
     public int set_powerControl( int  newval)  throws YAPI_Exception
     {
         String rest_val;
-        rest_val = String.format("%d",newval);
+        rest_val = Long.toString(newval);
         _setAttr("powerControl",rest_val);
         return YAPI.SUCCESS;
     }
