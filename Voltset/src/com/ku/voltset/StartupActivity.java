@@ -161,10 +161,10 @@ public class StartupActivity extends FragmentActivity implements
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.btnMeasure) {// User clicked Measurement
-			if (yocto_serial!=null) {
+			if (yocto_serial != null) {
 				Intent mainActivity = new Intent(this, MainActivity.class);
 				// Bring activity to front
-//				mainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				// mainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 				// Provide a serial number to avoid the unlikely chance of
 				// unplugging device within the threshold of 500ms
 				startActivity(mainActivity);// And now start
@@ -214,7 +214,7 @@ public class StartupActivity extends FragmentActivity implements
 	}
 
 	// Connection between service and activity
-	private ServiceConnection mConnection = new ServiceConnection() {
+	ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			// This is called when the connection with the service has been
 			// established, giving us the service object we can use to
@@ -255,17 +255,19 @@ public class StartupActivity extends FragmentActivity implements
 		// Establish a connection with the service. We use an explicit
 		// class name because there is no reason to be able to let other
 		// applications replace our component.
-		//Start in new thread to avoid ANR exceptions
-		Thread t = new Thread(){
-			public void run(){
-			getApplicationContext().bindService(new Intent(StartupActivity.this,
-					HardwareController_service.class), mConnection,
-					Context.BIND_AUTO_CREATE);
-			mIsBound = true;
+		// Start in new thread to avoid ANR exceptions
+		Thread t = new Thread() {
+			public void run() {
+				getApplicationContext().bindService(
+						new Intent(StartupActivity.this,
+								HardwareController_service.class), mConnection,
+						Context.BIND_AUTO_CREATE);
+
 			}
-			};
-			t.start();
-		
+		};
+		mIsBound = true;
+		t.start();
+
 		Log.d(TAG, "Binding.");
 	}
 
@@ -286,7 +288,7 @@ public class StartupActivity extends FragmentActivity implements
 			}
 
 			// Detach our existing connection.
-			unbindService(mConnection);
+			getApplicationContext().unbindService(mConnection);
 			mIsBound = false;
 			Log.d(TAG, "unbinding.");
 		}
