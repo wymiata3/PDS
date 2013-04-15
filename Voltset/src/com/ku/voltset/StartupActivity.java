@@ -128,12 +128,6 @@ public class StartupActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_startup);
-		try {
-			YAPI.EnableUSBHost(this); // Enable usb host mode
-			YAPI.RegisterHub("usb");
-		} catch (YAPI_Exception ypai) {
-			ypai.printStackTrace();
-		}
 		if (!mIsBound)
 			doBindService();
 		// Parse elements
@@ -261,10 +255,17 @@ public class StartupActivity extends FragmentActivity implements
 		// Establish a connection with the service. We use an explicit
 		// class name because there is no reason to be able to let other
 		// applications replace our component.
-		bindService(new Intent(StartupActivity.this,
-				HardwareController_service.class), mConnection,
-				Context.BIND_AUTO_CREATE);
-		mIsBound = true;
+		//Start in new thread to avoid ANR exceptions
+		Thread t = new Thread(){
+			public void run(){
+			getApplicationContext().bindService(new Intent(StartupActivity.this,
+					HardwareController_service.class), mConnection,
+					Context.BIND_AUTO_CREATE);
+			mIsBound = true;
+			}
+			};
+			t.start();
+		
 		Log.d(TAG, "Binding.");
 	}
 

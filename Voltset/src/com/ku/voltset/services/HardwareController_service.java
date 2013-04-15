@@ -1,26 +1,21 @@
 package com.ku.voltset.services;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-
 import com.yoctopuce.YoctoAPI.YAPI;
 import com.yoctopuce.YoctoAPI.YAPI.DeviceArrivalCallback;
 import com.yoctopuce.YoctoAPI.YAPI.DeviceRemovalCallback;
 import com.yoctopuce.YoctoAPI.YAPI_Exception;
 import com.yoctopuce.YoctoAPI.YModule;
 import com.yoctopuce.YoctoAPI.YVoltage;
-
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
 import android.widget.Toast;
 
 public class HardwareController_service extends Service {
@@ -36,16 +31,14 @@ public class HardwareController_service extends Service {
 	private static final int interval = 500; // Scan for device every 500 ms. We
 												// need to ensure each time
 												// device is connected.
-	static final int threshold = (1000 / interval) * 3; // Seconds to reach
-														// before saying thats
-														// the correct value so
-														// as to save it in
-														// previous measurement
+	// Seconds to reach before saying thats the correct value so as to save it
+	// in previous measurement
+	static final int threshold = (1000 / interval) * 3;
 	int seconds = 0;
 	boolean dcVolt = false;
 	ArrayList<Messenger> mClients = new ArrayList<Messenger>();
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
-	YModule module = null;
+	YModule module;
 	String currentMeasurement = "0.00";
 	String lastMeasurement = "0.00";
 	YVoltage dc_sensor;
@@ -60,29 +53,31 @@ public class HardwareController_service extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		hHardwareControler = new Handler();
-		measuringController = new Handler();
-		hHardwareControler.postDelayed(scanner, 0);
-		// Register handlers
-		YAPI.RegisterDeviceRemovalCallback(drc);
-		YAPI.RegisterDeviceArrivalCallback(dac);
+		try {
+			YAPI.EnableUSBHost(this); // Enable usb host mode
+			YAPI.RegisterHub("usb");
+			// Register handlers
+			hHardwareControler = new Handler();
+			measuringController = new Handler();
+			YAPI.RegisterDeviceRemovalCallback(drc);
+			YAPI.RegisterDeviceArrivalCallback(dac);
+			// Update device list
+			YAPI.UpdateDeviceList();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void onDestroy() {
-		Log.d(TAG, "onDestroy");
 		hHardwareControler.removeCallbacks(scanner);
 		if (measuringController != null)
 			measuringController.removeCallbacks(measurer);
-	}
-
-	@Override
-	public void onStart(Intent intent, int startid) {
-		Log.d(TAG, "onStartHCService");
+		YAPI.RegisterDeviceArrivalCallback(null);
+		YAPI.RegisterDeviceRemovalCallback(null);
 	}
 
 	/**
-	 * If serial is null, yocto device is not identified. Refresh.
 	 * 
 	 * @return true for null, false for not null
 	 */
@@ -93,21 +88,15 @@ public class HardwareController_service extends Service {
 	Runnable measurer = new Runnable() {
 		@Override
 		public void run() {
-			if (serial != null) {
+			if (serial != null && module.isOnline()) {
 				try {
 					// we currently have measurement
 					if (Double.valueOf(currentMeasurement) > 0.01)
 						seconds += 2;
 					lastMeasurement = currentMeasurement; // get the last
-					if (module.isOnline())
-						// format it to 0.### digits
-						currentMeasurement = String.format("%.3f",
-								dc_sensor.getCurrentValue());
-					else {
-						Toast.makeText(getApplicationContext(), "module.. offline?", 1000).show();
-						measuringController.postDelayed(measurer, interval);
-						return;
-					}
+					// format it to 0.### digits
+					currentMeasurement = String.format("%.3f",
+							dc_sensor.getCurrentValue());
 					// discard zero values, its spam
 					if (Double.valueOf(currentMeasurement) == 0
 							&& zeroSended == true) {
@@ -201,20 +190,16 @@ public class HardwareController_service extends Service {
 		@Override
 		public void yDeviceArrival(YModule lmodule) {
 			try {
-				if (lmodule.get_productName().equalsIgnoreCase("Yocto-Volt")) {// is
-																				// it
-																				// really
-																				// a
-																				// yocto-volt
-																				// device?
-					serial = lmodule.get_serialNumber(); // if yes grab the
-															// serial
+				// is it really a yocto-volt device?
+				if (lmodule.get_productName().equalsIgnoreCase("Yocto-Volt")) {
+					// if yes grab the serial
+					serial = lmodule.get_serialNumber();
 					dcVolt = false;
-					hHardwareControler.postDelayed(scanner, interval); // and
-																		// enable
-																		// the
-																		// scanner
+					// enable the scanner
+					hHardwareControler.postDelayed(scanner, interval);
 					module = lmodule;
+					Toast.makeText(getApplicationContext(),
+							module.get_serialNumber(), 1000).show();
 				}
 			} catch (YAPI_Exception yapi) {
 				yapi.printStackTrace();
@@ -224,13 +209,15 @@ public class HardwareController_service extends Service {
 
 	public void scan() {
 		try {
-			YAPI.UpdateDeviceList(); // Update device list
-			if (serial != null) {// Device found inform activity about that
-				if (dcVolt == false) { // no need to make new instances all time
+			// Update device list
+			YAPI.UpdateDeviceList();
+			// Device found inform activity about that
+			if (serial != null && module.isOnline()) {
+				// no need to make new instances all time
+				if (dcVolt == false) {
 					dc_sensor = YVoltage.FindVoltage(getSerial() + ".voltage1");
-					measuringController.postDelayed(measurer, interval); // start
-																			// the
-																			// controller
+					// start the controller
+					measuringController.postDelayed(measurer, interval);
 					dcVolt = true;
 				}
 				for (int i = mClients.size() - 1; i >= 0; i--) {
