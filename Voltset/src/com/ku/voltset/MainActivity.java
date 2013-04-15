@@ -38,6 +38,9 @@ public class MainActivity extends FragmentActivity implements
 	Fragment fragment = null;
 	DIYFragment diyFragment = null;
 	EduFragment eduFragment = null;
+	private static final String file = "VoltSet.csv"; // Our log file
+	Logger log;
+	
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -202,6 +205,11 @@ public class MainActivity extends FragmentActivity implements
 			case HardwareController_service.MSG_DC_VALUE:
 				try {
 					String dc = "";
+					if(log==null)
+					{
+						 log= new Logger(context);
+						 log.setFile(file);
+					}
 					dc = msg.getData().getString("dc");
 					String holded = msg.getData().getString("holded");
 					if (diyFragment == null)
@@ -215,11 +223,13 @@ public class MainActivity extends FragmentActivity implements
 
 					if (diyFragment.isVisible()) {
 						diyFragment.updateMeasureText(dc);
+						log.write("T:"+getTimeStamp()+"|M:" + dc + "DC");//Log event to file, T:time, M:measurement
 						if (holded != null) {
 							diyFragment.updateHolded(holded);
 						}
 					} else if (eduFragment.isVisible()) {
 						eduFragment.updateMeasureText(dc);
+						log.write("T:"+getTimeStamp()+"|M:" + dc + "DC");//Log event to file, T:time, M:measurement
 						if (holded != null) {
 							eduFragment.updateHolded(holded);
 							eduFragment.rotateArrowUpwards(holded);

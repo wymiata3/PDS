@@ -48,5 +48,4 @@ public class DIYFragment extends Fragment {
 		txtView=(TextView)mRoot.findViewById(R.id.txtHold);
 		txtView.setText("Holded:"+holded+"V");
 	}
-	
 }

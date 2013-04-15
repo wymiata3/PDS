@@ -1,6 +1,7 @@
 package com.ku.voltset.services;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import com.yoctopuce.YoctoAPI.YAPI;
 import com.yoctopuce.YoctoAPI.YAPI.DeviceArrivalCallback;
@@ -12,6 +13,7 @@ import com.yoctopuce.YoctoAPI.YVoltage;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -48,6 +50,7 @@ public class HardwareController_service extends Service {
 	String lastMeasurement = "0.00";
 	YVoltage dc_sensor;
 	Bundle bundle;
+	boolean zeroSended = false;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -90,17 +93,27 @@ public class HardwareController_service extends Service {
 	Runnable measurer = new Runnable() {
 		@Override
 		public void run() {
-			if (!isSerialNull()) {
+			if (serial != null) {
+
 				try {
-					if (Double.valueOf(currentMeasurement) > 0.01)// we
-																	// currently
-																	// have
-																	// measurement
-						seconds += 2;
+
+					// we currently have measurement
+					if (Double.valueOf(currentMeasurement) > 0.01)
+						seconds += 1;
 					lastMeasurement = currentMeasurement; // get the last
 					currentMeasurement = String.format("%.3f", // format it to
 																// 0.### digits
 							dc_sensor.getCurrentValue());
+					// discard zero values, its spam
+					if (Double.valueOf(currentMeasurement) == 0
+							&& zeroSended == true) {
+						measuringController.postDelayed(measurer, interval);
+						return;
+					} else {
+						zeroSended = false;
+					}
+					if (dc_sensor.getCurrentValue() == 0.0)
+						zeroSended = true;
 					bundle = new Bundle();
 					bundle.putString("dc", currentMeasurement); // put dc into
 																// bundle
@@ -136,6 +149,8 @@ public class HardwareController_service extends Service {
 						}
 					}
 				} catch (YAPI_Exception e) {
+					Toast.makeText(getApplicationContext(), "Exception",
+							Toast.LENGTH_SHORT).show();
 					e.printStackTrace();
 				}
 			}
@@ -195,7 +210,7 @@ public class HardwareController_service extends Service {
 																		// enable
 																		// the
 																		// scanner
-					module=lmodule;
+					module = lmodule;
 				}
 			} catch (YAPI_Exception yapi) {
 				yapi.printStackTrace();
@@ -266,7 +281,7 @@ public class HardwareController_service extends Service {
 					values.putString("Beacon",
 							(module.get_beacon() == YModule.BEACON_ON) ? "on"
 									: "off");
-					
+
 					values.putString("serial", module.getSerialNumber());
 				} catch (YAPI_Exception e) {
 					e.printStackTrace();
@@ -291,4 +306,5 @@ public class HardwareController_service extends Service {
 			}
 		}
 	}
+
 }

@@ -30,11 +30,13 @@
         </activity>
         <activity
             android:name="com.ku.voltset.StartupActivity"
-            android:label="@string/title_activity_startup" 
-            android:launchMode="singleTask">
+            android:label="@string/title_activity_startup"
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
+
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
 
@@ -51,7 +53,11 @@
             android:name="facebook.sdk.ApplicationId"
             android:value="@string/app_id" />
 
-        <activity android:name="MainActivity" >
+        <activity android:name="com.ku.voltset.MainActivity" >
+        </activity>
+        <activity
+            android:name="com.ku.voltset.LogViewer"
+            android:label="@string/title_activity_log_viewer" >
         </activity>
     </application>
 
