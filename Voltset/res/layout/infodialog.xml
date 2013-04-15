@@ -14,19 +14,11 @@
         android:text="Serial:" />
 
     <TextView
-        android:id="@+id/txtLogicalName"
+        android:id="@+id/txtLuminosity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/txtSerial"
         android:layout_below="@+id/txtSerial"
-        android:text="Logical Name:" />
-
-    <TextView
-        android:id="@+id/txtLuminosity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/txtLogicalName"
-        android:layout_below="@+id/txtLogicalName"
         android:text="Luminosity:" />
 
     <TextView
@@ -56,20 +48,11 @@
         android:text="TextView" />
 
     <TextView
-        android:id="@+id/txtLogicalNameV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/txtLogicalName"
-        android:layout_alignBottom="@+id/txtLogicalName"
-        android:layout_alignLeft="@+id/txtSerialV"
-        android:text="TextView" />
-
-    <TextView
         android:id="@+id/txtLumonosityV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/txtUpTime"
-        android:layout_alignLeft="@+id/txtLogicalNameV"
+        android:layout_alignLeft="@+id/txtSerialV"
         android:text="TextView" />
 
     <TextView
@@ -89,15 +72,21 @@
         android:layout_alignLeft="@+id/txtUpTimeV"
         android:text="TextView" />
 
-    <Switch
-        android:id="@+id/switch1"
+    <TextView
+        android:id="@+id/txtBeacon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/txtUsbCurrent"
-        android:layout_alignRight="@+id/txtUsbCurrentV"
         android:layout_below="@+id/txtUsbCurrent"
-        android:enabled="false"
-        android:hint="Switch through settings."
-        android:text="Beacon:" />
+        android:text="Beacon" />
+
+    <TextView
+        android:id="@+id/txtBeaconV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtBeacon"
+        android:layout_alignBottom="@+id/txtBeacon"
+        android:layout_alignRight="@+id/txtUsbCurrentV"
+        android:text="TextView" />
 
 </RelativeLayout>

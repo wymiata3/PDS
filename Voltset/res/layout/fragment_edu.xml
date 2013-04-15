@@ -40,26 +40,6 @@
             android:src="@drawable/downmeter" />
 
         <TextView
-            android:id="@+id/prevTextStatic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/prevText"
-            android:text="@string/previous" />
-
-        <TextView
-            android:id="@+id/prevText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/imageArrow"
-            android:layout_centerVertical="true"
-            android:clickable="false"
-            android:gravity="right"
-            android:numeric="integer|decimal"
-            android:singleLine="true"
-            android:text="@string/initValue" />
-
-        <TextView
             android:id="@+id/mVoltsText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,6 +50,19 @@
             android:numeric="integer|signed|decimal"
             android:singleLine="true"
             android:text="@string/initValue" />
+
+        <TextView
+            android:id="@+id/prevText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:clickable="false"
+            android:gravity="right"
+            android:numeric="integer|decimal"
+            android:singleLine="true"
+            android:text="@string/initValue" />
+
     </RelativeLayout>
 
 </RelativeLayout>

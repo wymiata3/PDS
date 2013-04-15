@@ -68,6 +68,10 @@ public class StartupActivity extends FragmentActivity implements
 			case HardwareController_service.MSG_GET_YOCTO_VALUES:
 				// parse them and place in bundle
 				yocto_values = msg.getData();
+				// Instantiate new dialog
+				InfoDialog info = InfoDialog.newInstance(yocto_values);
+				// And show it
+				info.show(getSupportFragmentManager(), "info");
 				break;
 			default:
 				super.handleMessage(msg);
@@ -87,7 +91,6 @@ public class StartupActivity extends FragmentActivity implements
 		}
 	}
 
-	// Unused animations, future maybe?
 	public static Animation runFadeOutAnimationOn(Context ctx, View target) {
 		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fadeout);
 		target.startAnimation(animation);
@@ -208,14 +211,6 @@ public class StartupActivity extends FragmentActivity implements
 						HardwareController_service.MSG_GET_YOCTO_VALUES);
 				msg.replyTo = mMessenger;
 				mService.send(msg);
-				// Instantiate new dialog
-				InfoDialog info = new InfoDialog();
-				// To bundle insert also our serial
-				yocto_values.putString("serial", yocto_serial);
-				// Set the bundle as arguments
-				info.setArguments(yocto_values);
-				// And show it
-				info.show(getSupportFragmentManager(), "info");
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

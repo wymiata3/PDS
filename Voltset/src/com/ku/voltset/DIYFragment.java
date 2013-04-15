@@ -2,6 +2,7 @@ package com.ku.voltset;
 
 import com.ku.voltset.R;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 public class DIYFragment extends Fragment {
 	private View mRoot;
 	private TextView txtView;
+	
 	public DIYFragment() {
 
 	}

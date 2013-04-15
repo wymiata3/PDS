@@ -1,5 +1,6 @@
 package com.ku.voltset;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 import com.ku.voltset.R;
@@ -29,12 +30,14 @@ import android.widget.Toast;
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener {
 	Messenger mService = null;
-	boolean mIsBound=false;
-	String serial_number=null;
+	boolean mIsBound = false;
+	String serial_number = null;
 	private static final String TAG = "MainActivity";
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
-	final Context context=this;
-	Fragment fragment=null;
+	final Context context = this;
+	Fragment fragment = null;
+	DIYFragment diyFragment = null;
+	EduFragment eduFragment = null;
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -49,6 +52,11 @@ public class MainActivity extends FragmentActivity implements
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
+
+	protected static String getTimeStamp() {
+		return java.text.DateFormat.getDateTimeInstance().format(
+				Calendar.getInstance().getTime());
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,13 +117,13 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onTabUnselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
-		//TODO implement it
+		// TODO implement it
 	}
 
 	@Override
 	public void onTabReselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
-		//TODO implement it
+		// TODO implement it
 	}
 
 	/**
@@ -133,18 +141,13 @@ public class MainActivity extends FragmentActivity implements
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a DummySectionFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
-			
-			if(position==0){
+
+			if (position == 0) {
 				fragment = new DIYFragment();
-			}
-			else if (position==1){
-				fragment= new ProFragment();
-			}
-			else if(position==2){
-				EduFragment edu= new EduFragment();
-				edu.setSerial(serial_number);
-				fragment=edu;
-				//TODO pass parameters
+			} else if (position == 1) {
+				fragment = new ProFragment();
+			} else if (position == 2) {
+				fragment = new EduFragment();
 			}
 			return fragment;
 		}
@@ -177,116 +180,142 @@ public class MainActivity extends FragmentActivity implements
 			switch (msg.what) {
 			case HardwareController_service.MSG_SET_STRING_VALUE:
 				String message = msg.getData().getString("serial");
-				if(message.equalsIgnoreCase("null")){
-					//PANIC
-					//Device is unplugged
-					//inform user
-					Toast.makeText(context, "Error! Device unplugged", Toast.LENGTH_LONG).show();
-					//and try to kill and unbind
-					finish();
+				if (message.equalsIgnoreCase("null")) {
+					// PANIC
+					// Device is unplugged
+					// inform user
+					Toast.makeText(context, "Error! Device unplugged",
+							Toast.LENGTH_LONG).show();
+					// and try to unbind
 					doUnbindService();
-					//switch to startup activity
-					Intent startupActivity = new Intent(context, StartupActivity.class);
-					startupActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					// switch to startup activity
+					Intent startupActivity = new Intent(context,
+							StartupActivity.class);
+					startupActivity
+							.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 					startActivity(startupActivity);
 
-				}
-				else{//update the serial number
-					serial_number=message;
+				} else {// update the serial number
+					serial_number = message;
 				}
 				break;
 			case HardwareController_service.MSG_DC_VALUE:
-				String dc=msg.getData().getString("dc");
-//				String holded=msg.getData().getString("holded");
-				DIYFragment diyFragment=(DIYFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:"+R.id.pager+":0");
-				diyFragment.updateMeasureText(dc);
-//				if(holded!=null)
-//				{
-//					diyFragment.updateHolded(holded);
-//				}
+				try {
+					String dc = "";
+					dc = msg.getData().getString("dc");
+					String holded = msg.getData().getString("holded");
+					if (diyFragment == null)
+						diyFragment = (DIYFragment) getSupportFragmentManager()
+								.findFragmentByTag(
+										"android:switcher:" + R.id.pager + ":0");
+					if (eduFragment == null)
+						eduFragment = (EduFragment) getSupportFragmentManager()
+								.findFragmentByTag(
+										"android:switcher:" + R.id.pager + ":2");
+
+					if (diyFragment.isVisible()) {
+						diyFragment.updateMeasureText(dc);
+						if (holded != null) {
+							diyFragment.updateHolded(holded);
+						}
+					} else if (eduFragment.isVisible()) {
+						eduFragment.updateMeasureText(dc);
+						if (holded != null) {
+							eduFragment.updateHolded(holded);
+							eduFragment.rotateArrowUpwards(holded);
+						}
+
+					}
+				} catch (Exception e) {
+					Log.d(TAG, "Exception", e);
+				}
+
 				break;
 			default:
 				super.handleMessage(msg);
 			}
 		}
 	}
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		try {
-            doUnbindService();
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to unbind from the service", t);
-        }
+			doUnbindService();
+		} catch (Throwable t) {
+			Log.e(TAG, "Failed to unbind from the service", t);
+		}
 	}
-	//Connection between service and activity
-		private ServiceConnection mConnection = new ServiceConnection() {
-			public void onServiceConnected(ComponentName className, IBinder service) {
-				// This is called when the connection with the service has been
-				// established, giving us the service object we can use to
-				// interact with the service. We are communicating with our
-				// service through an IDL interface, so get a client-side
-				// representation of that from the raw service object.
-				mService = new Messenger(service);
-				Log.d(TAG, "Attached.");
 
-				// We want to monitserialor the service for as long as we are
-				// connected to it.
+	// Connection between service and activity
+	private ServiceConnection mConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			// This is called when the connection with the service has been
+			// established, giving us the service object we can use to
+			// interact with the service. We are communicating with our
+			// service through an IDL interface, so get a client-side
+			// representation of that from the raw service object.
+			mService = new Messenger(service);
+			Log.d(TAG, "Attached.");
+
+			// We want to monitserialor the service for as long as we are
+			// connected to it.
+			try {
+				Message msg = Message.obtain(null,
+						HardwareController_service.MSG_REGISTER_CLIENT);
+				msg.replyTo = mMessenger;
+				mService.send(msg);
+			} catch (RemoteException e) {
+				// In this case the service has crashed before we could even
+				// do anything with it; we can count on soon being
+				// disconnected (and then reconnected if it can be restarted)
+				// so there is no need to do anything here.
+			}
+
+			// As part of the sample, tell the user what happened.
+			Log.d(TAG, "Connected.");
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			// This is called when the connection with the service has been
+			// unexpectedly disconnected -- that is, its process crashed.
+			mService = null;
+			Log.d(TAG, "Disconnected.");
+
+		}
+	};
+
+	void doBindService() {
+		// Establish a connection with the service. We use an explicit
+		// class name because there is no reason to be able to let other
+		// applications replace our component.
+		bindService(new Intent(MainActivity.this,
+				HardwareController_service.class), mConnection,
+				Context.BIND_AUTO_CREATE);
+		mIsBound = true;
+		Log.d(TAG, "Binding.");
+	}
+
+	void doUnbindService() {
+		if (mIsBound) {
+			// If we have received the service, and hence registered with
+			// it, then now is the time to unregister.
+			if (mService != null) {
 				try {
 					Message msg = Message.obtain(null,
-							HardwareController_service.MSG_REGISTER_CLIENT);
+							HardwareController_service.MSG_UNREGISTER_CLIENT);
 					msg.replyTo = mMessenger;
 					mService.send(msg);
 				} catch (RemoteException e) {
-					// In this case the service has crashed before we could even
-					// do anything with it; we can count on soon being
-					// disconnected (and then reconnected if it can be restarted)
-					// so there is no need to do anything here.
+					// There is nothing special we need to do if the service
+					// has crashed.
 				}
-
-				// As part of the sample, tell the user what happened.
-				Log.d(TAG, "Connected.");
 			}
 
-			public void onServiceDisconnected(ComponentName className) {
-				// This is called when the connection with the service has been
-				// unexpectedly disconnected -- that is, its process crashed.
-				mService = null;
-				Log.d(TAG, "Disconnected.");
-
-			}
-		};
-
-		void doBindService() {
-			// Establish a connection with the service. We use an explicit
-			// class name because there is no reason to be able to let other
-			// applications replace our component.
-			bindService(new Intent(MainActivity.this, HardwareController_service.class),
-					mConnection, Context.BIND_AUTO_CREATE);
-			mIsBound = true;
-			Log.d(TAG, "Binding.");
+			// Detach our existing connection.
+			unbindService(mConnection);
+			mIsBound = false;
+			Log.d(TAG, "MainActivity - unbinding.");
 		}
-
-		void doUnbindService() {
-			if (mIsBound) {
-				// If we have received the service, and hence registered with
-				// it, then now is the time to unregister.
-				if (mService != null) {
-					try {
-						Message msg = Message.obtain(null,
-								HardwareController_service.MSG_UNREGISTER_CLIENT);
-						msg.replyTo = mMessenger;
-						mService.send(msg);
-					} catch (RemoteException e) {
-						// There is nothing special we need to do if the service
-						// has crashed.
-					}
-				}
-
-				// Detach our existing connection.
-				unbindService(mConnection);
-				mIsBound = false;
-				Log.d(TAG, "MainActivity - unbinding.");
-			}
-		}
+	}
 }
