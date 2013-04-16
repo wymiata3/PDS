@@ -19,7 +19,6 @@ import android.os.RemoteException;
 import android.widget.Toast;
 
 public class HardwareController_service extends Service {
-	private static final String TAG = "YOCTOPUS_SERVICE";
 	String serial;
 	Handler hHardwareControler;
 	Handler measuringController;
@@ -42,14 +41,16 @@ public class HardwareController_service extends Service {
 	String currentMeasurement = "0.00";
 	String lastMeasurement = "0.00";
 	YVoltage dc_sensor;
-	Bundle bundle;
 	boolean zeroSended = false;
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mMessenger.getBinder();
 	}
-
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+	    return START_STICKY;
+	}
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -63,6 +64,7 @@ public class HardwareController_service extends Service {
 			YAPI.RegisterDeviceArrivalCallback(dac);
 			// Update device list
 			YAPI.UpdateDeviceList();
+			hHardwareControler.postDelayed(scanner, 0);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -73,16 +75,9 @@ public class HardwareController_service extends Service {
 		hHardwareControler.removeCallbacks(scanner);
 		if (measuringController != null)
 			measuringController.removeCallbacks(measurer);
+		YAPI.UnregisterHub("usb");
 		YAPI.RegisterDeviceArrivalCallback(null);
 		YAPI.RegisterDeviceRemovalCallback(null);
-	}
-
-	/**
-	 * 
-	 * @return true for null, false for not null
-	 */
-	protected boolean isSerialNull() {
-		return serial == null;
 	}
 
 	Runnable measurer = new Runnable() {
@@ -107,7 +102,7 @@ public class HardwareController_service extends Service {
 					}
 					if (dc_sensor.getCurrentValue() == 0.0)
 						zeroSended = true;
-					bundle = new Bundle();
+					Bundle bundle = new Bundle();
 					bundle.putString("dc", currentMeasurement); // put dc into
 																// bundle
 					if (!currentMeasurement.equalsIgnoreCase(lastMeasurement))
@@ -165,7 +160,6 @@ public class HardwareController_service extends Service {
 		// Device not found, panic!
 		@Override
 		public void yDeviceRemoval(YModule module) {
-			serial = null; // nullify
 			hHardwareControler.removeCallbacks(scanner);
 			measuringController.removeCallbacks(measurer);
 			for (int i = mClients.size() - 1; i >= 0; i--) {
@@ -183,6 +177,7 @@ public class HardwareController_service extends Service {
 					mClients.remove(i);
 				}
 			}
+			serial = null; // nullify
 		}
 	};
 	DeviceArrivalCallback dac = new DeviceArrivalCallback() {
@@ -198,8 +193,6 @@ public class HardwareController_service extends Service {
 					// enable the scanner
 					hHardwareControler.postDelayed(scanner, interval);
 					module = lmodule;
-					Toast.makeText(getApplicationContext(),
-							module.get_serialNumber(), 1000).show();
 				}
 			} catch (YAPI_Exception yapi) {
 				yapi.printStackTrace();
@@ -215,37 +208,34 @@ public class HardwareController_service extends Service {
 			if (serial != null && module.isOnline()) {
 				// no need to make new instances all time
 				if (dcVolt == false) {
-					dc_sensor = YVoltage.FindVoltage(getSerial() + ".voltage1");
+					dc_sensor = YVoltage.FindVoltage(serial + ".voltage1");
 					// start the controller
 					measuringController.postDelayed(measurer, interval);
 					dcVolt = true;
 				}
-				for (int i = mClients.size() - 1; i >= 0; i--) {
-					try {
-						bundle = new Bundle();
-						bundle.putString("serial", getSerial()); // give the
-																	// serial to
-																	// activity
-						Message msg = Message
-								.obtain(null, MSG_SET_STRING_VALUE);
-						msg.setData(bundle);
-						mClients.get(i).send(msg);
+			}
+			Bundle bundle = new Bundle();
+			// give the serial to activity
+			bundle.putString("serial", (serial==null)?"null":serial); 
+			for (int i = mClients.size() - 1; i >= 0; i--) {
+				try {
+					
+					
+					
+					Message msg = Message.obtain(null, MSG_SET_STRING_VALUE);
+					msg.setData(bundle);
+					mClients.get(i).send(msg);
 
-					} catch (RemoteException e) {
-						// The client is dead. Remove it from the list;
-						// we are going through the list from back to front
-						// so this is safe to do inside the loop.
-						mClients.remove(i);
-					}
+				} catch (RemoteException e) {
+					// The client is dead. Remove it from the list;
+					// we are going through the list from back to front
+					// so this is safe to do inside the loop.
+					mClients.remove(i);
 				}
 			}
 		} catch (YAPI_Exception yapi) {
 			yapi.printStackTrace();
 		}
-	}
-
-	public String getSerial() {// Get the serial number
-		return serial;
 	}
 
 	@SuppressLint("HandlerLeak")
@@ -258,6 +248,7 @@ public class HardwareController_service extends Service {
 				break;
 			case MSG_UNREGISTER_CLIENT: // unregister client
 				mClients.remove(msg.replyTo);
+
 				break;
 			case MSG_GET_YOCTO_VALUES:// Activity asks for values
 				Bundle values = new Bundle();

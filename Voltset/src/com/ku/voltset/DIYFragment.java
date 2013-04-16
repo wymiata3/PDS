@@ -2,12 +2,18 @@ package com.ku.voltset;
 
 import com.ku.voltset.R;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +24,8 @@ public class DIYFragment extends Fragment {
 	private TextView txtHolded;
 	private TextView txtDC;
 	private TextView txtAC;
-	int num=1;
+	int num = 1;
+
 	public DIYFragment() {
 
 	}
@@ -44,9 +51,21 @@ public class DIYFragment extends Fragment {
 		mTabHost.setCurrentTab(0);
 		txtMeasurement = (TextView) mRoot.findViewById(R.id.txtMeasurement);
 		txtHolded = (TextView) mRoot.findViewById(R.id.txtHold);
-		txtAC=(TextView)mRoot.findViewById(R.id.txtAC);
-		txtDC=(TextView)mRoot.findViewById(R.id.txtDC);
+		txtAC = (TextView) mRoot.findViewById(R.id.txtAC);
+		txtDC = (TextView) mRoot.findViewById(R.id.txtDC);
 		return mRoot;
+	}
+
+	public static Animation runFadeOutAnimationOn(Context ctx, View target) {
+		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fadeout);
+		target.startAnimation(animation);
+		return animation;
+	}
+
+	public static Animation runFadeInAnimationOn(Context ctx, View target) {
+		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fedein);
+		target.startAnimation(animation);
+		return animation;
 	}
 
 	public void updateMeasureText(String measurement) {
@@ -56,11 +75,26 @@ public class DIYFragment extends Fragment {
 
 	public void updateHolded(String holded) {
 		txtHolded.setText("Holded:" + holded + "V");
+		//do a animation from red to blue gradiently
+		Integer colorFrom = Color.RED;
+		Integer colorTo = Color.BLUE;
+		ValueAnimator colorAnimation = ValueAnimator.ofObject(
+				new ArgbEvaluator(), colorFrom, colorTo);
+		colorAnimation.addUpdateListener(new AnimatorUpdateListener() {
+			@Override
+			public void onAnimationUpdate(ValueAnimator animation) {
+				txtHolded.setTextColor((Integer) animation.getAnimatedValue());
+
+			}
+		});
+		colorAnimation.setDuration(5000);
+		colorAnimation.start();
 	}
 
 	public void setColorDC(int color) {
 		txtDC.setTextColor(color);
 	}
+
 	public void setColorAC(int color) {
 		txtAC.setTextColor(color);
 	}

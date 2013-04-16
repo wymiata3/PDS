@@ -3,6 +3,7 @@ package com.ku.voltset;
 import com.ku.voltset.services.HardwareController_service;
 import com.yoctopuce.YoctoAPI.YAPI;
 import com.yoctopuce.YoctoAPI.YAPI_Exception;
+import com.yoctopuce.YoctoAPI.YModule;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,6 +40,7 @@ public class StartupActivity extends FragmentActivity implements
 	String yocto_serial = null;
 	Bundle yocto_values = null;// holds device characteristics
 	private static final String file = "VoltSet.csv"; // Our log file
+	Handler serialscanner = new Handler();
 
 	/**
 	 * @author chmod Handles messages from service
@@ -58,9 +60,6 @@ public class StartupActivity extends FragmentActivity implements
 				} else // device found
 				{
 					yocto_serial = message; // get the serial
-					runFadeInAnimationOn(context, infoIcon).setFillAfter(true);// make
-																				// it
-																				// fancy
 					infoIcon.setEnabled(true); // enable the info
 				}
 				break;
@@ -84,10 +83,8 @@ public class StartupActivity extends FragmentActivity implements
 		super.onDestroy();
 		try {
 			doUnbindService(); // clear all
-			YAPI.FreeAPI(); // Important! Free the api!
 		} catch (Throwable t) {
-			Log.e("StartupActivity", "Failed to unbind from the service", t); // Log
-																				// errors
+			Log.e("StartupActivity", "Failed to unbind from the service", t);
 		}
 	}
 
@@ -238,7 +235,6 @@ public class StartupActivity extends FragmentActivity implements
 				// so there is no need to do anything here.
 			}
 
-			// As part of the sample, tell the user what happened.
 			Log.d(TAG, "Connected.");
 		}
 
@@ -282,15 +278,15 @@ public class StartupActivity extends FragmentActivity implements
 					msg.replyTo = mMessenger;
 					mService.send(msg);
 				} catch (RemoteException e) {
-					// There is nothing special we need to do if the service
-					// has crashed.
+					// // There is nothing special we need to do if the service
+					// // has crashed.
 				}
 			}
 
 			// Detach our existing connection.
 			getApplicationContext().unbindService(mConnection);
 			mIsBound = false;
-			Log.d(TAG, "unbinding.");
+			Log.d(TAG, "Unbinding.");
 		}
 	}
 }

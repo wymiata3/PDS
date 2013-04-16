@@ -20,7 +20,6 @@ public class LogViewer extends Activity implements OnClickListener {
 	private static final String file = "VoltSet.csv"; // Our log file
 	TextView logText;
 	ScrollView sv;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

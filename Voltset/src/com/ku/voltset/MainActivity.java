@@ -187,12 +187,13 @@ public class MainActivity extends FragmentActivity implements
 				String message = msg.getData().getString("serial");
 				if (message.equalsIgnoreCase("null")) {
 					// PANIC
+					// and try to unbind
+					doUnbindService();
+					serial_number=null;
 					// Device is unplugged
 					// inform user
 					Toast.makeText(context, "Error! Device unplugged",
 							Toast.LENGTH_LONG).show();
-					// and try to unbind
-					doUnbindService();
 					// switch to startup activity
 					Intent startupActivity = new Intent(context,
 							StartupActivity.class);
@@ -265,9 +266,9 @@ public class MainActivity extends FragmentActivity implements
 							{
 								diyFragment.updateHolded(holded);
 							}
-
 						}
 					} else if (eduFragment.isVisible()) {
+						Toast.makeText(getApplicationContext(), "mpike?!", 1000).show();
 						eduFragment.updateMeasureText(voltage);
 						// Log event to file, T:time, M:measurement
 						log.write("T:" + getTimeStamp() + "|M:" + voltage
@@ -310,7 +311,7 @@ public class MainActivity extends FragmentActivity implements
 			mService = new Messenger(service);
 			Log.d(TAG, "Attached.");
 
-			// We want to monitserialor the service for as long as we are
+			// We want to monitor the service for as long as we are
 			// connected to it.
 			try {
 				Message msg = Message.obtain(null,
@@ -341,10 +342,15 @@ public class MainActivity extends FragmentActivity implements
 		// Establish a connection with the service. We use an explicit
 		// class name because there is no reason to be able to let other
 		// applications replace our component.
-		bindService(new Intent(MainActivity.this,
+		Thread t = new Thread() {
+			public void run() {
+				getApplicationContext().bindService(new Intent(MainActivity.this,
 				HardwareController_service.class), mConnection,
 				Context.BIND_AUTO_CREATE);
+			}
+		};
 		mIsBound = true;
+		t.start();
 		Log.d(TAG, "Binding.");
 	}
 
@@ -363,9 +369,8 @@ public class MainActivity extends FragmentActivity implements
 					// has crashed.
 				}
 			}
-
 			// Detach our existing connection.
-			unbindService(mConnection);
+			getApplicationContext().unbindService(mConnection);
 			mIsBound = false;
 			Log.d(TAG, "MainActivity - unbinding.");
 		}

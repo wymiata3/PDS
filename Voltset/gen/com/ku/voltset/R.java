@@ -14,6 +14,9 @@ public final class R {
         public static final int left_to_right=0x7f040002;
         public static final int right_to_left=0x7f040003;
     }
+    public static final class array {
+        public static final int graph_options=0x7f0a0000;
+    }
     public static final class attr {
     }
     public static final class color {
@@ -43,66 +46,70 @@ public final class R {
         public static final int upmeter=0x7f02000a;
     }
     public static final class id {
-        public static final int ACDClayout=0x7f0c0019;
-        public static final int MessageText=0x7f0c0039;
-        public static final int SendButton=0x7f0c003a;
-        public static final int SubjectText=0x7f0c0038;
-        public static final int ToText=0x7f0c0037;
-        public static final int acVolt=0x7f0c0008;
-        public static final int action_settings=0x7f0c003b;
-        public static final int bottomLayout=0x7f0c0021;
-        public static final int btnConf=0x7f0c0011;
-        public static final int btnMeasure=0x7f0c000d;
-        public static final int btnProfile=0x7f0c000e;
-        public static final int btnQuit=0x7f0c0012;
-        public static final int btnRange=0x7f0c001f;
-        public static final int btnShare=0x7f0c000f;
-        public static final int btnToEnd=0x7f0c0003;
-        public static final int btnToTop=0x7f0c0001;
-        public static final int btnVault=0x7f0c0010;
-        public static final int btnViewLogs=0x7f0c000a;
-        public static final int cbLog=0x7f0c0009;
-        public static final int data=0x7f0c0024;
-        public static final int dcVolt=0x7f0c0005;
-        public static final int guide=0x7f0c0026;
-        public static final int imageArrow=0x7f0c002b;
-        public static final int imageClimax=0x7f0c002a;
-        public static final int info=0x7f0c0022;
-        public static final int infoIcon=0x7f0c0014;
-        public static final int innerLLHoriz=0x7f0c001d;
-        public static final int linearLayout1=0x7f0c0028;
-        public static final int mVoltsText=0x7f0c002c;
-        public static final int middleLayout=0x7f0c001c;
-        public static final int monitorLayout=0x7f0c0017;
-        public static final int pager=0x7f0c0004;
-        public static final int parentLayout=0x7f0c0016;
-        public static final int parentScroll=0x7f0c0015;
-        public static final int prevText=0x7f0c002d;
-        public static final int r1=0x7f0c0029;
-        public static final int relativeLayout1=0x7f0c0013;
-        public static final int root=0x7f0c000b;
-        public static final int scollView=0x7f0c000c;
-        public static final int scrolllview=0x7f0c0000;
-        public static final int seekBar=0x7f0c0006;
-        public static final int tbtnVoice=0x7f0c0020;
-        public static final int textView=0x7f0c0007;
-        public static final int textView7=0x7f0c0027;
-        public static final int txtAC=0x7f0c001b;
-        public static final int txtBeacon=0x7f0c0035;
-        public static final int txtBeaconV=0x7f0c0036;
-        public static final int txtDC=0x7f0c001a;
-        public static final int txtHold=0x7f0c001e;
-        public static final int txtLogs=0x7f0c0002;
-        public static final int txtLuminosity=0x7f0c002f;
-        public static final int txtLumonosityV=0x7f0c0032;
-        public static final int txtMeasurement=0x7f0c0018;
-        public static final int txtPresets=0x7f0c0023;
-        public static final int txtSerial=0x7f0c002e;
-        public static final int txtSerialV=0x7f0c0031;
-        public static final int txtUpTime=0x7f0c0030;
-        public static final int txtUpTimeV=0x7f0c0033;
-        public static final int txtUsbCurrent=0x7f0c0025;
-        public static final int txtUsbCurrentV=0x7f0c0034;
+        public static final int ACDClayout=0x7f0d0019;
+        public static final int MessageText=0x7f0d003d;
+        public static final int SendButton=0x7f0d003e;
+        public static final int SubjectText=0x7f0d003c;
+        public static final int ToText=0x7f0d003b;
+        public static final int acVolt=0x7f0d0008;
+        public static final int action_settings=0x7f0d003f;
+        public static final int bottomLayout=0x7f0d0021;
+        public static final int btnConf=0x7f0d0011;
+        public static final int btnMeasure=0x7f0d000d;
+        public static final int btnProfile=0x7f0d000e;
+        public static final int btnQuit=0x7f0d0012;
+        public static final int btnRange=0x7f0d001f;
+        public static final int btnShare=0x7f0d000f;
+        public static final int btnShow=0x7f0d0030;
+        public static final int btnToEnd=0x7f0d0003;
+        public static final int btnToTop=0x7f0d0001;
+        public static final int btnVault=0x7f0d0010;
+        public static final int btnViewLogs=0x7f0d000a;
+        public static final int cbLog=0x7f0d0009;
+        public static final int data=0x7f0d0024;
+        public static final int dcVolt=0x7f0d0005;
+        public static final int graphLayout=0x7f0d0031;
+        public static final int guide=0x7f0d0026;
+        public static final int imageArrow=0x7f0d002b;
+        public static final int imageClimax=0x7f0d002a;
+        public static final int info=0x7f0d0022;
+        public static final int infoIcon=0x7f0d0014;
+        public static final int innerLLHoriz=0x7f0d001d;
+        public static final int linearLayout1=0x7f0d0028;
+        public static final int mVoltsText=0x7f0d002c;
+        public static final int middleLayout=0x7f0d001c;
+        public static final int monitorLayout=0x7f0d0017;
+        public static final int pager=0x7f0d0004;
+        public static final int parentLayout=0x7f0d0016;
+        public static final int parentScroll=0x7f0d0015;
+        public static final int prevText=0x7f0d002d;
+        public static final int r1=0x7f0d0029;
+        public static final int relativeLayout1=0x7f0d0013;
+        public static final int root=0x7f0d000b;
+        public static final int scollView=0x7f0d000c;
+        public static final int scrolllview=0x7f0d0000;
+        public static final int seekBar=0x7f0d0006;
+        public static final int spinner1=0x7f0d002f;
+        public static final int tbtnVoice=0x7f0d0020;
+        public static final int textView=0x7f0d0007;
+        public static final int textView7=0x7f0d0027;
+        public static final int txtAC=0x7f0d001b;
+        public static final int txtBeacon=0x7f0d0039;
+        public static final int txtBeaconV=0x7f0d003a;
+        public static final int txtDC=0x7f0d001a;
+        public static final int txtHold=0x7f0d001e;
+        public static final int txtLogs=0x7f0d0002;
+        public static final int txtLuminosity=0x7f0d0033;
+        public static final int txtLumonosityV=0x7f0d0036;
+        public static final int txtMeasurement=0x7f0d0018;
+        public static final int txtPresets=0x7f0d0023;
+        public static final int txtSerial=0x7f0d0032;
+        public static final int txtSerialV=0x7f0d0035;
+        public static final int txtUpTime=0x7f0d0034;
+        public static final int txtUpTimeV=0x7f0d0037;
+        public static final int txtUsbCurrent=0x7f0d0025;
+        public static final int txtUsbCurrentV=0x7f0d0038;
+        public static final int txtWhatToGraph=0x7f0d002e;
     }
     public static final class integer {
         public static final int maxAnimation=0x7f070000;
@@ -121,11 +128,11 @@ public final class R {
         public static final int share_activity=0x7f030008;
     }
     public static final class menu {
-        public static final int log_viewer=0x7f0b0000;
-        public static final int main=0x7f0b0001;
-        public static final int settings=0x7f0b0002;
-        public static final int simple=0x7f0b0003;
-        public static final int startup=0x7f0b0004;
+        public static final int log_viewer=0x7f0c0000;
+        public static final int main=0x7f0c0001;
+        public static final int settings=0x7f0c0002;
+        public static final int simple=0x7f0c0003;
+        public static final int startup=0x7f0c0004;
     }
     public static final class string {
         public static final int action_settings=0x7f080006;
@@ -134,7 +141,6 @@ public final class R {
         public static final int conf=0x7f080011;
         public static final int dialog_close=0x7f080014;
         public static final int dialog_rescan=0x7f080013;
-        public static final int hello_world=0x7f080018;
         public static final int infoIcon=0x7f080015;
         public static final int initValue=0x7f08000c;
         public static final int initialText=0x7f080003;
@@ -176,11 +182,11 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f0a0000;
+        public static final int AppBaseTheme=0x7f0b0000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f0a0001;
+        public static final int AppTheme=0x7f0b0001;
     }
     public static final class xml {
         public static final int device_filter=0x7f050000;
