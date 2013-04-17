@@ -183,7 +183,7 @@ public class StartupActivity extends FragmentActivity implements
 				overridePendingTransition(R.anim.left_to_right,
 						R.anim.right_to_left);
 				// dont progress to next activity is serial is "null"
-				//and inform user
+				// and inform user
 			} else {
 				Toast.makeText(getApplicationContext(),
 						"Device not found, can't proceed", Toast.LENGTH_SHORT)
@@ -192,29 +192,30 @@ public class StartupActivity extends FragmentActivity implements
 			}
 
 		}
-		//clicked on share
+		// clicked on share
 		if (v.getId() == R.id.btnShare) {
+
 			Intent share = new Intent(this, Share_function.class);
 			// Bring activity to front
 			share.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			// start activity
 			startActivity(share);
-			//with animation
+			// with animation
 			overridePendingTransition(R.anim.left_to_right,
 					R.anim.right_to_left);
 
 		}
 		// User clicked conf
 		if (v.getId() == R.id.btnConf) {
-			//init activity
+			// init activity
 			Intent settingsActivity = new Intent(this, SettingsActivity.class);
-			//set the flags
+			// set the flags
 			settingsActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			//duration of arrow animation
+			// duration of arrow animation
 			settingsActivity.putExtra("duration", 2500);
-			//start activity
+			// start activity
 			startActivity(settingsActivity);
-			//with animation
+			// with animation
 			overridePendingTransition(R.anim.left_to_right,
 					R.anim.right_to_left);
 		}
@@ -222,28 +223,30 @@ public class StartupActivity extends FragmentActivity implements
 			finish();
 		}
 		if (v.getId() == R.id.infoIcon) {// user clicked info
-			try {
-				//initialize the bundle
-				yocto_values = new Bundle();
-				//parse module values 
-				yocto_values.putString("Luminosity",
-						String.format("%d%%", module.get_luminosity()));
-				yocto_values.putString("UpTime", module.get_upTime() / 1000
-						+ " sec");
-				yocto_values.putString("UsbCurrent", module.get_usbCurrent()
-						+ " mA");
-				yocto_values.putString("Beacon",
-						(module.get_beacon() == YModule.BEACON_ON) ? "on"
-								: "off");
-				yocto_values.putString("serial", module.getSerialNumber());
-				//parse module values end
-			} catch (YAPI_Exception e) {
-				e.printStackTrace();
+			if (!serial.equalsIgnoreCase("null")) {
+				try {
+					// initialize the bundle
+					yocto_values = new Bundle();
+					// parse module values
+					yocto_values.putString("Luminosity",
+							String.format("%d%%", module.get_luminosity()));
+					yocto_values.putString("UpTime", module.get_upTime() / 1000
+							+ " sec");
+					yocto_values.putString("UsbCurrent",
+							module.get_usbCurrent() + " mA");
+					yocto_values.putString("Beacon",
+							(module.get_beacon() == YModule.BEACON_ON) ? "on"
+									: "off");
+					yocto_values.putString("serial", module.getSerialNumber());
+					// parse module values end
+				} catch (YAPI_Exception e) {
+					e.printStackTrace();
+				}
+				// Instantiate new dialog
+				InfoDialog info = InfoDialog.newInstance(yocto_values);
+				// And show it
+				info.show(getSupportFragmentManager(), "info");
 			}
-			// Instantiate new dialog
-			InfoDialog info = InfoDialog.newInstance(yocto_values);
-			// And show it
-			info.show(getSupportFragmentManager(), "info");
 		}
 
 	}
