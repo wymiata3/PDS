@@ -1,27 +1,17 @@
 package com.ku.voltset;
 
-import com.ku.voltset.services.HardwareController_service;
 import com.yoctopuce.YoctoAPI.YAPI;
 import com.yoctopuce.YoctoAPI.YAPI_Exception;
 import com.yoctopuce.YoctoAPI.YModule;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
-import android.annotation.SuppressLint;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -30,70 +20,121 @@ import android.widget.Toast;
 
 public class StartupActivity extends FragmentActivity implements
 		OnClickListener {
-	private static final String TAG = "StartupActivity";
 	final Context context = this;
-	AlphaAnimation aa;
-	public ImageView infoIcon;
-	Messenger mService = null;
-	boolean mIsBound = false;
-	final Messenger mMessenger = new Messenger(new IncomingHandler());
-	String yocto_serial = null;
+	ImageView infoIcon;
 	Bundle yocto_values = null;// holds device characteristics
 	private static final String file = "VoltSet.csv"; // Our log file
 	Handler serialscanner = new Handler();
+	YModule module = null;
+	String serial = "null";
+	Runnable scan = new Runnable() {
+		@Override
+		public void run() {
+			try {
+				// Scan for device changes
+				YAPI.UpdateDeviceList();
+				// be sure to have initialized value
+				serial = "null";
+				module = null;
+				// scan for module
+				module = YModule.FirstModule();
+				while (module != null) {
+					if (module.get_productName().equals("Yocto-Volt")) {
+						serial = module.get_serialNumber();
+						infoIcon.setEnabled(true);
+						// remove transparency
+						infoIcon.setAlpha(1f);
+						break;
+					}
+					module = module.nextModule();
+				}
+				// end of scan
+				// re run at interval of 500ms
+				serialscanner.postDelayed(scan, 500);
+			} catch (YAPI_Exception yapi) {
+				yapi.printStackTrace();
+			}
+
+		}
+
+	};
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		try {
+			// enable usb for all application
+			YAPI.EnableUSBHost(getApplicationContext());
+			// register events
+			YAPI.RegisterHub("usb");
+			// aaaand again be sure all is null
+			serial = "null";
+			module = null;
+			// start the scanner
+			serialscanner.postDelayed(scan, 500);
+		} catch (YAPI_Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * @author chmod Handles messages from service
 	 */
-	@SuppressLint("HandlerLeak")
-	class IncomingHandler extends Handler {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case HardwareController_service.MSG_SET_STRING_VALUE:
-				String message = msg.getData().getString("serial");// Get the
-																	// serial
-				if (message.equalsIgnoreCase("null"))// device not found
-				{
-					yocto_serial = null; // Ensure it is null
-					infoIcon.setEnabled(false); // No info
-				} else // device found
-				{
-					yocto_serial = message; // get the serial
-					infoIcon.setEnabled(true); // enable the info
-				}
-				break;
-			// we asked for values
-			case HardwareController_service.MSG_GET_YOCTO_VALUES:
-				// parse them and place in bundle
-				yocto_values = msg.getData();
-				// Instantiate new dialog
-				InfoDialog info = InfoDialog.newInstance(yocto_values);
-				// And show it
-				info.show(getSupportFragmentManager(), "info");
-				break;
-			default:
-				super.handleMessage(msg);
-			}
-		}
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_startup);
+		// Parse elements
+		Button basicReading = (Button) findViewById(R.id.btnMeasure);
+		basicReading.setOnClickListener(this);
+		Button conf = (Button) findViewById(R.id.btnConf);
+		conf.setOnClickListener(this);
+		Button share = (Button) findViewById(R.id.btnShare);
+		share.setOnClickListener(this);
+		Button quit = (Button) findViewById(R.id.btnQuit);
+		quit.setOnClickListener(this);
+		infoIcon = (ImageView) findViewById(R.id.infoIcon);
+		// play animation for icon if module not found
+		runFadeOutAnimationOn(context, infoIcon).setFillAfter(true);
+		// we cant take values if module not plugged
+		infoIcon.setEnabled(false);
+		infoIcon.setOnClickListener(this);
+		// try to rotate log if too big or too old
+		Logger log = new Logger(this.getApplicationContext());
+		log.setFile(file);
+		log.logRotate(25L, 100);
+		log = null; // Not used anymore
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		try {
-			doUnbindService(); // clear all
-		} catch (Throwable t) {
-			Log.e("StartupActivity", "Failed to unbind from the service", t);
-		}
 	}
 
+	/**
+	 * Plays fade out animation see res/anim/ for more info
+	 * 
+	 * @param ctx
+	 *            Context the widget belongs
+	 * @param target
+	 *            the widget to be animated
+	 * @return
+	 */
 	public static Animation runFadeOutAnimationOn(Context ctx, View target) {
 		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fadeout);
 		target.startAnimation(animation);
 		return animation;
 	}
 
+	/**
+	 * Plays fade in animation see res/anim/ for more info
+	 * 
+	 * @param ctx
+	 *            Context the widget belongs
+	 * @param target
+	 *            the widget to be animated
+	 * @return
+	 */
 	public static Animation runFadeInAnimationOn(Context ctx, View target) {
 		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fedein);
 		target.startAnimation(animation);
@@ -112,40 +153,11 @@ public class StartupActivity extends FragmentActivity implements
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
-		savedInstanceState.putBoolean("service_started", mIsBound);
 	}
 
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		mIsBound = savedInstanceState.getBoolean("service_started");
-	}
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_startup);
-		if (!mIsBound)
-			doBindService();
-		// Parse elements
-		Button basicReading = (Button) findViewById(R.id.btnMeasure);
-		basicReading.setOnClickListener(this);
-		Button conf = (Button) findViewById(R.id.btnConf);
-		conf.setOnClickListener(this);
-		Button share = (Button) findViewById(R.id.btnShare);
-		share.setOnClickListener(this);
-		Button quit = (Button) findViewById(R.id.btnQuit);
-		quit.setOnClickListener(this);
-		infoIcon = (ImageView) findViewById(R.id.infoIcon);
-		runFadeOutAnimationOn(context, infoIcon).setFillAfter(true);
-		infoIcon.setEnabled(false);
-		infoIcon.setOnClickListener(this);
-		// try to rotate log if too big or too old
-		Logger log = new Logger(this.getApplicationContext());
-		log.setFile(file);
-		log.logRotate(25L, 100);
-		log = null; // Not used anymore
-
 	}
 
 	@Override
@@ -157,18 +169,22 @@ public class StartupActivity extends FragmentActivity implements
 
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.btnMeasure) {// User clicked Measurement
-			if (yocto_serial != null) {
+		// User clicked Measurement
+		if (v.getId() == R.id.btnMeasure) {
+			// we have connected device?
+			if (!serial.equalsIgnoreCase("null")) {
+				// remove the callbacks, we are in another activity
+				serialscanner.removeCallbacks(scan);
+				// init the new activity
 				Intent mainActivity = new Intent(this, MainActivity.class);
-				// Bring activity to front
-				// mainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-				// Provide a serial number to avoid the unlikely chance of
-				// unplugging device within the threshold of 500ms
-				startActivity(mainActivity);// And now start
+				// start activity
+				startActivity(mainActivity);
 				// with animation
 				overridePendingTransition(R.anim.left_to_right,
 						R.anim.right_to_left);
-			} else { // dont progress to next activity is serial is null
+				// dont progress to next activity is serial is "null"
+				//and inform user
+			} else {
 				Toast.makeText(getApplicationContext(),
 						"Device not found, can't proceed", Toast.LENGTH_SHORT)
 						.show();
@@ -176,117 +192,59 @@ public class StartupActivity extends FragmentActivity implements
 			}
 
 		}
+		//clicked on share
 		if (v.getId() == R.id.btnShare) {
 			Intent share = new Intent(this, Share_function.class);
 			// Bring activity to front
 			share.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			startActivity(share);// And now start
+			// start activity
+			startActivity(share);
+			//with animation
+			overridePendingTransition(R.anim.left_to_right,
+					R.anim.right_to_left);
 
 		}
-		if (v.getId() == R.id.btnConf) {// User clicked conf
+		// User clicked conf
+		if (v.getId() == R.id.btnConf) {
+			//init activity
 			Intent settingsActivity = new Intent(this, SettingsActivity.class);
+			//set the flags
 			settingsActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			//duration of arrow animation
 			settingsActivity.putExtra("duration", 2500);
+			//start activity
 			startActivity(settingsActivity);
+			//with animation
 			overridePendingTransition(R.anim.left_to_right,
 					R.anim.right_to_left);
 		}
 		if (v.getId() == R.id.btnQuit) {// user clicked quit
-			doUnbindService();
 			finish();
 		}
 		if (v.getId() == R.id.infoIcon) {// user clicked info
 			try {
-				// Ask service for device characteristics
-				Message msg = Message.obtain(null,
-						HardwareController_service.MSG_GET_YOCTO_VALUES);
-				msg.replyTo = mMessenger;
-				mService.send(msg);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
+				//initialize the bundle
+				yocto_values = new Bundle();
+				//parse module values 
+				yocto_values.putString("Luminosity",
+						String.format("%d%%", module.get_luminosity()));
+				yocto_values.putString("UpTime", module.get_upTime() / 1000
+						+ " sec");
+				yocto_values.putString("UsbCurrent", module.get_usbCurrent()
+						+ " mA");
+				yocto_values.putString("Beacon",
+						(module.get_beacon() == YModule.BEACON_ON) ? "on"
+								: "off");
+				yocto_values.putString("serial", module.getSerialNumber());
+				//parse module values end
+			} catch (YAPI_Exception e) {
 				e.printStackTrace();
 			}
+			// Instantiate new dialog
+			InfoDialog info = InfoDialog.newInstance(yocto_values);
+			// And show it
+			info.show(getSupportFragmentManager(), "info");
 		}
 
-	}
-
-	// Connection between service and activity
-	ServiceConnection mConnection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			// This is called when the connection with the service has been
-			// established, giving us the service object we can use to
-			// interact with the service. We are communicating with our
-			// service through an IDL interface, so get a client-side
-			// representation of that from the raw service object.
-			mService = new Messenger(service);
-			Log.d("YOCTOPUS_SERVICE", "Attached.");
-
-			// We want to monitor the service for as long as we are
-			// connected to it.
-			try {
-				Message msg = Message.obtain(null,
-						HardwareController_service.MSG_REGISTER_CLIENT);
-				msg.replyTo = mMessenger;
-				mService.send(msg);
-			} catch (RemoteException e) {
-				// In this case the service has crashed before we could even
-				// do anything with it; we can count on soon being
-				// disconnected (and then reconnected if it can be restarted)
-				// so there is no need to do anything here.
-			}
-
-			Log.d(TAG, "Connected.");
-		}
-
-		public void onServiceDisconnected(ComponentName className) {
-			// This is called when the connection with the service has been
-			// unexpectedly disconnected -- that is, its process crashed.
-			mService = null;
-			Log.d(TAG, "Disconnected.");
-
-		}
-	};
-
-	void doBindService() {
-		// Establish a connection with the service. We use an explicit
-		// class name because there is no reason to be able to let other
-		// applications replace our component.
-		// Start in new thread to avoid ANR exceptions
-		Thread t = new Thread() {
-			public void run() {
-				getApplicationContext().bindService(
-						new Intent(StartupActivity.this,
-								HardwareController_service.class), mConnection,
-						Context.BIND_AUTO_CREATE);
-
-			}
-		};
-		mIsBound = true;
-		t.start();
-
-		Log.d(TAG, "Binding.");
-	}
-
-	void doUnbindService() {
-		if (mIsBound) {
-			// If we have received the service, and hence registered with
-			// it, then now is the time to unregister.
-			if (mService != null) {
-				try {
-					Message msg = Message.obtain(null,
-							HardwareController_service.MSG_UNREGISTER_CLIENT);
-					msg.replyTo = mMessenger;
-					mService.send(msg);
-				} catch (RemoteException e) {
-					// // There is nothing special we need to do if the service
-					// // has crashed.
-				}
-			}
-
-			// Detach our existing connection.
-			getApplicationContext().unbindService(mConnection);
-			mIsBound = false;
-			Log.d(TAG, "Unbinding.");
-		}
 	}
 }

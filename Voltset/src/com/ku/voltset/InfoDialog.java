@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Switch;
 import android.widget.TextView;
 
 public class InfoDialog extends DialogFragment {
@@ -18,6 +17,8 @@ public class InfoDialog extends DialogFragment {
 	String UsbCurrent = null;
 	String Beacon = null;
 
+	//Android sdk: new instance not constructor
+	//so as to get the bundled passed from startup
 	static InfoDialog newInstance(Bundle data) {
 		InfoDialog f = new InfoDialog();
 		f.setArguments(data);
@@ -27,6 +28,7 @@ public class InfoDialog extends DialogFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//actually parse the bundle arguments
 		Bundle arguments = getArguments();
 		this.yocto_serial = arguments.getString("serial");
 		this.Luminosity = arguments.getString("Luminosity");
@@ -37,6 +39,7 @@ public class InfoDialog extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		//display them in a dialogbox
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		mRoot = inflater.inflate(R.layout.infodialog, null);

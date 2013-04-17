@@ -32,13 +32,13 @@ public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener {
 	Messenger mService = null;
 	boolean mIsBound = false;
-	String serial_number = null;
+	//Log tag
 	private static final String TAG = "MainActivity";
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	final Context context = this;
-	Fragment fragment = null;
 	DIYFragment diyFragment = null;
 	EduFragment eduFragment = null;
+	ProFragment proFragment=null;
 	private static final String file = "VoltSet.csv"; // Our log file
 	Logger log;
 	Boolean alreadyColoredAC = false;
@@ -148,13 +148,16 @@ public class MainActivity extends FragmentActivity implements
 			// below) with the page number as its lone argument.
 
 			if (position == 0) {
-				fragment = new DIYFragment();
+				DIYFragment fragment = new DIYFragment();
+				return fragment;
 			} else if (position == 1) {
-				fragment = new ProFragment();
+				ProFragment fragment= new ProFragment();
+				return fragment;
 			} else if (position == 2) {
-				fragment = new EduFragment();
+				EduFragment fragment= new EduFragment();
+				return fragment;
 			}
-			return fragment;
+			return null;
 		}
 
 		@Override
@@ -183,13 +186,10 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case HardwareController_service.MSG_SET_STRING_VALUE:
-				String message = msg.getData().getString("serial");
-				if (message.equalsIgnoreCase("null")) {
+			case HardwareController_service.MSG_DISCONNECT:
 					// PANIC
-					// and try to unbind
+					// try to unbind
 					doUnbindService();
-					serial_number=null;
 					// Device is unplugged
 					// inform user
 					Toast.makeText(context, "Error! Device unplugged",
@@ -197,23 +197,24 @@ public class MainActivity extends FragmentActivity implements
 					// switch to startup activity
 					Intent startupActivity = new Intent(context,
 							StartupActivity.class);
+					//reoder to front flag
 					startupActivity
 							.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 					startActivity(startupActivity);
-
-				} else {// update the serial number
-					serial_number = message;
-				}
 				break;
-			case HardwareController_service.MSG_DC_VALUE:
+			case HardwareController_service.MSG_MEASUREMENT:
 				try {
 					String voltage = "";
+					//logger is already initialized
 					if (log == null) {
 						log = new Logger(context);
 						log.setFile(file);
 					}
+					//parse the value
 					voltage = msg.getData().getString("dc");
+					//parse the holded value, null if no "holded" in the bundle
 					String holded = msg.getData().getString("holded");
+					//avoid null
 					if (diyFragment == null)
 						diyFragment = (DIYFragment) getSupportFragmentManager()
 								.findFragmentByTag(
@@ -222,8 +223,9 @@ public class MainActivity extends FragmentActivity implements
 						eduFragment = (EduFragment) getSupportFragmentManager()
 								.findFragmentByTag(
 										"android:switcher:" + R.id.pager + ":2");
-
+					//we need to update the correct fragment
 					if (diyFragment.isVisible()) {
+						//update text
 						diyFragment.updateMeasureText(voltage);
 						// Log event to file, T:time, M:measurement
 						log.write("T:" + getTimeStamp() + "|M:" + voltage
@@ -231,25 +233,32 @@ public class MainActivity extends FragmentActivity implements
 						// Colorize
 						// AC
 						if (alreadyColoredAC == false) {
-							if (Double.valueOf(voltage) > 50) {// Assume it's AC
+							// Assume it's AC
+							if (Double.valueOf(voltage) > 50) {
+								//Color red
 								diyFragment.setColorAC(Color.RED);
+								//And remove color from DC
 								diyFragment.setColorDC(getResources().getColor(
 										R.color.generalColor));
 							}
+							//its colored, no need to recolor
 							alreadyColoredAC = true;
 						}
 						// DC
 						if (alreadyColoredDC == false) {
+							//DC is 0< >50, !!Tommy!!
 							if (Double.valueOf(voltage) > 0
 									&& Double.valueOf(voltage) < 50) {
+								//Color red the DC
 								diyFragment.setColorDC(Color.RED);
+								//And remove color from AC
 								diyFragment.setColorAC(getResources().getColor(
 										R.color.generalColor));
 							}
 							alreadyColoredDC = true;
 						}
-						 // No color
-						//Ensure we run only once!
+						// No color
+						// Ensure we run only once!
 						if (alreadyColoredAC == true
 								|| alreadyColoredDC == true) {
 							if (Double.valueOf(voltage) == 0) {
@@ -264,17 +273,18 @@ public class MainActivity extends FragmentActivity implements
 						// Colorize end
 						if (holded != null) {
 							{
+								//update the value and play animation
 								diyFragment.updateHolded(holded);
 							}
 						}
 					} else if (eduFragment.isVisible()) {
-						Toast.makeText(getApplicationContext(), "mpike?!", 1000).show();
 						eduFragment.updateMeasureText(voltage);
 						// Log event to file, T:time, M:measurement
 						log.write("T:" + getTimeStamp() + "|M:" + voltage
 								+ "DC");
 						if (holded != null) {
 							eduFragment.updateHolded(holded);
+							//rotate the imageview if value was holded.
 							eduFragment.rotateArrowUpwards(holded);
 						}
 
@@ -294,6 +304,7 @@ public class MainActivity extends FragmentActivity implements
 	protected void onDestroy() {
 		super.onDestroy();
 		try {
+			//unbind the service, view is destroyed
 			doUnbindService();
 		} catch (Throwable t) {
 			Log.e(TAG, "Failed to unbind from the service", t);
@@ -301,7 +312,7 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	// Connection between service and activity
-	private ServiceConnection mConnection = new ServiceConnection() {
+	ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			// This is called when the connection with the service has been
 			// established, giving us the service object we can use to
@@ -342,11 +353,13 @@ public class MainActivity extends FragmentActivity implements
 		// Establish a connection with the service. We use an explicit
 		// class name because there is no reason to be able to let other
 		// applications replace our component.
+		// Run in another thread
 		Thread t = new Thread() {
 			public void run() {
-				getApplicationContext().bindService(new Intent(MainActivity.this,
-				HardwareController_service.class), mConnection,
-				Context.BIND_AUTO_CREATE);
+				getApplicationContext().bindService(
+						new Intent(MainActivity.this,
+								HardwareController_service.class), mConnection,
+						Context.BIND_AUTO_CREATE);
 			}
 		};
 		mIsBound = true;
