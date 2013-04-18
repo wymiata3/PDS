@@ -43,6 +43,9 @@ public class MainActivity extends FragmentActivity implements
 	Logger log;
 	Boolean alreadyColoredAC = false;
 	Boolean alreadyColoredDC = false;
+	static double max=0.0;
+	static double avg=0.0;
+	static int measurements=0;
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -230,6 +233,20 @@ public class MainActivity extends FragmentActivity implements
 						// Log event to file, T:time, M:measurement
 						log.write("T:" + getTimeStamp() + "|M:" + voltage
 								+ "DC");
+						if(Double.valueOf(voltage)>0){
+							measurements+=1;
+							if(max>Double.valueOf(voltage))
+								max=Double.valueOf(voltage);
+							avg+=Double.valueOf(voltage)/measurements;
+						}
+						else if(Double.valueOf(voltage)==0)
+						{
+							Toast.makeText(getApplicationContext(), "AVG:"+avg+" MAX:"+max , Toast.LENGTH_SHORT).show();
+							max=0.0;
+							measurements=0;
+							avg=0.0;
+						}
+							
 						// Colorize
 						// AC
 						if (alreadyColoredAC == false) {

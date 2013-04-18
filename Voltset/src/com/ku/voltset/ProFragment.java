@@ -18,13 +18,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 
-public class ProFragment extends Fragment implements OnClickListener {
+public class ProFragment extends Fragment implements OnClickListener,OnItemSelectedListener {
 	Button btnShow;
 	View mRoot;
 	RelativeLayout graphLayout;
+	Spinner chooser;
+	String userChoice="all";
 	private static final String file = "VoltSet.csv"; // Our log file
 
 	public ProFragment() {
@@ -39,7 +45,8 @@ public class ProFragment extends Fragment implements OnClickListener {
 		btnShow=(Button)mRoot.findViewById(R.id.btnShow);
 		btnShow.setOnClickListener(this);
 		graphLayout= (RelativeLayout) mRoot.findViewById(R.id.graphLayout);
-		
+		chooser=(Spinner)mRoot.findViewById(R.id.spinner1);
+		chooser.setOnItemSelectedListener(this);
 		return mRoot;
 	}
 
@@ -84,6 +91,26 @@ public class ProFragment extends Fragment implements OnClickListener {
 			}
 			
 		}
+		
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View arg1, int pos,
+			long id) {
+		switch (pos){
+		case 0:
+			userChoice="all";
+			break;
+		case 2:
+			TimeDialog td=TimeDialog.newInstance();
+			td.show(getFragmentManager(), "time");
+			userChoice="time";
+		}
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
 		
 	}
 

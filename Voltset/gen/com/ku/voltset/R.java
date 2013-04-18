@@ -52,7 +52,7 @@ public final class R {
         public static final int SubjectText=0x7f0d003c;
         public static final int ToText=0x7f0d003b;
         public static final int acVolt=0x7f0d0008;
-        public static final int action_settings=0x7f0d003f;
+        public static final int action_settings=0x7f0d0043;
         public static final int bottomLayout=0x7f0d0021;
         public static final int btnConf=0x7f0d0011;
         public static final int btnMeasure=0x7f0d000d;
@@ -92,7 +92,11 @@ public final class R {
         public static final int spinner1=0x7f0d002f;
         public static final int tbtnVoice=0x7f0d0020;
         public static final int textView=0x7f0d0007;
+        public static final int textView1=0x7f0d003f;
+        public static final int textView2=0x7f0d0041;
         public static final int textView7=0x7f0d0027;
+        public static final int tmpickerFrom=0x7f0d0040;
+        public static final int tmpickerTo=0x7f0d0042;
         public static final int txtAC=0x7f0d001b;
         public static final int txtBeacon=0x7f0d0039;
         public static final int txtBeaconV=0x7f0d003a;
@@ -126,6 +130,7 @@ public final class R {
         public static final int fragment_pros=0x7f030006;
         public static final int infodialog=0x7f030007;
         public static final int share_activity=0x7f030008;
+        public static final int time_layout=0x7f030009;
     }
     public static final class menu {
         public static final int log_viewer=0x7f0c0000;
