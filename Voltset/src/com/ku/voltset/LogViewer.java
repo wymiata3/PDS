@@ -46,7 +46,6 @@ public class LogViewer extends Activity implements OnClickListener {
 				// Print the content on the console
 				logText.append(strLine + "\n");
 			}
-
 			// Close the input stream
 			in.close();
 		} catch (IOException io) {
@@ -66,7 +65,7 @@ public class LogViewer extends Activity implements OnClickListener {
 		getMenuInflater().inflate(R.menu.log_viewer, menu);
 		return true;
 	}
-
+	
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.btnToTop) {
