@@ -32,8 +32,12 @@ public class Share_function extends Activity implements OnSeekBarChangeListener{
 	        public void onClick(View v) {
 
 	            String to = ToText.getText().toString();
+	            to = to.replace("To:", "");
 	            String subject = SubjectText.getText().toString();
+	            subject = subject.replace("Subject:", "");
 	            String message = MessageText.getText().toString();
+	            message = message.replace("Message:", "");
+	            
 
 	            Intent email = new Intent(Intent.ACTION_SEND);
 	            email.putExtra(Intent.EXTRA_EMAIL, new String[] { to });
