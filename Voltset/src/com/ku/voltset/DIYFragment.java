@@ -24,10 +24,6 @@ import android.widget.Toast;
  * Fragment responsible for showing text measurements
  * 
  */
-/**
- * @author chmod
- *
- */
 public class DIYFragment extends Fragment {
 	private View mRoot;
 	private TextView txtMeasurement;

@@ -16,7 +16,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
 
 public class HardwareController_service extends Service {
 	String serial;
@@ -56,6 +55,7 @@ public class HardwareController_service extends Service {
 			module = null;
 			// Get the first and scan through all modules
 			// so as to find the serial and initialize dc_sensor
+			
 			// TODO initialize ac_sensor too
 			module = YModule.FirstModule();
 			while (module != null) {
@@ -160,7 +160,7 @@ public class HardwareController_service extends Service {
 					e.printStackTrace();
 				}
 			}
-			// re-run after 1000ms
+			// re-run after interval
 			measuringController.postDelayed(this, interval); 
 		}
 	};
@@ -187,7 +187,7 @@ public class HardwareController_service extends Service {
 		}
 	};
 
-	//inner class responsoble to register and unregister activities
+	//inner class responsible to register and unregister activities
 	@SuppressLint("HandlerLeak")
 	class IncomingHandler extends Handler {
 		@Override

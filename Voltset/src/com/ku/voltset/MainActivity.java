@@ -222,7 +222,7 @@ public class MainActivity extends FragmentActivity implements
 				break;
 			case HardwareController_service.MSG_MEASUREMENT:
 				try {
-					String voltage = "";
+					String voltage = "";//immutable
 					//logger is already initialized
 					if (log == null) {
 						log = new Logger(context);
@@ -317,6 +317,8 @@ public class MainActivity extends FragmentActivity implements
 								+ "DC");
 						if (holded != null) {
 							eduFragment.updateHolded(holded);
+							//inform user to remove cables
+							Toast.makeText(getApplicationContext(), "Remove cables now", Toast.LENGTH_SHORT).show();
 							//rotate the imageview if value was holded.
 							eduFragment.rotateArrowUpwards(holded);
 						}
