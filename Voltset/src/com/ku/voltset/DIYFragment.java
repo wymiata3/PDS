@@ -18,6 +18,16 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * @author chmod
+ *
+ * Fragment responsible for showing text measurements
+ * 
+ */
+/**
+ * @author chmod
+ *
+ */
 public class DIYFragment extends Fragment {
 	private View mRoot;
 	private TextView txtMeasurement;
@@ -39,7 +49,9 @@ public class DIYFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		//get the layout
 		mRoot = inflater.inflate(R.layout.fragment_diy, container, false);
+		//initialize data
 		TabHost mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
 		mTabHost.setup();
 		mTabHost.addTab(mTabHost.newTabSpec("tab_test1").setIndicator("TAB1")
@@ -53,31 +65,43 @@ public class DIYFragment extends Fragment {
 		txtHolded = (TextView) mRoot.findViewById(R.id.txtHold);
 		txtAC = (TextView) mRoot.findViewById(R.id.txtAC);
 		txtDC = (TextView) mRoot.findViewById(R.id.txtDC);
+		//end of initializ data
 		return mRoot;
 	}
 
+	//Fade out animation
 	public static Animation runFadeOutAnimationOn(Context ctx, View target) {
 		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fadeout);
 		target.startAnimation(animation);
 		return animation;
 	}
 
+	//Fade in animation
 	public static Animation runFadeInAnimationOn(Context ctx, View target) {
 		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fedein);
 		target.startAnimation(animation);
 		return animation;
 	}
 
+	/**
+	 * Sets the measurement in the text view
+	 * @param measurement value to be displayed
+	 */
 	public void updateMeasureText(String measurement) {
-
 		txtMeasurement.setText(measurement);
 	}
 
+	/**
+	 * Sets the holded in the text view
+	 * along with gradient animation
+	 * @param holded value to be displayed
+	 */
 	public void updateHolded(String holded) {
 		txtHolded.setText("Holded:" + holded + "V");
 		//do a animation from red to blue gradiently
 		Integer colorFrom = Color.RED;
 		Integer colorTo = Color.BLUE;
+		//register and init listener
 		ValueAnimator colorAnimation = ValueAnimator.ofObject(
 				new ArgbEvaluator(), colorFrom, colorTo);
 		colorAnimation.addUpdateListener(new AnimatorUpdateListener() {
@@ -87,14 +111,24 @@ public class DIYFragment extends Fragment {
 
 			}
 		});
+		//animation duration
 		colorAnimation.setDuration(5000);
+		//play the animation
 		colorAnimation.start();
 	}
 
+	/**
+	 * Changes color at DC textview
+	 * @param color color to be for DC
+	 */
 	public void setColorDC(int color) {
 		txtDC.setTextColor(color);
 	}
 
+	/**
+	 * Changes color at AC textview
+	 * @param color color to be for AC
+	 */
 	public void setColorAC(int color) {
 		txtAC.setTextColor(color);
 	}

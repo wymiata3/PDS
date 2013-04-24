@@ -12,12 +12,18 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+/**
+ * Activity responsible for showing settings
+ * @author chmod
+ *
+ */
 public class SettingsActivity extends Activity implements OnSeekBarChangeListener,OnClickListener {
 	private int duration;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
+		//default value =0
 		int duration= this.getIntent().getIntExtra("duration",0);
 		this.setDuration(duration);
 		//TODO 
@@ -40,6 +46,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+		//user is scrolling the bar, update the value
 		this.setDuration(progress);
 	}
 
@@ -55,10 +62,18 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 		
 	}
 
+	/**
+	 * Default getter
+	 * @return duration
+	 */
 	public int getDuration() {
 		return duration;
 	}
 
+	/**
+	 * Default setter
+	 * @param duration
+	 */
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
@@ -66,6 +81,7 @@ public class SettingsActivity extends Activity implements OnSeekBarChangeListene
 	@Override
 	public void onClick(View v) {
 		if(v.getId()==R.id.btnViewLogs){
+			//clicked on view logs, create the activity
 			Intent logViewer = new Intent(this, LogViewer.class);
 			startActivity(logViewer);// And now start
 			// with animation

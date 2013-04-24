@@ -18,6 +18,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+/**
+ * Initial activity
+ * 
+ * @author chmod
+ * 
+ */
 public class StartupActivity extends FragmentActivity implements
 		OnClickListener {
 	final Context context = this;
@@ -25,8 +31,8 @@ public class StartupActivity extends FragmentActivity implements
 	Bundle yocto_values = null;// holds device characteristics
 	private static final String file = "VoltSet.csv"; // Our log file
 	Handler serialscanner = new Handler();
-	YModule module = null;
-	String serial = "null";
+	YModule module = null; // null it
+	String serial = "null"; // immutable
 	Runnable scan = new Runnable() {
 		@Override
 		public void run() {
@@ -40,12 +46,14 @@ public class StartupActivity extends FragmentActivity implements
 				module = YModule.FirstModule();
 				while (module != null) {
 					if (module.get_productName().equals("Yocto-Volt")) {
+						// pass reference to serial number of device
 						serial = module.get_serialNumber();
 						infoIcon.setEnabled(true);
 						// remove transparency
 						infoIcon.setAlpha(1f);
 						break;
 					}
+					// get the next module if null
 					module = module.nextModule();
 				}
 				// end of scan
@@ -84,7 +92,7 @@ public class StartupActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_startup);
-		// Parse elements
+		// Initialize widgets
 		Button basicReading = (Button) findViewById(R.id.btnMeasure);
 		basicReading.setOnClickListener(this);
 		Button conf = (Button) findViewById(R.id.btnConf);
@@ -97,6 +105,7 @@ public class StartupActivity extends FragmentActivity implements
 		// play animation for icon if module not found
 		runFadeOutAnimationOn(context, infoIcon).setFillAfter(true);
 		// we cant take values if module not plugged
+		// make it disabled
 		infoIcon.setEnabled(false);
 		infoIcon.setOnClickListener(this);
 		// try to rotate log if too big or too old
@@ -118,7 +127,7 @@ public class StartupActivity extends FragmentActivity implements
 	 *            Context the widget belongs
 	 * @param target
 	 *            the widget to be animated
-	 * @return
+	 * @return animation object
 	 */
 	public static Animation runFadeOutAnimationOn(Context ctx, View target) {
 		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fadeout);
@@ -133,7 +142,7 @@ public class StartupActivity extends FragmentActivity implements
 	 *            Context the widget belongs
 	 * @param target
 	 *            the widget to be animated
-	 * @return
+	 * @return animation object
 	 */
 	public static Animation runFadeInAnimationOn(Context ctx, View target) {
 		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fedein);
@@ -147,8 +156,6 @@ public class StartupActivity extends FragmentActivity implements
 	 * @see
 	 * android.support.v4.app.FragmentActivity#onSaveInstanceState(android.os
 	 * .Bundle)
-	 * 
-	 * Save state so as not to register multiple services.
 	 */
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -182,9 +189,10 @@ public class StartupActivity extends FragmentActivity implements
 				// with animation
 				overridePendingTransition(R.anim.left_to_right,
 						R.anim.right_to_left);
+			} else {
 				// dont progress to next activity is serial is "null"
 				// and inform user
-			} else {
+
 				Toast.makeText(getApplicationContext(),
 						"Device not found, can't proceed", Toast.LENGTH_SHORT)
 						.show();

@@ -28,12 +28,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
 
+/**
+ * Main activity that holds the three fragments and communicates with
+ * service.
+ * @author chmod
+ *
+ */
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener {
 	Messenger mService = null;
 	boolean mIsBound = false;
 	//Log tag
 	private static final String TAG = "MainActivity";
+	//Message handler
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	final Context context = this;
 	DIYFragment diyFragment = null;
@@ -41,6 +48,8 @@ public class MainActivity extends FragmentActivity implements
 	ProFragment proFragment=null;
 	private static final String file = "VoltSet.csv"; // Our log file
 	Logger log;
+	//init colors, max and avg
+	
 	Boolean alreadyColoredAC = false;
 	Boolean alreadyColoredDC = false;
 	static double max=0.0;
@@ -149,7 +158,7 @@ public class MainActivity extends FragmentActivity implements
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a DummySectionFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
-
+			//Init the objects for each tab
 			if (position == 0) {
 				DIYFragment fragment = new DIYFragment();
 				return fragment;
@@ -172,6 +181,7 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public CharSequence getPageTitle(int position) {
 			Locale l = Locale.getDefault();
+			//get the TAB caption in capitals
 			switch (position) {
 			case 0:
 				return getString(R.string.title_section1).toUpperCase(l);
@@ -184,6 +194,11 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
+	/**
+	 * Inner Class responsible to process messages from service
+	 * @author chmod
+	 *
+	 */
 	@SuppressLint("HandlerLeak")
 	class IncomingHandler extends Handler {
 		@Override
@@ -241,6 +256,7 @@ public class MainActivity extends FragmentActivity implements
 						}
 						else if(Double.valueOf(voltage)==0)
 						{
+							//TODO better implementation of max/avg
 							Toast.makeText(getApplicationContext(), "AVG:"+avg+" MAX:"+max , Toast.LENGTH_SHORT).show();
 							max=0.0;
 							measurements=0;

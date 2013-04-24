@@ -187,6 +187,7 @@ public class HardwareController_service extends Service {
 		}
 	};
 
+	//inner class responsoble to register and unregister activities
 	@SuppressLint("HandlerLeak")
 	class IncomingHandler extends Handler {
 		@Override

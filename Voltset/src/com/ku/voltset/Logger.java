@@ -10,6 +10,12 @@ import android.content.Context;
 import android.util.Log;
 
 
+/**
+ * Logging class
+ * Saves data to file
+ * @author chmod
+ *
+ */
 public class Logger {
 	private static final String TAG = "Logger";
 	File toWrite = null;
@@ -18,6 +24,7 @@ public class Logger {
 
 	public Logger(Context context) {
 		this.context = context;
+		//File will be saved to context directory
 		root = new File(context.getFilesDir(), "VoltSet");
 		if (!root.exists())
 			root.mkdirs();
@@ -49,6 +56,7 @@ public class Logger {
 
 	
 	/**
+	 * Log rotate, responsible for deleting log
 	 * @param daysBack defines how old shall be allowed before delete
 	 * @param kbSize defines how big shall be allowed to growth before delete
 	 * Log Rotate is used to delete log file in order to save space.
@@ -70,6 +78,7 @@ public class Logger {
 	}
 
 	/**
+	 * Writes data to the lo file
 	 * @param data Log line to be appended to log file
 	 */
 	public void write(String data) {
@@ -82,6 +91,7 @@ public class Logger {
 			BufferedWriter out = new BufferedWriter(ow);
 			out.write(data);
 			out.newLine();
+			//close streams
 			out.flush();
 			out.close();
 			ow.close();

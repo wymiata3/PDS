@@ -16,6 +16,11 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+/**
+ * Log viweing activity
+ * @author chmod
+ *
+ */
 public class LogViewer extends Activity implements OnClickListener {
 	private static final String file = "VoltSet.csv"; // Our log file
 	TextView logText;
@@ -28,9 +33,11 @@ public class LogViewer extends Activity implements OnClickListener {
 		sv = (ScrollView) findViewById(R.id.scrolllview);//get scrollview widget
 		Button btnToTop = (Button) findViewById(R.id.btnToTop);//get buttons
 		Button btnToEnd = (Button) findViewById(R.id.btnToEnd);
-		btnToTop.setOnClickListener(this);//add listeners
+		//add listeners
+		btnToTop.setOnClickListener(this);
 		btnToEnd.setOnClickListener(this);
 
+		//Scrolling method in the larg text area
 		logText.setMovementMethod(new ScrollingMovementMethod());
 		//read file line by line 
 		//TODO might lock the UI, place in async task or thread.

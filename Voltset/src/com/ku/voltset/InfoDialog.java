@@ -9,6 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+/**
+ * Shows information dialog about yocto-device
+ * @author chmod
+ *
+ */
 public class InfoDialog extends DialogFragment {
 	private View mRoot;
 	String yocto_serial = null;
@@ -41,8 +46,10 @@ public class InfoDialog extends DialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		//display them in a dialogbox
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		//parse the layout
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		mRoot = inflater.inflate(R.layout.infodialog, null);
+		// update widget values
 		TextView txtView = (TextView) mRoot.findViewById(R.id.txtSerialV);
 		txtView.setText(yocto_serial);
 		TextView txtView2 = (TextView) mRoot.findViewById(R.id.txtLumonosityV);
@@ -53,7 +60,9 @@ public class InfoDialog extends DialogFragment {
 		txtView4.setText(UsbCurrent);
 		TextView beacon = (TextView) mRoot.findViewById(R.id.txtBeaconV);
 		beacon.setText(Beacon);
-
+		//end update
+		
+		//build the dialog butons - cancel
 		builder.setView(mRoot).setNegativeButton(R.string.dialog_close,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {

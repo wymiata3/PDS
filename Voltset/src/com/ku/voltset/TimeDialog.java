@@ -25,6 +25,7 @@ public class TimeDialog extends DialogFragment {
 		//f.setArguments(data);
 		return f;
 	}
+	//not implemented
 	private String getFirstLastTimeDate(){
 		try {
 			Logger log = new Logger(this.getActivity().getApplicationContext());

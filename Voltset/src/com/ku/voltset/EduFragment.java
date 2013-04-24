@@ -15,8 +15,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
+ * Fragment responsible for showing Edu tab
+ * tab is for educational purposes with an animated image arrow
  * @author chmod
  * 
+ */
+/**
+ * @author chmod
+ *
  */
 public class EduFragment extends Fragment {
 	ImageView image; // Arrow image
@@ -84,10 +90,16 @@ public class EduFragment extends Fragment {
 		}
 	};
 
+	/**
+	 * Method to make arrow animate up to holded value
+	 * @param holded Holds the value in a climate of max 5*36
+	 */
 	public void rotateArrowUpwards(String holded) {
+		//Dont rotate if same value
 		if(prevDC.equalsIgnoreCase(holded))
 			rotate=null;
 		if (rotate == null ) {
+			//Climax is 5(max) * 36
 			rotate = new RotateAnimation(0, Float.valueOf(holded) * 36,
 					Animation.RELATIVE_TO_SELF, Xaxis,
 					Animation.RELATIVE_TO_SELF, Yaxis);
@@ -101,6 +113,7 @@ public class EduFragment extends Fragment {
 		
 	}
 
+	//Not implemented yet
 	public void rotateArrowBackwards(String currentMeasurement) {
 		// rotate = new RotateAnimation(
 		// Float.valueOf(currentMeasurement) * 36, 0,
