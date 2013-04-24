@@ -53,7 +53,7 @@ public final class R {
         public static final int SubjectText=0x7f0d003c;
         public static final int ToText=0x7f0d003b;
         public static final int acVolt=0x7f0d0008;
-        public static final int action_settings=0x7f0d0044;
+        public static final int action_settings=0x7f0d0045;
         public static final int bottomLayout=0x7f0d0021;
         public static final int btnConf=0x7f0d0011;
         public static final int btnMeasure=0x7f0d000d;
@@ -80,6 +80,7 @@ public final class R {
         public static final int mVoltsText=0x7f0d002c;
         public static final int middleLayout=0x7f0d001c;
         public static final int monitorLayout=0x7f0d0017;
+        public static final int okbutton=0x7f0d0044;
         public static final int pager=0x7f0d0004;
         public static final int parentLayout=0x7f0d0016;
         public static final int parentScroll=0x7f0d0015;
@@ -150,6 +151,7 @@ public final class R {
         public static final int infoIcon=0x7f080015;
         public static final int initValue=0x7f08000c;
         public static final int initialText=0x7f080003;
+        public static final int okbutton=0x7f080018;
         public static final int presets=0x7f080004;
         public static final int previous=0x7f08000b;
         public static final int profile=0x7f08000f;
