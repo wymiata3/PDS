@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import android.R.string;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ public class Share_function extends Activity implements OnSeekBarChangeListener{
 	    final String file = "VoltSet.csv"; // Our log file
 	    
 	    Button GetLogsButton = (Button) findViewById(R.id.GetLogsButton);
+	    Button DeleteButton = (Button) findViewById(R.id.DeleteButton);
 	    Button buttonSend = (Button) findViewById(R.id.SendButton);
 	    final EditText ToText = (EditText) findViewById(R.id.ToText);
 	    final EditText SubjectText = (EditText) findViewById(R.id.SubjectText);
@@ -66,6 +68,18 @@ public class Share_function extends Activity implements OnSeekBarChangeListener{
 			}
 		});
 	    
+	    /*
+	     * This is a way to delete the current text of the message
+	     */
+	    DeleteButton.setOnClickListener(new OnClickListener() {	
+			
+			@Override
+			public void onClick(View v) {
+				
+				MessageText.setText("Message:");
+				
+			}
+		});
 	    
 	    buttonSend.setOnClickListener(new OnClickListener(){
 	    
