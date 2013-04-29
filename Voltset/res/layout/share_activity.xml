@@ -62,8 +62,8 @@
                 android:layout_alignParentBottom="true"
                 android:layout_toRightOf="@+id/GetLogsButton"
                 android:text="Delete Message" />
-			    />
-        </RelativeLayout>
+			    
+	</RelativeLayout>
 
     </LinearLayout>
 </RelativeLayout>

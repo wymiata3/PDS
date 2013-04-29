@@ -6,14 +6,19 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
 import com.ku.voltset.R;
 import com.jjoe64.graphview.GraphView.GraphViewData;
+
+import android.app.TimePickerDialog;
+import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +29,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 /**
  * Pro fragment, the second tab, showing graphs
@@ -37,7 +44,9 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 	Spinner chooser;
 	String userChoice="all";
 	private static final String file = "VoltSet.csv"; // Our log file
-
+	TimeDialog td=TimeDialog.newInstance();
+	//Button gettimebutton = (Button) mRoot.findViewById(R.id.Okbutton); // Take time button
+	
 	public ProFragment() {
 
 	}
@@ -63,6 +72,8 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 	public void onClick(View v) {
 		if(v.getId()==R.id.btnShow)
 		{
+			String hour = td.gethours();
+			Toast.makeText(getActivity(), hour, Toast.LENGTH_LONG).show();
 			//be sure nothing is displayed
 			graphLayout.removeAllViews();
 			int line=0;
@@ -115,6 +126,7 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 		
 	}
 
+	
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View arg1, int pos,
 			long id) {
@@ -124,7 +136,6 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 			userChoice="all";
 			break;
 		case 2:
-			TimeDialog td=TimeDialog.newInstance();
 			td.show(getFragmentManager(), "time");
 			userChoice="time";
 		}

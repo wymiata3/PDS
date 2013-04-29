@@ -177,6 +177,7 @@ public class StartupActivity extends FragmentActivity implements
 	@Override
 	public void onClick(View v) {
 		// User clicked Measurement
+		
 		if (v.getId() == R.id.btnMeasure) {
 			// we have connected device?
 			if (!serial.equalsIgnoreCase("null")) {
@@ -190,6 +191,7 @@ public class StartupActivity extends FragmentActivity implements
 				overridePendingTransition(R.anim.left_to_right,
 						R.anim.right_to_left);
 			} else {
+				
 				// dont progress to next activity is serial is "null"
 				// and inform user
 
@@ -197,7 +199,9 @@ public class StartupActivity extends FragmentActivity implements
 						"Device not found, can't proceed", Toast.LENGTH_SHORT)
 						.show();
 				return;
+				
 			}
+			
 
 		}
 		// clicked on share
