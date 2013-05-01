@@ -17,10 +17,16 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-/*This class implements the share function in which users are able to send a message through the mail service
+/** 
+ * This class implements the share function in which users are able to send a message through the mail service
  * or Bluetooth to another mobile.
  */
 public class Share_function extends Activity implements OnSeekBarChangeListener{
+	/**
+	 * Sets up the screen and allows sharing measurements with others.
+	 * 
+	 * @param savedInstanceState the current application state.
+	 */
 	protected void onCreate (Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.share_activity); //The layout for this functionality

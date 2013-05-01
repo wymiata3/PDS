@@ -21,7 +21,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
+/**
+ * creates a Dialog for selecting a time range.
+ *
+ */
 public class TimeDialog extends DialogFragment {
 	private View mRoot;
 	private static final String file = "VoltSet.csv"; // Our log file
@@ -36,7 +39,11 @@ public class TimeDialog extends DialogFragment {
 	}
 	
 	
-	//return the hours given in the time interval
+	/**
+	 * return the hours given in the time interval
+	 * 
+	 * @return String a string in the format of hourfrom--minutefrom--hourto--minuteto
+	 */
 	public String gethours(){
 		
 		String hours;
@@ -54,7 +61,9 @@ public class TimeDialog extends DialogFragment {
 		hours =hourfrom + "--" + minutefrom + "--" + hourto +"--" + minuteto;
 		return hours;
 				}
-	//not implemented
+	/**
+	 * not implemented
+	 */
 	public String getFirstLastTimeDate(){
 		
 		/*
@@ -88,7 +97,9 @@ public class TimeDialog extends DialogFragment {
 	}
 	
 	
-	//not working....
+	/** 
+	 * not working....
+	 */
 	private void setCurrentTimeOnView() {
 		
 		LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -110,6 +121,12 @@ public class TimeDialog extends DialogFragment {
 		Toast.makeText(getActivity(), "smthing", 4000).show();
 	}
 
+	/**
+	 * Sets up a dialog for time interval selection.
+	 * 
+	 * @param savedInstanceState the state of the instance.
+	 * @return Dialog the created dialog 
+	 */
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		//display them in a dialogbox
