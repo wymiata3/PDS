@@ -40,27 +40,44 @@ public class TimeDialog extends DialogFragment {
 	
 	
 	/**
-	 * return the hours given in the time interval
+	 * return the hours given in the time interval (from)
 	 * 
-	 * @return String a string in the format of hourfrom--minutefrom--hourto--minuteto
+	 * @return Integer
 	 */
-	public String gethours(){
-		
-		String hours;
-		int hourfrom;
-		int minutefrom;
-		int hourto;
-		int minuteto;
-		
+	public int gethourfrom(){
 		tmf = (TimePicker) mRoot.findViewById(R.id.tmpickerFrom);
+		return tmf.getCurrentHour();
+	}
+	
+	/**
+	 * return the minute given in the time interval (from)
+	 * 
+	 * @return Integer
+	 */
+	public int getminutefrom(){
+		tmf = (TimePicker) mRoot.findViewById(R.id.tmpickerFrom);
+		return tmf.getCurrentMinute();
+	}
+	
+	/**
+	 * return the hours given in the time interval (To)
+	 * 
+	 * @return Integer
+	 */
+	public int gethourto(){
 		tmt = (TimePicker) mRoot.findViewById(R.id.tmpickerTo);
-		hourfrom = tmf.getCurrentHour();
-		minutefrom = tmf.getCurrentMinute();
-		hourto = tmt.getCurrentHour();
-		minuteto = tmt.getCurrentMinute();
-		hours =hourfrom + "--" + minutefrom + "--" + hourto +"--" + minuteto;
-		return hours;
-				}
+		return tmt.getCurrentHour();
+	}
+	
+	/**
+	 * return the minute given in the time interval (To)
+	 * 
+	 * @return Integer
+	 */
+	public int getminuteto(){
+		tmt = (TimePicker) mRoot.findViewById(R.id.tmpickerTo);
+		return tmt.getCurrentMinute();
+	}
 	/**
 	 * not implemented
 	 */

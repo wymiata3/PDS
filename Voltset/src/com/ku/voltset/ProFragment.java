@@ -45,6 +45,7 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 	String userChoice="all";
 	private static final String file = "VoltSet.csv"; // Our log file
 	TimeDialog td=TimeDialog.newInstance();
+	private int flag = 0;
 	//Button gettimebutton = (Button) mRoot.findViewById(R.id.Okbutton); // Take time button
 	
 	public ProFragment() {
@@ -72,60 +73,190 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 	public void onClick(View v) {
 		if(v.getId()==R.id.btnShow)
 		{
-			String hour = td.gethours();
-			Toast.makeText(getActivity(), hour, Toast.LENGTH_LONG).show();
-			//be sure nothing is displayed
-			graphLayout.removeAllViews();
-			int line=0;
-			try {
-				//Generic ArrayList to Store only String objects
-				ArrayList<GraphViewData> graphHolder= new ArrayList<GraphViewData>();
-				//object of which data will be displayed
-				GraphViewData graphData;
-				//get the log file
-				Logger log = new Logger(this.getActivity());
-				log.setFile(file);
-				FileInputStream fstream = new FileInputStream(log.getFile());
-				DataInputStream in = new DataInputStream(fstream);
-				BufferedReader br = new BufferedReader(new InputStreamReader(in));
-				String strLine;
-				// Read File Line By Line
-				while ((strLine = br.readLine()) != null) {
-					//Split by | and keep only right part
-					String measurement=strLine.split("\\|")[1];
-					//we only need the values, discard rest
-					measurement=measurement.substring(measurement.indexOf(":")+1, measurement.length()-2);
-					//and save them in the graph data
-					graphData=new GraphViewData(line++, Double.valueOf(measurement));
-					graphHolder.add(graphData);
+			
+			if (flag == 0){ //selecting all graph
+				//be sure nothing is displayed
+				graphLayout.removeAllViews();
+				int line=0;
+				try {
+					//Generic ArrayList to Store only String objects
+					ArrayList<GraphViewData> graphHolder= new ArrayList<GraphViewData>();
+					//object of which data will be displayed
+					GraphViewData graphData;
+					//get the log file
+					Logger log = new Logger(this.getActivity());
+					log.setFile(file);
+					FileInputStream fstream = new FileInputStream(log.getFile());
+					DataInputStream in = new DataInputStream(fstream);
+					BufferedReader br = new BufferedReader(new InputStreamReader(in));
+					String strLine;
+					// Read File Line By Line
+					while ((strLine = br.readLine()) != null) {
+						//Split by | and keep only right part
+						String measurement=strLine.split("\\|")[1];
+						//we only need the values, discard rest
+						measurement=measurement.substring(measurement.indexOf(":")+1, measurement.length()-2);
+						//and save them in the graph data
+						graphData=new GraphViewData(line++, Double.valueOf(measurement));
+						graphHolder.add(graphData);
+					}
+					// Close the input stream
+					in.close();
+					//recreate array as required by api
+					GraphViewData[] data=new GraphViewData[graphHolder.size()];
+					for(int i=0;i<graphHolder.size();i++)
+						data[i]=graphHolder.get(i);
+					GraphViewSeries wholeLog=new GraphViewSeries(data);
+					//end of recreate
+					//build the graph
+					GraphView graphView = new LineGraphView(this.getActivity(),"Whole Data Log");
+					//no need to see all, just a portion
+					graphView.setViewPort(20, 150);  
+					//make it scrollable
+					graphView.setScrollable(true);  
+					// activate scaling / zooming  
+					graphView.setScalable(true);  
+					graphView.addSeries(wholeLog);
+					//add it to layout
+					graphLayout.addView(graphView);
+				} catch (IOException io) {
+					io.printStackTrace();
 				}
-				// Close the input stream
-				in.close();
-				//recreate array as required by api
-				GraphViewData[] data=new GraphViewData[graphHolder.size()];
-				for(int i=0;i<graphHolder.size();i++)
-					data[i]=graphHolder.get(i);
-				GraphViewSeries wholeLog=new GraphViewSeries(data);
-				//end of recreate
-				//build the graph
-				GraphView graphView = new LineGraphView(this.getActivity(),"Whole Data Log");
-				//no need to see all, just a portion
-				graphView.setViewPort(20, 150);  
-				//make it scrollable
-				graphView.setScrollable(true);  
-				// activate scaling / zooming  
-				graphView.setScalable(true);  
-				graphView.addSeries(wholeLog);
-				//add it to layout
-				graphLayout.addView(graphView);
-			} catch (IOException io) {
-				io.printStackTrace();
 			}
+			else if (flag == 2){ //select time interval
+				
+				graphLayout.removeAllViews();
+				int line=0;
+				try {
+					//Generic ArrayList to Store only String objects
+					ArrayList<GraphViewData> graphHolder= new ArrayList<GraphViewData>();
+					//object of which data will be displayed
+					GraphViewData graphData;
+					//get the log file
+					Logger log = new Logger(this.getActivity());
+					log.setFile(file);
+					FileInputStream fstream = new FileInputStream(log.getFile());
+					DataInputStream in = new DataInputStream(fstream);
+					BufferedReader br = new BufferedReader(new InputStreamReader(in));
+					String strLine;
+					// Read File Line By Line
+					
+					while ((strLine = br.readLine()) != null && !timeparsing(strLine)) {
+						
+						//Split by | and keep only right part
+						String measurement=strLine.split("\\|")[1];
+						//we only need the values, discard rest
+						measurement=measurement.substring(measurement.indexOf(":")+1, measurement.length()-2);
+						//and save them in the graph data
+						graphData=new GraphViewData(line++, Double.valueOf(measurement));
+						graphHolder.add(graphData);
+					}
+					// Close the input stream
+					in.close();
+					//recreate array as required by api
+					GraphViewData[] data=new GraphViewData[graphHolder.size()];
+					for(int i=0;i<graphHolder.size();i++)
+						data[i]=graphHolder.get(i);
+					GraphViewSeries wholeLog=new GraphViewSeries(data);
+					//end of recreate
+					//build the graph
+					GraphView graphView = new LineGraphView(this.getActivity(),"Whole Data Log");
+					//no need to see all, just a portion
+					graphView.setViewPort(20, 150);  
+					//make it scrollable
+					graphView.setScrollable(true);  
+					// activate scaling / zooming  
+					graphView.setScalable(true);  
+					graphView.addSeries(wholeLog);
+					//add it to layout
+					graphLayout.addView(graphView);
+				} catch (IOException io) {
+					io.printStackTrace();
+				}
+				
+			}
+			
 			
 		}
 		
 	}
-
+	
+	
+	/**
+	 * return a boolean that shows if the log line is between the time requests
+	 * 
+	 * @return a Boolean true if the line is for use and false if it is out of time intervals
+	 */
+	private Boolean timeparsing(String strLine){
+		int hourfrom = td.gethourfrom();
+		int minutefrom = td.getminutefrom();
+		int hourto = td.gethourto();
+		int minuteto = td.getminuteto();
+		
+		Boolean timeflag=true;
+		String time = strLine.split("\\:")[1];
+		String time2 = time.substring(14, time.length());
+		String time3 = time.substring(13, time.length());
+		int loghour=0;
+		int logminute=0;
+		try{
+			  loghour = Integer.parseInt(time2);
+			  // is an integer!
+			} catch (NumberFormatException e) {
+			  // not an integer!
+			}
+		
+		try{
+			loghour = Integer.parseInt(time3);
+			 // is an integer!
+		} catch (NumberFormatException e) {
+		  // not an integer!
+		}
+		
+		
+		String minute = strLine.split("\\:")[2];
+		try{
+			logminute = Integer.parseInt(minute);
+			  // is an integer!
+			} catch (NumberFormatException e) {
+			  // not an integer!
+			}
+		
+		String ampm = strLine.split("\\:")[3];
+		if (ampm.contains("PM")){
+			loghour += 12;
+		}
+		
+		if (hourfrom==loghour){
+			if (minutefrom<=logminute && hourto == loghour)
+			{
+				if (logminute<=minuteto)
+				{
+					timeflag = true;
+				}
+				else timeflag = false;
+			}
+			else if (minutefrom<=logminute && hourto > loghour)
+			{
+				timeflag = true;
+			}
+			else timeflag = false;
+		}
+		else if (hourfrom < loghour){
+			if (hourto == loghour && minuteto>=logminute)
+			{
+				timeflag = true;
+			}
+			else if (hourto > loghour)
+			{
+				timeflag = true;	
+			}
+			timeflag = false;
+		}
+		else timeflag = false;
+		
+		return timeflag;
+	}
 	
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View arg1, int pos,
@@ -134,8 +265,10 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 		switch (pos){
 		case 0:
 			userChoice="all";
+			flag = 0;
 			break;
 		case 2:
+			flag = 2;
 			td.show(getFragmentManager(), "time");
 			userChoice="time";
 		}
