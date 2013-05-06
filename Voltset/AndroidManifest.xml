@@ -25,6 +25,10 @@
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
+            android:name="com.ku.voltset.DateDialog"
+            android:label="@string/title_date_activity" >
+        </activity>
+        <activity
             android:name="com.ku.voltset.Share_function"
             android:label="@string/title_share_activity" >
         </activity>

@@ -14,6 +14,7 @@ import com.jjoe64.graphview.LineGraphView;
 import com.ku.voltset.R;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 
+import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
@@ -45,7 +46,8 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 	String userChoice="all";
 	private static final String file = "VoltSet.csv"; // Our log file
 	TimeDialog td=TimeDialog.newInstance();
-	DateDialog dd=DateDialog.newInstance();
+	DialogFragment dd=DateDialog.newInstance();
+
 	private int flag = 0;
 	//Button gettimebutton = (Button) mRoot.findViewById(R.id.Okbutton); // Take time button
 	
@@ -270,7 +272,7 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 			break;
 		case 1:
 			flag = 1;
-			//dd.show(getFragmentManager(), "date");
+			//dd.show(getSupportFragmentManager(), "datePicker");
 		case 2:
 			flag = 2;
 			td.show(getFragmentManager(), "time");
