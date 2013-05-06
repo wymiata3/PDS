@@ -45,6 +45,7 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 	String userChoice="all";
 	private static final String file = "VoltSet.csv"; // Our log file
 	TimeDialog td=TimeDialog.newInstance();
+	DateDialog dd=DateDialog.newInstance();
 	private int flag = 0;
 	//Button gettimebutton = (Button) mRoot.findViewById(R.id.Okbutton); // Take time button
 	
@@ -140,16 +141,19 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 					BufferedReader br = new BufferedReader(new InputStreamReader(in));
 					String strLine;
 					// Read File Line By Line
-					
-					while ((strLine = br.readLine()) != null && !timeparsing(strLine)) {
-						
+					while ((strLine = br.readLine()) != null) {
+						Boolean st = false;
+						st = timeparsing(strLine);
+						if(st == true){
 						//Split by | and keep only right part
-						String measurement=strLine.split("\\|")[1];
+						String measurement=strLine.split("\\|")[1];	
 						//we only need the values, discard rest
 						measurement=measurement.substring(measurement.indexOf(":")+1, measurement.length()-2);
 						//and save them in the graph data
 						graphData=new GraphViewData(line++, Double.valueOf(measurement));
 						graphHolder.add(graphData);
+						}
+					
 					}
 					// Close the input stream
 					in.close();
@@ -193,12 +197,13 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 		int hourto = td.gethourto();
 		int minuteto = td.getminuteto();
 		
-		Boolean timeflag=true;
+		Boolean timeflag=false;
 		String time = strLine.split("\\:")[1];
-		String time2 = time.substring(14, time.length());
-		String time3 = time.substring(13, time.length());
+		String time2 = time.substring(time.length()-2, time.length());
+		String time3 = time.substring(time.length()-1, time.length());
 		int loghour=0;
 		int logminute=0;
+		
 		try{
 			  loghour = Integer.parseInt(time2);
 			  // is an integer!
@@ -221,7 +226,7 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 			} catch (NumberFormatException e) {
 			  // not an integer!
 			}
-		
+
 		String ampm = strLine.split("\\:")[3];
 		if (ampm.contains("PM")){
 			loghour += 12;
@@ -234,13 +239,11 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 				{
 					timeflag = true;
 				}
-				else timeflag = false;
 			}
 			else if (minutefrom<=logminute && hourto > loghour)
 			{
 				timeflag = true;
 			}
-			else timeflag = false;
 		}
 		else if (hourfrom < loghour){
 			if (hourto == loghour && minuteto>=logminute)
@@ -251,9 +254,7 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 			{
 				timeflag = true;	
 			}
-			timeflag = false;
 		}
-		else timeflag = false;
 		
 		return timeflag;
 	}
@@ -267,6 +268,9 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 			userChoice="all";
 			flag = 0;
 			break;
+		case 1:
+			flag = 1;
+			//dd.show(getFragmentManager(), "date");
 		case 2:
 			flag = 2;
 			td.show(getFragmentManager(), "time");

@@ -1,24 +1,14 @@
 package com.ku.voltset;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Calendar;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.webkit.WebView.FindListener;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 /**
@@ -27,7 +17,6 @@ import android.widget.Toast;
  */
 public class TimeDialog extends DialogFragment {
 	private View mRoot;
-	private static final String file = "VoltSet.csv"; // Our log file
 	private TimePicker tmf; //time picker from
 	private TimePicker tmt; //time picker to
 	//Android sdk: new instance not constructor
