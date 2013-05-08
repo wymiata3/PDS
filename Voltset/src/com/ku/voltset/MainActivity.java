@@ -85,9 +85,12 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	public void onInit(int i) {
+		//do we have tts engine?
 		if (i == TextToSpeech.SUCCESS) {
+			//is us locale avaible? Then set it
 			if (mTts.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE)
 				mTts.setLanguage(Locale.US);
+			//inform about error
 		} else if (i == TextToSpeech.ERROR) {
 			Toast.makeText(this, "Sorry! Text To Speech failed...",
 					Toast.LENGTH_LONG).show();
@@ -95,6 +98,7 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		//data check code is just a checksum, can be any value
 		if (requestCode == MY_DATA_CHECK_CODE) {
 			if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 				// success, create the TTS instance
@@ -113,6 +117,7 @@ public class MainActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		//start internal activity to check if there is TTS engine 
 		Intent checkIntent = new Intent();
 		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
@@ -492,12 +497,17 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see com.ku.voltset.DIYFragment.onVoiceOnOff#onVoiceOn()
+	 */
 	@Override
 	public void onVoiceOn() {
 		isVoiceEnabled = true;
-
 	}
-
+	/* (non-Javadoc)
+	 * @see com.ku.voltset.DIYFragment.onVoiceOnOff#onVoiceOff()
+	 */
 	@Override
 	public void onVoiceOff() {
 		isVoiceEnabled = false;

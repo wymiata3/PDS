@@ -33,32 +33,46 @@ public class DIYFragment extends Fragment {
 	private TextView txtDC;
 	private TextView txtAC;
 	int num = 1;
+	// Interface object
 	onVoiceOnOff mCallback;
 	private ToggleButton tbtnVoice;
+
 	public DIYFragment() {
 
 	}
+
+	// interface responsible to inform activity about if voice button is enabled
 	public interface onVoiceOnOff {
-        public void onVoiceOn();
-        public void onVoiceOff();
-    }
+		/**
+		 * Enables voice
+		 */
+		public void onVoiceOn();
+
+		/**
+		 * Disables voice
+		 */
+		public void onVoiceOff();
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	}
+
 	@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            mCallback = (onVoiceOnOff) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnHeadlineSelectedListener");
-        }
-    }
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try {
+			mCallback = (onVoiceOnOff) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()
+					+ " must implement onVoiceOnOff");
+		}
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -78,17 +92,20 @@ public class DIYFragment extends Fragment {
 		txtHolded = (TextView) mRoot.findViewById(R.id.txtHold);
 		txtAC = (TextView) mRoot.findViewById(R.id.txtAC);
 		txtDC = (TextView) mRoot.findViewById(R.id.txtDC);
-		tbtnVoice=(ToggleButton)mRoot.findViewById(R.id.tbtnVoice);
-		tbtnVoice.setOnCheckedChangeListener( new OnCheckedChangeListener() {
-	        @Override
-	        public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
-	           if(isChecked)
-	        	   mCallback.onVoiceOn();
-	           else
-	        	   mCallback.onVoiceOff();
-	        }
-	    }) ;
-		// end of initializ data
+		tbtnVoice = (ToggleButton) mRoot.findViewById(R.id.tbtnVoice);
+		// Add listener to togglebutton so as to inform if is checked
+		// and enable voice
+		tbtnVoice.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton toggleButton,
+					boolean isChecked) {
+				if (isChecked)
+					mCallback.onVoiceOn();
+				else
+					mCallback.onVoiceOff();
+			}
+		});
+		// end of initialize data
 		return mRoot;
 	}
 
