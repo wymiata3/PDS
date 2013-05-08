@@ -1,10 +1,12 @@
 package com.ku.voltset;
 
 import com.ku.voltset.R;
+import com.ku.voltset.interfaces.VoiceOnOff;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,14 +16,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ToggleButton;
 
 /**
  * @author chmod
- *
- * Fragment responsible for showing text measurements
+ * 
+ *         Fragment responsible for showing text measurements
  * 
  */
 public class DIYFragment extends Fragment {
@@ -31,23 +35,38 @@ public class DIYFragment extends Fragment {
 	private TextView txtDC;
 	private TextView txtAC;
 	int num = 1;
-
+	onVoiceOnOff mCallback;
+	private ToggleButton tbtnVoice;
 	public DIYFragment() {
 
 	}
-
+	public interface onVoiceOnOff {
+        public void onVoiceOn();
+        public void onVoiceOff();
+    }
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 	}
-
+	@Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (onVoiceOnOff) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		//get the layout
+		// get the layout
 		mRoot = inflater.inflate(R.layout.fragment_diy, container, false);
-		//initialize data
+		// initialize data
 		TabHost mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
 		mTabHost.setup();
 		mTabHost.addTab(mTabHost.newTabSpec("tab_test1").setIndicator("TAB1")
@@ -61,18 +80,28 @@ public class DIYFragment extends Fragment {
 		txtHolded = (TextView) mRoot.findViewById(R.id.txtHold);
 		txtAC = (TextView) mRoot.findViewById(R.id.txtAC);
 		txtDC = (TextView) mRoot.findViewById(R.id.txtDC);
-		//end of initializ data
+		tbtnVoice=(ToggleButton)mRoot.findViewById(R.id.tbtnVoice);
+		tbtnVoice.setOnCheckedChangeListener( new OnCheckedChangeListener() {
+	        @Override
+	        public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
+	           if(isChecked)
+	        	   mCallback.onVoiceOn();
+	           else
+	        	   mCallback.onVoiceOff();
+	        }
+	    }) ;
+		// end of initializ data
 		return mRoot;
 	}
 
-	//Fade out animation
+	// Fade out animation
 	public static Animation runFadeOutAnimationOn(Context ctx, View target) {
 		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fadeout);
 		target.startAnimation(animation);
 		return animation;
 	}
 
-	//Fade in animation
+	// Fade in animation
 	public static Animation runFadeInAnimationOn(Context ctx, View target) {
 		Animation animation = AnimationUtils.loadAnimation(ctx, R.anim.fedein);
 		target.startAnimation(animation);
@@ -81,23 +110,26 @@ public class DIYFragment extends Fragment {
 
 	/**
 	 * Sets the measurement in the text view
-	 * @param measurement value to be displayed
+	 * 
+	 * @param measurement
+	 *            value to be displayed
 	 */
 	public void updateMeasureText(String measurement) {
 		txtMeasurement.setText(measurement);
 	}
 
 	/**
-	 * Sets the holded in the text view
-	 * along with gradient animation
-	 * @param holded value to be displayed
+	 * Sets the holded in the text view along with gradient animation
+	 * 
+	 * @param holded
+	 *            value to be displayed
 	 */
 	public void updateHolded(String holded) {
 		txtHolded.setText("Holded:" + holded + "V");
-		//do a animation from red to blue gradiently
+		// do a animation from red to blue gradiently
 		Integer colorFrom = Color.RED;
 		Integer colorTo = Color.BLUE;
-		//register and init listener
+		// register and init listener
 		ValueAnimator colorAnimation = ValueAnimator.ofObject(
 				new ArgbEvaluator(), colorFrom, colorTo);
 		colorAnimation.addUpdateListener(new AnimatorUpdateListener() {
@@ -107,15 +139,17 @@ public class DIYFragment extends Fragment {
 
 			}
 		});
-		//animation duration
+		// animation duration
 		colorAnimation.setDuration(5000);
-		//play the animation
+		// play the animation
 		colorAnimation.start();
 	}
 
 	/**
 	 * Changes color at DC textview
-	 * @param color color to be for DC
+	 * 
+	 * @param color
+	 *            color to be for DC
 	 */
 	public void setColorDC(int color) {
 		txtDC.setTextColor(color);
@@ -123,7 +157,9 @@ public class DIYFragment extends Fragment {
 
 	/**
 	 * Changes color at AC textview
-	 * @param color color to be for AC
+	 * 
+	 * @param color
+	 *            color to be for AC
 	 */
 	public void setColorAC(int color) {
 		txtAC.setTextColor(color);

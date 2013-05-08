@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -29,32 +30,40 @@ import android.view.Menu;
 import android.widget.Toast;
 
 /**
- * Main activity that holds the three fragments and communicates with
- * service.
+ * Main activity that holds the three fragments and communicates with service.
+ * 
  * @author chmod
- *
+ * 
  */
 public class MainActivity extends FragmentActivity implements
-		ActionBar.TabListener {
+		ActionBar.TabListener, TextToSpeech.OnInitListener,
+		DIYFragment.onVoiceOnOff {
 	Messenger mService = null;
 	boolean mIsBound = false;
-	//Log tag
+	// Log tag
 	private static final String TAG = "MainActivity";
-	//Message handler
+	// Message handler
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	final Context context = this;
 	DIYFragment diyFragment = null;
 	EduFragment eduFragment = null;
-	ProFragment proFragment=null;
+	ProFragment proFragment = null;
 	private static final String file = "VoltSet.csv"; // Our log file
 	Logger log;
-	//init colors, max and avg
-	
+	boolean isVoiceEnabled = false;
+	// init colors, max and avg
 	Boolean alreadyColoredAC = false;
 	Boolean alreadyColoredDC = false;
-	static double max=0.0;
-	static double avg=0.0;
-	static int measurements=0;
+	static double max = 0.0;
+	static double avg = 0.0;
+	static int measurements = 0;
+	static double maxEDU = 0.0;
+	static double avgEDU = 0.0;
+	static int measurementsEDU = 0;
+	// TTS object
+	private TextToSpeech mTts;
+	// status check code
+	private int MY_DATA_CHECK_CODE = 1234;
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -75,10 +84,38 @@ public class MainActivity extends FragmentActivity implements
 				Calendar.getInstance().getTime());
 	}
 
+	public void onInit(int i) {
+		if (i == TextToSpeech.SUCCESS) {
+			if (mTts.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE)
+				mTts.setLanguage(Locale.US);
+		} else if (i == TextToSpeech.ERROR) {
+			Toast.makeText(this, "Sorry! Text To Speech failed...",
+					Toast.LENGTH_LONG).show();
+		}
+	}
+
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == MY_DATA_CHECK_CODE) {
+			if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+				// success, create the TTS instance
+				mTts = new TextToSpeech(this, this);
+			} else {
+				// missing data, install it
+				Intent installIntent = new Intent();
+				installIntent
+						.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+				startActivity(installIntent);
+			}
+		}
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		Intent checkIntent = new Intent();
+		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+		startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
 		doBindService();
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
@@ -158,15 +195,15 @@ public class MainActivity extends FragmentActivity implements
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a DummySectionFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
-			//Init the objects for each tab
+			// Init the objects for each tab
 			if (position == 0) {
 				DIYFragment fragment = new DIYFragment();
 				return fragment;
 			} else if (position == 1) {
-				ProFragment fragment= new ProFragment();
+				ProFragment fragment = new ProFragment();
 				return fragment;
 			} else if (position == 2) {
-				EduFragment fragment= new EduFragment();
+				EduFragment fragment = new EduFragment();
 				return fragment;
 			}
 			return null;
@@ -181,7 +218,7 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public CharSequence getPageTitle(int position) {
 			Locale l = Locale.getDefault();
-			//get the TAB caption in capitals
+			// get the TAB caption in capitals
 			switch (position) {
 			case 0:
 				return getString(R.string.title_section1).toUpperCase(l);
@@ -196,8 +233,9 @@ public class MainActivity extends FragmentActivity implements
 
 	/**
 	 * Inner Class responsible to process messages from service
+	 * 
 	 * @author chmod
-	 *
+	 * 
 	 */
 	@SuppressLint("HandlerLeak")
 	class IncomingHandler extends Handler {
@@ -205,34 +243,33 @@ public class MainActivity extends FragmentActivity implements
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case HardwareController_service.MSG_DISCONNECT:
-					// PANIC
-					// try to unbind
-					doUnbindService();
-					// Device is unplugged
-					// inform user
-					Toast.makeText(context, "Error! Device unplugged",
-							Toast.LENGTH_LONG).show();
-					// switch to startup activity
-					Intent startupActivity = new Intent(context,
-							StartupActivity.class);
-					//reoder to front flag
-					startupActivity
-							.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-					startActivity(startupActivity);
+				// PANIC
+				// try to unbind
+				doUnbindService();
+				// Device is unplugged
+				// inform user
+				Toast.makeText(context, "Error! Device unplugged",
+						Toast.LENGTH_LONG).show();
+				// switch to startup activity
+				Intent startupActivity = new Intent(context,
+						StartupActivity.class);
+				// reoder to front flag
+				startupActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				startActivity(startupActivity);
 				break;
 			case HardwareController_service.MSG_MEASUREMENT:
 				try {
-					String voltage = "";//immutable
-					//logger is already initialized
+					String voltage = "";// immutable
+					// logger is already initialized
 					if (log == null) {
 						log = new Logger(context);
 						log.setFile(file);
 					}
-					//parse the value
+					// parse the value
 					voltage = msg.getData().getString("dc");
-					//parse the holded value, null if no "holded" in the bundle
+					// parse the holded value, null if no "holded" in the bundle
 					String holded = msg.getData().getString("holded");
-					//avoid null
+					// avoid null
 					if (diyFragment == null)
 						diyFragment = (DIYFragment) getSupportFragmentManager()
 								.findFragmentByTag(
@@ -241,50 +278,36 @@ public class MainActivity extends FragmentActivity implements
 						eduFragment = (EduFragment) getSupportFragmentManager()
 								.findFragmentByTag(
 										"android:switcher:" + R.id.pager + ":2");
-					//we need to update the correct fragment
+					// we need to update the correct fragment
 					if (diyFragment.isVisible()) {
-						//update text
+						// update text
 						diyFragment.updateMeasureText(voltage);
 						// Log event to file, T:time, M:measurement
 						log.write("T:" + getTimeStamp() + "|M:" + voltage
 								+ "DC");
-						if(Double.valueOf(voltage)>0){
-							measurements+=1;
-							if(max>Double.valueOf(voltage))
-								max=Double.valueOf(voltage);
-							avg+=Double.valueOf(voltage)/measurements;
-						}
-						else if(Double.valueOf(voltage)==0)
-						{
-							//TODO better implementation of max/avg
-							Toast.makeText(getApplicationContext(), "AVG:"+avg+" MAX:"+max , Toast.LENGTH_SHORT).show();
-							max=0.0;
-							measurements=0;
-							avg=0.0;
-						}
-							
+
 						// Colorize
 						// AC
 						if (alreadyColoredAC == false) {
 							// Assume it's AC
 							if (Double.valueOf(voltage) > 50) {
-								//Color red
+								// Color red
 								diyFragment.setColorAC(Color.RED);
-								//And remove color from DC
+								// And remove color from DC
 								diyFragment.setColorDC(getResources().getColor(
 										R.color.generalColor));
 							}
-							//its colored, no need to recolor
+							// its colored, no need to recolor
 							alreadyColoredAC = true;
 						}
 						// DC
 						if (alreadyColoredDC == false) {
-							//DC is 0< >50, !!Tommy!!
+							// DC is 0< >50, !!Tommy!!
 							if (Double.valueOf(voltage) > 0
 									&& Double.valueOf(voltage) < 50) {
-								//Color red the DC
+								// Color red the DC
 								diyFragment.setColorDC(Color.RED);
-								//And remove color from AC
+								// And remove color from AC
 								diyFragment.setColorAC(getResources().getColor(
 										R.color.generalColor));
 							}
@@ -306,7 +329,20 @@ public class MainActivity extends FragmentActivity implements
 						// Colorize end
 						if (holded != null) {
 							{
-								//update the value and play animation
+								// show the avg and max
+								measurements += 1;
+								if (max < Double.valueOf(holded))
+									max = Double.valueOf(holded);
+								avg += Double.valueOf(voltage) / measurements;
+								showAVGandMAX(avg, max);
+								if (isVoiceEnabled) {
+									// Drop all pending entries in the
+									// playback queue.
+									mTts.speak(String.valueOf(holded)
+											+ " Volts.",
+											TextToSpeech.QUEUE_FLUSH, null);
+								}
+								// update the value and play animation
 								diyFragment.updateHolded(holded);
 							}
 						}
@@ -316,10 +352,23 @@ public class MainActivity extends FragmentActivity implements
 						log.write("T:" + getTimeStamp() + "|M:" + voltage
 								+ "DC");
 						if (holded != null) {
+							measurementsEDU += 1;
+							if (maxEDU < Double.valueOf(holded))
+								maxEDU = Double.valueOf(holded);
+							avgEDU += Double.valueOf(voltage) / measurements;
+							showAVGandMAX(avgEDU, maxEDU);
 							eduFragment.updateHolded(holded);
-							//inform user to remove cables
-							Toast.makeText(getApplicationContext(), "Remove cables now", Toast.LENGTH_SHORT).show();
-							//rotate the imageview if value was holded.
+							if (isVoiceEnabled) {
+								// Drop all pending entries in the
+								// playback queue.
+								mTts.speak(String.valueOf(holded) + " Volts.",
+										TextToSpeech.QUEUE_FLUSH, null);
+							}
+							// inform user to remove cables
+							Toast.makeText(getApplicationContext(),
+									"Remove cables now", Toast.LENGTH_SHORT)
+									.show();
+							// rotate the imageview if value was holded.
 							eduFragment.rotateArrowUpwards(holded);
 						}
 
@@ -335,15 +384,34 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
+	/**
+	 * Presentes the average and max in screen through TOAST
+	 * 
+	 * @param AVG
+	 *            the average value of measurements
+	 * @param MAX
+	 *            the maximum value of measurements
+	 */
+	private void showAVGandMAX(double AVG, double MAX) {
+		Toast.makeText(
+				getApplicationContext(),
+				"AVG:" + String.format("%.2f", AVG) + " MAX:"
+						+ String.valueOf(MAX), Toast.LENGTH_SHORT).show();
+	}
+
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
+		if (mTts != null) {
+			mTts.stop();
+			mTts.shutdown();
+		}
 		try {
-			//unbind the service, view is destroyed
+			// unbind the service, view is destroyed
 			doUnbindService();
 		} catch (Throwable t) {
 			Log.e(TAG, "Failed to unbind from the service", t);
 		}
+		super.onDestroy();
 	}
 
 	// Connection between service and activity
@@ -423,4 +491,16 @@ public class MainActivity extends FragmentActivity implements
 			Log.d(TAG, "MainActivity - unbinding.");
 		}
 	}
+
+	@Override
+	public void onVoiceOn() {
+		isVoiceEnabled = true;
+
+	}
+
+	@Override
+	public void onVoiceOff() {
+		isVoiceEnabled = false;
+	}
+
 }
