@@ -1,21 +1,15 @@
 package com.ku.voltset;
 
-import java.util.Locale;
-
 import com.ku.voltset.R;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
-import android.speech.tts.TextToSpeech;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.Toast;
 
 /**
  * Activity responsible for showing settings
@@ -26,7 +20,7 @@ import android.widget.Toast;
 public class SettingsActivity extends Activity implements
 		OnSeekBarChangeListener, OnClickListener {
 	private int duration;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,8 +28,7 @@ public class SettingsActivity extends Activity implements
 		// default value =0
 		int duration = this.getIntent().getIntExtra("duration", 0);
 		this.setDuration(duration);
-		// TODO
-		// implement duration so as to pass to other activities
+		// TODO pass these parameters to other activities
 		SeekBar durationLength = (SeekBar) findViewById(R.id.seekBar);
 		durationLength.setProgress(duration);
 		durationLength.setOnSeekBarChangeListener(this);
@@ -97,6 +90,5 @@ public class SettingsActivity extends Activity implements
 			overridePendingTransition(R.anim.left_to_right,
 					R.anim.right_to_left);
 		}
-
 	}
 }
