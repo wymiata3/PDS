@@ -1,8 +1,6 @@
 package com.ku.voltset;
 
 import com.ku.voltset.R;
-import com.ku.voltset.interfaces.VoiceOnOff;
-
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
