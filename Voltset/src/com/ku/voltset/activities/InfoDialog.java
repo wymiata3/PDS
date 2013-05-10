@@ -1,4 +1,9 @@
-package com.ku.voltset;
+package com.ku.voltset.activities;
+
+import com.ku.voltset.R;
+import com.ku.voltset.R.id;
+import com.ku.voltset.R.layout;
+import com.ku.voltset.R.string;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -22,8 +27,14 @@ public class InfoDialog extends DialogFragment {
 	String UsbCurrent = null;
 	String Beacon = null;
 
-	//Android sdk: new instance not constructor
+	//
 	//so as to get the bundled passed from startup
+	/**
+	 * Android sdk: new instance not constructor
+	 * so as to get the bundled passed from startup
+	 * @param data Bundle contains keys: serial, Luminosity, UpTime, UsbCurrent, Beacon 
+	 * @return An instance of InfoDialog
+	 */
 	static InfoDialog newInstance(Bundle data) {
 		InfoDialog f = new InfoDialog();
 		f.setArguments(data);

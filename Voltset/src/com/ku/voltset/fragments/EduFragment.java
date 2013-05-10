@@ -1,7 +1,6 @@
-package com.ku.voltset;
+package com.ku.voltset.fragments;
 
 import com.ku.voltset.R;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -35,6 +34,9 @@ public class EduFragment extends Fragment {
 	View mRoot;
 	String prevDC = "0";
 
+	/**
+	 * Default empty constructor 
+	 */
 	public EduFragment() {
 
 	}
@@ -58,10 +60,18 @@ public class EduFragment extends Fragment {
 		return mRoot;
 	}
 
+	/**
+	 * Updates UI. Sets current value of dc sensor.
+	 * @param measurement The value of measurement to be shown.
+	 */
 	public void updateMeasureText(String measurement) {
 		mVoltsText.setText(measurement);
 	}
 
+	/**
+	 * Updates UI. Sets the value of holded.
+	 * @param holded The value to be shown.
+	 */
 	public void updateHolded(String holded) {
 		prevText.setText("Holded:" + holded + "V");
 	}

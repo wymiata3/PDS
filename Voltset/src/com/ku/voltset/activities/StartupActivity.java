@@ -1,6 +1,13 @@
-package com.ku.voltset;
+package com.ku.voltset.activities;
 
 
+import com.ku.voltset.Logger;
+import com.ku.voltset.R;
+import com.ku.voltset.Share_function;
+import com.ku.voltset.R.anim;
+import com.ku.voltset.R.id;
+import com.ku.voltset.R.layout;
+import com.ku.voltset.R.menu;
 import com.yoctopuce.YoctoAPI.YAPI;
 import com.yoctopuce.YoctoAPI.YAPI_Exception;
 import com.yoctopuce.YoctoAPI.YModule;
@@ -31,12 +38,14 @@ public class StartupActivity extends FragmentActivity implements
 	ImageView infoIcon;
 	Bundle yocto_values = null;// holds device characteristics
 	private static final String file = "VoltSet.csv"; // Our log file
-//	private static final int REQUEST_ENABLE_BT = 1;
 	Handler serialscanner = new Handler();
 	YModule module = null; // null it
 	String serial = "null"; // immutable
 	final Handler handler = new Handler();
 	String mAdapter="";
+	/**
+	 *  Runnable interface. Scans for presend of YOCTO_PUS device
+	 */
 	Runnable scan = new Runnable() {
 		@Override
 		public void run() {
@@ -71,6 +80,9 @@ public class StartupActivity extends FragmentActivity implements
 
 	};
 
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.FragmentActivity#onStart()
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -89,8 +101,8 @@ public class StartupActivity extends FragmentActivity implements
 		}
 	}
 
-	/**
-	 * @author chmod Handles messages from service
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -168,11 +180,17 @@ public class StartupActivity extends FragmentActivity implements
 		super.onSaveInstanceState(savedInstanceState);
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onRestoreInstanceState(android.os.Bundle)
+	 */
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -180,6 +198,9 @@ public class StartupActivity extends FragmentActivity implements
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.view.View.OnClickListener#onClick(android.view.View)
+	 */
 	@Override
 	public void onClick(View v) {
 		// User clicked Measurement
@@ -209,7 +230,6 @@ public class StartupActivity extends FragmentActivity implements
 		}
 		// clicked on share
 		if (v.getId() == R.id.btnShare) {
-
 			Intent share = new Intent(this, Share_function.class);
 			// Bring activity to front
 			share.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -223,7 +243,7 @@ public class StartupActivity extends FragmentActivity implements
 		//User clicked bluetooth
 		if(v.getId()==R.id.btnBluetooth)
 		{
-			Intent btActivity=new Intent(this,AndroidBluetoothEchoServerActivity.class);
+			Intent btActivity=new Intent(this,AndroidBluetoothServerActivity.class);
 			startActivity(btActivity);
 			overridePendingTransition(R.anim.left_to_right,
 					R.anim.right_to_left);

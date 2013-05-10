@@ -1,6 +1,12 @@
-package com.ku.voltset;
+package com.ku.voltset.activities;
 
+import com.ku.voltset.LogViewer;
 import com.ku.voltset.R;
+import com.ku.voltset.R.anim;
+import com.ku.voltset.R.id;
+import com.ku.voltset.R.layout;
+import com.ku.voltset.R.menu;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;

@@ -1,5 +1,10 @@
-package com.ku.voltset;
+package com.ku.voltset.fragments;
 
+
+import com.ku.voltset.R;
+import com.ku.voltset.R.id;
+import com.ku.voltset.R.layout;
+import com.ku.voltset.R.string;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

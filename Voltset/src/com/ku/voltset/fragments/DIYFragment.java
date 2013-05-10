@@ -1,6 +1,10 @@
-package com.ku.voltset;
+package com.ku.voltset.fragments;
 
 import com.ku.voltset.R;
+import com.ku.voltset.R.anim;
+import com.ku.voltset.R.id;
+import com.ku.voltset.R.layout;
+
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
@@ -37,11 +41,18 @@ public class DIYFragment extends Fragment {
 	onVoiceOnOff mCallback;
 	private ToggleButton tbtnVoice;
 
+	/**
+	 * Default empty constructor
+	 */
 	public DIYFragment() {
 
 	}
 
-	// interface responsible to inform activity about if voice button is enabled
+	/**
+	 * @author chmod
+	 *interface responsible to inform activity about if voice button is enabled
+	 *Implements onVoiceOn and onVoiceOff
+	 */
 	public interface onVoiceOnOff {
 		/**
 		 * Enables voice

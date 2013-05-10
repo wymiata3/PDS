@@ -22,6 +22,10 @@ public class Logger {
 	File root = null;
 	Context context;
 
+	/**
+	 * Constructor. 
+	 * @param context Application's context for writing files
+	 */
 	public Logger(Context context) {
 		this.context = context;
 		//File will be saved to context directory

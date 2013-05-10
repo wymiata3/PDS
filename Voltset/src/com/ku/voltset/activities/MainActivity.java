@@ -1,16 +1,18 @@
-package com.ku.voltset;
+package com.ku.voltset.activities;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
+import com.ku.voltset.Logger;
 import com.ku.voltset.R;
+import com.ku.voltset.fragments.DIYFragment;
+import com.ku.voltset.fragments.EduFragment;
+import com.ku.voltset.fragments.ProFragment;
 import com.ku.voltset.services.HardwareController_service;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -38,7 +40,6 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -113,6 +114,9 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
@@ -155,6 +159,9 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.FragmentActivity#onActivityResult(int, int, android.content.Intent)
+	 */
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// data check code is just a checksum, can be any value
 		if (requestCode == MY_DATA_CHECK_CODE) {
@@ -408,7 +415,7 @@ public class MainActivity extends FragmentActivity implements
 							if (isBTEnabled) {
 								Bundle data=new Bundle();
 								data.putString("holded", holded);
-								data.putString("avg",String.valueOf(avg));
+								data.putString("avg",String.format("%.2f",avg));
 								data.putString("max", String.valueOf(max));
 								bluetoothClient = new BluetoothClient(
 										mArrayAdapter, data);
@@ -483,7 +490,9 @@ public class MainActivity extends FragmentActivity implements
 		super.onDestroy();
 	}
 
-	// Connection between service and activity
+	/**
+	 * Connection between service and activity
+	 */
 	ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			// This is called when the connection with the service has been
@@ -512,6 +521,9 @@ public class MainActivity extends FragmentActivity implements
 			Log.d(TAG, "Connected.");
 		}
 
+		/* (non-Javadoc)
+		 * @see android.content.ServiceConnection#onServiceDisconnected(android.content.ComponentName)
+		 */
 		public void onServiceDisconnected(ComponentName className) {
 			// This is called when the connection with the service has been
 			// unexpectedly disconnected -- that is, its process crashed.
@@ -521,11 +533,14 @@ public class MainActivity extends FragmentActivity implements
 		}
 	};
 
+	/**
+	 *	Establish a connection with the service. We use an explicit
+		class name because there is no reason to be able to let other
+		applications replace our component.
+		Run in another thread
+ 
+	 */
 	void doBindService() {
-		// Establish a connection with the service. We use an explicit
-		// class name because there is no reason to be able to let other
-		// applications replace our component.
-		// Run in another thread
 		Thread t = new Thread() {
 			public void run() {
 				getApplicationContext().bindService(
@@ -539,6 +554,10 @@ public class MainActivity extends FragmentActivity implements
 		Log.d(TAG, "Binding.");
 	}
 
+	/**
+	 * Unbind service from activity
+	 * Called at onDestoy()
+	 */
 	void doUnbindService() {
 		if (mIsBound) {
 			// If we have received the service, and hence registered with
@@ -581,6 +600,10 @@ public class MainActivity extends FragmentActivity implements
 		isVoiceEnabled = false;
 	}
 
+	/**
+	 * @author chmod
+	 * Inner class to send messages to bluetooth
+	 */
 	class BluetoothClient extends Thread {
 
 		BluetoothAdapter mBluetoothAdapter;
@@ -604,7 +627,7 @@ public class MainActivity extends FragmentActivity implements
 			for (String device : devices) {
 				BluetoothDevice mmDevice = mBluetoothAdapter
 						.getRemoteDevice(device);
-
+				Log.e("BT", device);
 				try {
 					// UUID string same used by server
 					clientSocket = mmDevice
@@ -613,7 +636,7 @@ public class MainActivity extends FragmentActivity implements
 					clientSocket.connect();
 					DataOutputStream out = new DataOutputStream(
 							clientSocket.getOutputStream());
-					out.writeUTF("Holded: "+voltage+" Volts "+"MAX: "+max+" AVG: "+String.format("%.2f",avg)); // Send to server
+					out.writeUTF("Holded: "+voltage+" Volts "+"MAX: "+max+" AVG: "+avg); // Send to server
 				} catch (Exception e) {
 					Log.e("BT", "ERROR", e);
 				}

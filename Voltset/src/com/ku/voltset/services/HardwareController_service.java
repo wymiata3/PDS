@@ -17,6 +17,11 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
+/**
+ * Service activity to handle communication between Activities and H/W device.
+ * @author chmod
+ *
+ */
 public class HardwareController_service extends Service {
 	String serial;
 	Handler measuringController;
@@ -90,7 +95,9 @@ public class HardwareController_service extends Service {
 		YAPI.RegisterDeviceRemovalCallback(null);
 	}
 
-	//Runnable responsible for passing measurements to activity
+	/**
+	 *Runnable responsible for passing measurements to activity 
+	 */
 	Runnable measurer = new Runnable() {
 		@Override
 		public void run() {
@@ -165,6 +172,9 @@ public class HardwareController_service extends Service {
 		}
 	};
 
+	/**
+	 * Callback if device is not found (unplugged).
+	 */
 	DeviceRemovalCallback drc = new DeviceRemovalCallback() {
 		// Device not found, panic!
 		@Override
@@ -187,7 +197,11 @@ public class HardwareController_service extends Service {
 		}
 	};
 
-	//inner class responsible to register and unregister activities
+	/**
+	 * @author chmod
+	 * inner class responsible to register and unregister activities
+	 *
+	 */
 	@SuppressLint("HandlerLeak")
 	class IncomingHandler extends Handler {
 		@Override

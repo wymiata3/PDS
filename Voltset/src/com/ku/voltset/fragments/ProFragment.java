@@ -1,4 +1,4 @@
-package com.ku.voltset;
+package com.ku.voltset.fragments;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -6,32 +6,25 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
+import com.ku.voltset.Logger;
 import com.ku.voltset.R;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 
-import android.app.DialogFragment;
-import android.app.TimePickerDialog;
-import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TimePicker;
-import android.widget.Toast;
 
 /**
  * Pro fragment, the second tab, showing graphs
@@ -48,12 +41,16 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 	TimeDialog td=TimeDialog.newInstance();
 
 	private int flag = 0;
-	//Button gettimebutton = (Button) mRoot.findViewById(R.id.Okbutton); // Take time button
 	
+	/**
+	 * Default empty constructor
+	 */
 	public ProFragment() {
-
 	}
 
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -71,6 +68,9 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 		return mRoot;
 	}
 
+	/* (non-Javadoc)
+	 * @see android.view.View.OnClickListener#onClick(android.view.View)
+	 */
 	@Override
 	public void onClick(View v) {
 		if(v.getId()==R.id.btnShow)
@@ -178,12 +178,8 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 				} catch (IOException io) {
 					io.printStackTrace();
 				}
-				
 			}
-			
-			
 		}
-		
 	}
 	
 	
@@ -260,6 +256,9 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 		return timeflag;
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.widget.AdapterView.OnItemSelectedListener#onItemSelected(android.widget.AdapterView, android.view.View, int, long)
+	 */
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View arg1, int pos,
 			long id) {
@@ -279,10 +278,12 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see android.widget.AdapterView.OnItemSelectedListener#onNothingSelected(android.widget.AdapterView)
+	 */
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// do nothing, just close
-		
 	}
 
 }

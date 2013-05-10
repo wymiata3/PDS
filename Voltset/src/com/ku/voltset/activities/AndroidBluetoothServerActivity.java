@@ -1,8 +1,10 @@
-package com.ku.voltset;
+package com.ku.voltset.activities;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.UUID;
+
+import com.ku.voltset.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,16 +19,22 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-public class AndroidBluetoothEchoServerActivity extends Activity {
+/**
+ * @author chmod
+ * Activity that listens for bluetooth messages
+ */
+public class AndroidBluetoothServerActivity extends Activity {
 	LinearLayout layout;
 	BluetoothServer bluetoothServer;
 	EditText message;
-	// private ArrayAdapter mArrayAdapter;
-
 	final Handler handler = new Handler();
+	
+	/**
+	 * Runnable to append data to edittext widget.
+	 * Called from inner class as handler.
+	 */
 	final Runnable updateUI = new Runnable() {
 		public void run() {
-//			Toast.makeText(getApplicationContext(), bluetoothServer.getBluetoothServer(), 1990).show();
 			message.append(bluetoothServer.getBluetoothServer()+"\n");
 		}
 	};
@@ -60,6 +68,10 @@ public class AndroidBluetoothEchoServerActivity extends Activity {
 	}
 }
 
+/**
+ * @author chmod
+ * Threaded class to process bluetooth connection and messages.
+ */
 class BluetoothServer extends Thread {
 	BluetoothAdapter mBluetoothAdapter = null;
 	String data = null;
@@ -81,6 +93,10 @@ class BluetoothServer extends Thread {
 		this.updateUI = updateUI;
 	}
 
+	/**
+	 * Gets the data from bluetooth. Used in the updateUI.
+	 * @return String parsed through bluetooth connect
+	 */
 	public String getBluetoothServer() {
 		return data;
 	}
@@ -113,7 +129,6 @@ class BluetoothServer extends Thread {
 					socket.close();
 				} catch (IOException e) {
 				}
-//				break;
 			}
 		}
 	}
