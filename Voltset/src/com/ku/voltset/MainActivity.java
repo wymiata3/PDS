@@ -142,6 +142,8 @@ public class MainActivity extends FragmentActivity implements
 
 					}
 				}
+				Toast.makeText(getApplicationContext(),
+						"1:" + mArrayAdapter.get(0), Toast.LENGTH_SHORT).show();
 				item.setChecked(true);
 				isBTEnabled = true;
 			} else {
