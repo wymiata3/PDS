@@ -1,13 +1,8 @@
 package com.ku.voltset.activities;
 
-
 import com.ku.voltset.Logger;
 import com.ku.voltset.R;
 import com.ku.voltset.Share_function;
-import com.ku.voltset.R.anim;
-import com.ku.voltset.R.id;
-import com.ku.voltset.R.layout;
-import com.ku.voltset.R.menu;
 import com.yoctopuce.YoctoAPI.YAPI;
 import com.yoctopuce.YoctoAPI.YAPI_Exception;
 import com.yoctopuce.YoctoAPI.YModule;
@@ -42,9 +37,9 @@ public class StartupActivity extends FragmentActivity implements
 	YModule module = null; // null it
 	String serial = "null"; // immutable
 	final Handler handler = new Handler();
-	String mAdapter="";
+	String mAdapter = "";
 	/**
-	 *  Runnable interface. Scans for presend of YOCTO_PUS device
+	 * Runnable interface. Scans for presend of YOCTO_PUS device
 	 */
 	Runnable scan = new Runnable() {
 		@Override
@@ -80,7 +75,9 @@ public class StartupActivity extends FragmentActivity implements
 
 	};
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.support.v4.app.FragmentActivity#onStart()
 	 */
 	@Override
@@ -101,7 +98,9 @@ public class StartupActivity extends FragmentActivity implements
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
 	 */
 	@Override
@@ -115,7 +114,7 @@ public class StartupActivity extends FragmentActivity implements
 		conf.setOnClickListener(this);
 		Button share = (Button) findViewById(R.id.btnShare);
 		share.setOnClickListener(this);
-		Button bt=(Button)findViewById(R.id.btnBluetooth);
+		Button bt = (Button) findViewById(R.id.btnBluetooth);
 		bt.setOnClickListener(this);
 		Button quit = (Button) findViewById(R.id.btnQuit);
 		quit.setOnClickListener(this);
@@ -180,7 +179,9 @@ public class StartupActivity extends FragmentActivity implements
 		super.onSaveInstanceState(savedInstanceState);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onRestoreInstanceState(android.os.Bundle)
 	 */
 	@Override
@@ -188,7 +189,9 @@ public class StartupActivity extends FragmentActivity implements
 		super.onRestoreInstanceState(savedInstanceState);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
 	 */
 	@Override
@@ -197,8 +200,10 @@ public class StartupActivity extends FragmentActivity implements
 		getMenuInflater().inflate(R.menu.startup, menu);
 		return true;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.view.View.OnClickListener#onClick(android.view.View)
 	 */
 	@Override
@@ -240,10 +245,10 @@ public class StartupActivity extends FragmentActivity implements
 					R.anim.right_to_left);
 
 		}
-		//User clicked bluetooth
-		if(v.getId()==R.id.btnBluetooth)
-		{
-			Intent btActivity=new Intent(this,AndroidBluetoothServerActivity.class);
+		// User clicked bluetooth
+		if (v.getId() == R.id.btnBluetooth) {
+			Intent btActivity = new Intent(this,
+					AndroidBluetoothServerActivity.class);
 			startActivity(btActivity);
 			overridePendingTransition(R.anim.left_to_right,
 					R.anim.right_to_left);
@@ -263,7 +268,7 @@ public class StartupActivity extends FragmentActivity implements
 					R.anim.right_to_left);
 		}
 		if (v.getId() == R.id.btnQuit) {// user clicked quit
-			 finish();
+			finish();
 		}
 		if (v.getId() == R.id.infoIcon) {// user clicked info
 			if (!serial.equalsIgnoreCase("null")) {

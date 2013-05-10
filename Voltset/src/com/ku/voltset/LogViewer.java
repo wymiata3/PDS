@@ -18,29 +18,32 @@ import android.widget.TextView;
 
 /**
  * Log viweing activity
+ * 
  * @author chmod
- *
+ * 
  */
 public class LogViewer extends Activity implements OnClickListener {
 	private static final String file = "VoltSet.csv"; // Our log file
 	TextView logText;
 	ScrollView sv;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_log_viewer);
-		logText = (TextView) findViewById(R.id.txtLogs);//get textview widget
-		sv = (ScrollView) findViewById(R.id.scrolllview);//get scrollview widget
-		Button btnToTop = (Button) findViewById(R.id.btnToTop);//get buttons
+		logText = (TextView) findViewById(R.id.txtLogs);// get textview widget
+		sv = (ScrollView) findViewById(R.id.scrolllview);// get scrollview
+															// widget
+		Button btnToTop = (Button) findViewById(R.id.btnToTop);// get buttons
 		Button btnToEnd = (Button) findViewById(R.id.btnToEnd);
-		//add listeners
+		// add listeners
 		btnToTop.setOnClickListener(this);
 		btnToEnd.setOnClickListener(this);
 
-		//Scrolling method in the larg text area
+		// Scrolling method in the larg text area
 		logText.setMovementMethod(new ScrollingMovementMethod());
-		//read file line by line 
-		//TODO might lock the UI, place in async task or thread.
+		// read file line by line
+		// TODO might lock the UI, place in async task or thread.
 		try {
 			Logger log = new Logger(this.getApplicationContext());
 			log.setFile(file);
@@ -58,7 +61,7 @@ public class LogViewer extends Activity implements OnClickListener {
 		} catch (IOException io) {
 			io.printStackTrace();
 		}
-		//move to the end
+		// move to the end
 		logText.post(new Runnable() {
 			public void run() {
 				sv.fullScroll(ScrollView.FOCUS_DOWN);
@@ -72,11 +75,11 @@ public class LogViewer extends Activity implements OnClickListener {
 		getMenuInflater().inflate(R.menu.log_viewer, menu);
 		return true;
 	}
-	
+
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.btnToTop) {
-			//move at top
+			// move at top
 			logText.post(new Runnable() {
 				public void run() {
 					sv.fullScroll(ScrollView.FOCUS_UP);
@@ -84,7 +87,7 @@ public class LogViewer extends Activity implements OnClickListener {
 			});
 		}
 		if (v.getId() == R.id.btnToEnd) {
-			//move at end
+			// move at end
 			logText.post(new Runnable() {
 				public void run() {
 					sv.fullScroll(ScrollView.FOCUS_DOWN);

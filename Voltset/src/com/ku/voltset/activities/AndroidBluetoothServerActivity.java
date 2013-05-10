@@ -20,22 +20,21 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 /**
- * @author chmod
- * Activity that listens for bluetooth messages
+ * @author chmod Activity that listens for bluetooth messages
  */
 public class AndroidBluetoothServerActivity extends Activity {
 	LinearLayout layout;
 	BluetoothServer bluetoothServer;
 	EditText message;
 	final Handler handler = new Handler();
-	
+
 	/**
-	 * Runnable to append data to edittext widget.
-	 * Called from inner class as handler.
+	 * Runnable to append data to edittext widget. Called from inner class as
+	 * handler.
 	 */
 	final Runnable updateUI = new Runnable() {
 		public void run() {
-			message.append(bluetoothServer.getBluetoothServer()+"\n");
+			message.append(bluetoothServer.getBluetoothServer() + "\n");
 		}
 	};
 
@@ -44,24 +43,27 @@ public class AndroidBluetoothServerActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.bluetooth);
-		message=(EditText)findViewById(R.id.txtMSG);
-		AlertDialog ad= new AlertDialog.Builder(this).create();
+		message = (EditText) findViewById(R.id.txtMSG);
+		AlertDialog ad = new AlertDialog.Builder(this).create();
 		ad.setTitle("Notice");
 		ad.setMessage("You need to already have devices paired. Do you want me to open Bluetooth settings for you?");
-		ad.setButton(ad.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				Intent intentBluetooth = new Intent();
-			    intentBluetooth.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
-			    startActivity(intentBluetooth);     
-			}
-		});
-		ad.setButton(ad.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				//Do nothing
-			}
-		});
+		ad.setButton(ad.BUTTON_POSITIVE, "Yes",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intentBluetooth = new Intent();
+						intentBluetooth
+								.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
+						startActivity(intentBluetooth);
+					}
+				});
+		ad.setButton(ad.BUTTON_NEGATIVE, "No",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// Do nothing
+					}
+				});
 		ad.show();
 		bluetoothServer = new BluetoothServer(handler, updateUI);
 		bluetoothServer.start();
@@ -69,8 +71,7 @@ public class AndroidBluetoothServerActivity extends Activity {
 }
 
 /**
- * @author chmod
- * Threaded class to process bluetooth connection and messages.
+ * @author chmod Threaded class to process bluetooth connection and messages.
  */
 class BluetoothServer extends Thread {
 	BluetoothAdapter mBluetoothAdapter = null;
@@ -95,6 +96,7 @@ class BluetoothServer extends Thread {
 
 	/**
 	 * Gets the data from bluetooth. Used in the updateUI.
+	 * 
 	 * @return String parsed through bluetooth connect
 	 */
 	public String getBluetoothServer() {
@@ -119,7 +121,7 @@ class BluetoothServer extends Thread {
 							socket.getInputStream());
 
 					data = in.readUTF();
-					handler.post( updateUI );
+					handler.post(updateUI);
 					Log.e("THREAD", data);
 				} catch (IOException e) {
 					Log.e("THREAD", "Error obtaining InputStream from socket");

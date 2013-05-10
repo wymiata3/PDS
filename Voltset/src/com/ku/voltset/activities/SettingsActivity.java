@@ -2,10 +2,6 @@ package com.ku.voltset.activities;
 
 import com.ku.voltset.LogViewer;
 import com.ku.voltset.R;
-import com.ku.voltset.R.anim;
-import com.ku.voltset.R.id;
-import com.ku.voltset.R.layout;
-import com.ku.voltset.R.menu;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -26,7 +22,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 public class SettingsActivity extends Activity implements
 		OnSeekBarChangeListener, OnClickListener {
 	private int duration;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

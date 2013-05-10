@@ -18,16 +18,20 @@ import android.os.Messenger;
 import android.os.RemoteException;
 
 /**
- * Service activity to handle communication between Activities and H/W device.
- * @author chmod
- *
+ * 
+ * @author chmod Service activity to handle communication between Activities and
+ *         H/W device.
  */
 public class HardwareController_service extends Service {
 	String serial;
 	Handler measuringController;
+	@SuppressWarnings("javadoc")
 	public static final int MSG_REGISTER_CLIENT = 1;
+	@SuppressWarnings("javadoc")
 	public static final int MSG_UNREGISTER_CLIENT = 2;
+	@SuppressWarnings("javadoc")
 	public static final int MSG_DISCONNECT = 3;
+	@SuppressWarnings("javadoc")
 	public static final int MSG_MEASUREMENT = 5;
 	// Interval to communicate with hardware
 	private static final int interval = 1;
@@ -60,7 +64,7 @@ public class HardwareController_service extends Service {
 			module = null;
 			// Get the first and scan through all modules
 			// so as to find the serial and initialize dc_sensor
-			
+
 			// TODO initialize ac_sensor too
 			module = YModule.FirstModule();
 			while (module != null) {
@@ -96,7 +100,7 @@ public class HardwareController_service extends Service {
 	}
 
 	/**
-	 *Runnable responsible for passing measurements to activity 
+	 * Runnable responsible for passing measurements to activity
 	 */
 	Runnable measurer = new Runnable() {
 		@Override
@@ -122,20 +126,20 @@ public class HardwareController_service extends Service {
 					// discard zero values, its spam
 					if (Double.valueOf(currentMeasurement) == 0
 							&& zeroSended == true) {
-						//rerun
-						//retun not necessar
+						// rerun
+						// retun not necessar
 						measuringController.postDelayed(this, interval);
 						return;
 					} else {
-						//values is not zero, we need to catch it
+						// values is not zero, we need to catch it
 						zeroSended = false;
 					}
-					//0 was sent
+					// 0 was sent
 					if (Double.valueOf(currentMeasurement) == 0.0)
 						zeroSended = true;
 					Bundle bundle = new Bundle();
 					// put dc into bundle
-					//TODO put ac into bundle too
+					// TODO put ac into bundle too
 					bundle.putString("dc", currentMeasurement);
 					if (!currentMeasurement.equalsIgnoreCase(lastMeasurement))
 						seconds = 0; // zero it if not same
@@ -168,7 +172,7 @@ public class HardwareController_service extends Service {
 				}
 			}
 			// re-run after interval
-			measuringController.postDelayed(this, interval); 
+			measuringController.postDelayed(this, interval);
 		}
 	};
 
@@ -179,9 +183,9 @@ public class HardwareController_service extends Service {
 		// Device not found, panic!
 		@Override
 		public void yDeviceRemoval(YModule module) {
-			//unregister handler
+			// unregister handler
 			measuringController.removeCallbacks(measurer);
-			//send message to all clients
+			// send message to all clients
 			Message msg = Message.obtain(null, MSG_DISCONNECT);
 			for (int i = mClients.size() - 1; i >= 0; i--) {
 				try {
@@ -193,14 +197,14 @@ public class HardwareController_service extends Service {
 					mClients.remove(i);
 				}
 			}
-			//end send message
+			// end send message
 		}
 	};
 
 	/**
-	 * @author chmod
-	 * inner class responsible to register and unregister activities
-	 *
+	 * @author chmod inner class responsible to register and unregister
+	 *         activities
+	 * 
 	 */
 	@SuppressLint("HandlerLeak")
 	class IncomingHandler extends Handler {

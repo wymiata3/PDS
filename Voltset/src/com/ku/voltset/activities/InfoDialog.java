@@ -1,9 +1,6 @@
 package com.ku.voltset.activities;
 
 import com.ku.voltset.R;
-import com.ku.voltset.R.id;
-import com.ku.voltset.R.layout;
-import com.ku.voltset.R.string;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -16,8 +13,9 @@ import android.widget.TextView;
 
 /**
  * Shows information dialog about yocto-device
+ * 
  * @author chmod
- *
+ * 
  */
 public class InfoDialog extends DialogFragment {
 	private View mRoot;
@@ -28,11 +26,14 @@ public class InfoDialog extends DialogFragment {
 	String Beacon = null;
 
 	//
-	//so as to get the bundled passed from startup
+	// so as to get the bundled passed from startup
 	/**
-	 * Android sdk: new instance not constructor
-	 * so as to get the bundled passed from startup
-	 * @param data Bundle contains keys: serial, Luminosity, UpTime, UsbCurrent, Beacon 
+	 * Android sdk: new instance not constructor so as to get the bundled passed
+	 * from startup
+	 * 
+	 * @param data
+	 *            Bundle contains keys: serial, Luminosity, UpTime, UsbCurrent,
+	 *            Beacon
 	 * @return An instance of InfoDialog
 	 */
 	static InfoDialog newInstance(Bundle data) {
@@ -44,7 +45,7 @@ public class InfoDialog extends DialogFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//actually parse the bundle arguments
+		// actually parse the bundle arguments
 		Bundle arguments = getArguments();
 		this.yocto_serial = arguments.getString("serial");
 		this.Luminosity = arguments.getString("Luminosity");
@@ -55,9 +56,9 @@ public class InfoDialog extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		//display them in a dialogbox
+		// display them in a dialogbox
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		//parse the layout
+		// parse the layout
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		mRoot = inflater.inflate(R.layout.infodialog, null);
 		// update widget values
@@ -71,9 +72,9 @@ public class InfoDialog extends DialogFragment {
 		txtView4.setText(UsbCurrent);
 		TextView beacon = (TextView) mRoot.findViewById(R.id.txtBeaconV);
 		beacon.setText(Beacon);
-		//end update
-		
-		//build the dialog butons - cancel
+		// end update
+
+		// build the dialog butons - cancel
 		builder.setView(mRoot).setNegativeButton(R.string.dialog_close,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {

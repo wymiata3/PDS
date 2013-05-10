@@ -114,7 +114,9 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
 	 */
 	@Override
@@ -159,8 +161,11 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.FragmentActivity#onActivityResult(int, int, android.content.Intent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.support.v4.app.FragmentActivity#onActivityResult(int, int,
+	 * android.content.Intent)
 	 */
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// data check code is just a checksum, can be any value
@@ -256,6 +261,7 @@ public class MainActivity extends FragmentActivity implements
 	 */
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+		@SuppressWarnings("javadoc")
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 		}
@@ -413,9 +419,10 @@ public class MainActivity extends FragmentActivity implements
 							// update the value and play animation
 							diyFragment.updateHolded(holded);
 							if (isBTEnabled) {
-								Bundle data=new Bundle();
+								Bundle data = new Bundle();
 								data.putString("holded", holded);
-								data.putString("avg",String.format("%.2f",avg));
+								data.putString("avg",
+										String.format("%.2f", avg));
 								data.putString("max", String.valueOf(max));
 								bluetoothClient = new BluetoothClient(
 										mArrayAdapter, data);
@@ -521,8 +528,12 @@ public class MainActivity extends FragmentActivity implements
 			Log.d(TAG, "Connected.");
 		}
 
-		/* (non-Javadoc)
-		 * @see android.content.ServiceConnection#onServiceDisconnected(android.content.ComponentName)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.content.ServiceConnection#onServiceDisconnected(android.content
+		 * .ComponentName)
 		 */
 		public void onServiceDisconnected(ComponentName className) {
 			// This is called when the connection with the service has been
@@ -534,11 +545,9 @@ public class MainActivity extends FragmentActivity implements
 	};
 
 	/**
-	 *	Establish a connection with the service. We use an explicit
-		class name because there is no reason to be able to let other
-		applications replace our component.
-		Run in another thread
- 
+	 * Establish a connection with the service. We use an explicit class name
+	 * because there is no reason to be able to let other applications replace
+	 * our component. Run in another thread
 	 */
 	void doBindService() {
 		Thread t = new Thread() {
@@ -555,8 +564,7 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	/**
-	 * Unbind service from activity
-	 * Called at onDestoy()
+	 * Unbind service from activity Called at onDestoy()
 	 */
 	void doUnbindService() {
 		if (mIsBound) {
@@ -601,24 +609,24 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	/**
-	 * @author chmod
-	 * Inner class to send messages to bluetooth
+	 * @author chmod Inner class to send messages to bluetooth
 	 */
 	class BluetoothClient extends Thread {
 
 		BluetoothAdapter mBluetoothAdapter;
-		private Bundle data= null;
+		private Bundle data = null;
 		List<String> devices;
-		String voltage=null;
-		String avg=null;
-		String max=null;
+		String voltage = null;
+		String avg = null;
+		String max = null;
+
 		public BluetoothClient(List<String> deviceList, Bundle data) {
 			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 			this.devices = deviceList;
 			this.data = data;
-			voltage=data.getString("holded");
-			avg=data.getString("avg");
-			max=data.getString("max");
+			voltage = data.getString("holded");
+			avg = data.getString("avg");
+			max = data.getString("max");
 		}
 
 		public void run() {
@@ -636,7 +644,8 @@ public class MainActivity extends FragmentActivity implements
 					clientSocket.connect();
 					DataOutputStream out = new DataOutputStream(
 							clientSocket.getOutputStream());
-					out.writeUTF("Holded: "+voltage+" Volts "+"MAX: "+max+" AVG: "+avg); // Send to server
+					out.writeUTF("Holded: " + voltage + " Volts " + "MAX: "
+							+ max + " AVG: " + avg); // Send to server
 				} catch (Exception e) {
 					Log.e("BT", "ERROR", e);
 				}

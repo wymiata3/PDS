@@ -14,14 +14,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
- * Fragment responsible for showing Edu tab
- * tab is for educational purposes with an animated image arrow
+ * Fragment responsible for showing Edu tab tab is for educational purposes with
+ * an animated image arrow
+ * 
  * @author chmod
  * 
- */
-/**
- * @author chmod
- *
  */
 public class EduFragment extends Fragment {
 	ImageView image; // Arrow image
@@ -35,7 +32,7 @@ public class EduFragment extends Fragment {
 	String prevDC = "0";
 
 	/**
-	 * Default empty constructor 
+	 * Default empty constructor
 	 */
 	public EduFragment() {
 
@@ -62,7 +59,9 @@ public class EduFragment extends Fragment {
 
 	/**
 	 * Updates UI. Sets current value of dc sensor.
-	 * @param measurement The value of measurement to be shown.
+	 * 
+	 * @param measurement
+	 *            The value of measurement to be shown.
 	 */
 	public void updateMeasureText(String measurement) {
 		mVoltsText.setText(measurement);
@@ -70,7 +69,9 @@ public class EduFragment extends Fragment {
 
 	/**
 	 * Updates UI. Sets the value of holded.
-	 * @param holded The value to be shown.
+	 * 
+	 * @param holded
+	 *            The value to be shown.
 	 */
 	public void updateHolded(String holded) {
 		prevText.setText("Holded:" + holded + "V");
@@ -102,14 +103,16 @@ public class EduFragment extends Fragment {
 
 	/**
 	 * Method to make arrow animate up to holded value
-	 * @param holded Holds the value in a climate of max 5*36
+	 * 
+	 * @param holded
+	 *            Holds the value in a climate of max 5*36
 	 */
 	public void rotateArrowUpwards(String holded) {
-		//Dont rotate if same value
-		if(prevDC.equalsIgnoreCase(holded))
-			rotate=null;
-		if (rotate == null ) {
-			//Climax is 5(max) * 36
+		// Dont rotate if same value
+		if (prevDC.equalsIgnoreCase(holded))
+			rotate = null;
+		if (rotate == null) {
+			// Climax is 5(max) * 36
 			rotate = new RotateAnimation(0, Float.valueOf(holded) * 36,
 					Animation.RELATIVE_TO_SELF, Xaxis,
 					Animation.RELATIVE_TO_SELF, Yaxis);
@@ -119,11 +122,11 @@ public class EduFragment extends Fragment {
 			rotate.setAnimationListener(animationListener);
 			image.startAnimation(rotate);
 		}
-		prevDC=holded;
-		
+		prevDC = holded;
+
 	}
 
-	//Not implemented yet
+	// Not implemented yet
 	public void rotateArrowBackwards(String currentMeasurement) {
 		// rotate = new RotateAnimation(
 		// Float.valueOf(currentMeasurement) * 36, 0,

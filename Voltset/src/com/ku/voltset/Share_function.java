@@ -16,34 +16,36 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-/** 
- * This class implements the share function in which users are able to send a message through the mail service
- * or Bluetooth to another mobile.
+/**
+ * This class implements the share function in which users are able to send a
+ * message through the mail service or Bluetooth to another mobile.
  */
-public class Share_function extends Activity implements OnSeekBarChangeListener{
+public class Share_function extends Activity implements OnSeekBarChangeListener {
 	/**
 	 * Sets up the screen and allows sharing measurements with others.
 	 * 
-	 * @param savedInstanceState the current application state.
+	 * @param savedInstanceState
+	 *            the current application state.
 	 */
-	protected void onCreate (Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.share_activity); //The layout for this functionality
-	    final String file = "VoltSet.csv"; // Our log file
-	    
-	    Button GetLogsButton = (Button) findViewById(R.id.GetLogsButton);
-	    Button DeleteButton = (Button) findViewById(R.id.DeleteButton);
-	    Button buttonSend = (Button) findViewById(R.id.SendButton);
-	    final EditText ToText = (EditText) findViewById(R.id.ToText);
-	    final EditText SubjectText = (EditText) findViewById(R.id.SubjectText);
-	    final EditText MessageText = (EditText) findViewById(R.id.MessageText);
-	    
-	    
-	    /*This is a way to get the logs from the measurements and paste them into message so as 
-	    a user can send the whole log file through e-mail
-	    */
-	    String logs = "";
-	    try {
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.share_activity); // The layout for this
+													// functionality
+		final String file = "VoltSet.csv"; // Our log file
+
+		Button GetLogsButton = (Button) findViewById(R.id.GetLogsButton);
+		Button DeleteButton = (Button) findViewById(R.id.DeleteButton);
+		Button buttonSend = (Button) findViewById(R.id.SendButton);
+		final EditText ToText = (EditText) findViewById(R.id.ToText);
+		final EditText SubjectText = (EditText) findViewById(R.id.SubjectText);
+		final EditText MessageText = (EditText) findViewById(R.id.MessageText);
+
+		/*
+		 * This is a way to get the logs from the measurements and paste them
+		 * into message so as a user can send the whole log file through e-mail
+		 */
+		String logs = "";
+		try {
 			Logger log = new Logger(this.getApplicationContext());
 			log.setFile(file);
 			FileInputStream fstream = new FileInputStream(log.getFile());
@@ -60,78 +62,80 @@ public class Share_function extends Activity implements OnSeekBarChangeListener{
 		} catch (IOException io) {
 			io.printStackTrace();
 		}
-	    
-	    
-	    final String flogs = logs; 
-	    GetLogsButton.setOnClickListener(new OnClickListener() {
-			
+
+		final String flogs = logs;
+		GetLogsButton.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 
 				MessageText.append(flogs);
-				
+
 			}
 		});
-	    
-	    /*
-	     * This is a way to delete the current text of the message
-	     */
-	    DeleteButton.setOnClickListener(new OnClickListener() {	
-			
+
+		/*
+		 * This is a way to delete the current text of the message
+		 */
+		DeleteButton.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
-				
+
 				MessageText.setText("Message:");
-				
+
 			}
 		});
-	    
-	    buttonSend.setOnClickListener(new OnClickListener(){
-	    
-	        @Override
-	        public void onClick(View v) {
-	        	
-	        	//keep the receiver, the subject and the message as a parameters and remove the first part of the
-	        	//string since each EditText includes a word to clarify each field to the user
-	            String to = ToText.getText().toString();
-	            to = to.substring(3, to.length());
-	            String subject = SubjectText.getText().toString();
-	            subject = subject.substring(8, subject.length());
-	            String message = MessageText.getText().toString();
-	            message = message.substring(8, message.length());
 
-	            Intent email = new Intent(Intent.ACTION_SEND);
-	            email.putExtra(Intent.EXTRA_EMAIL, new String[] { to });
-	            email.putExtra(Intent.EXTRA_SUBJECT, subject);
-	            email.putExtra(Intent.EXTRA_TEXT, message);
+		buttonSend.setOnClickListener(new OnClickListener() {
 
-	            // need this to prompts email client only
-	            email.setType("message/rfc822");
+			@Override
+			public void onClick(View v) {
 
-	            startActivity(Intent.createChooser(email, "Choose an Email client :"));
+				// keep the receiver, the subject and the message as a
+				// parameters and remove the first part of the
+				// string since each EditText includes a word to clarify each
+				// field to the user
+				String to = ToText.getText().toString();
+				to = to.substring(3, to.length());
+				String subject = SubjectText.getText().toString();
+				subject = subject.substring(8, subject.length());
+				String message = MessageText.getText().toString();
+				message = message.substring(8, message.length());
 
-	        }
-	    });
-	    
+				Intent email = new Intent(Intent.ACTION_SEND);
+				email.putExtra(Intent.EXTRA_EMAIL, new String[] { to });
+				email.putExtra(Intent.EXTRA_SUBJECT, subject);
+				email.putExtra(Intent.EXTRA_TEXT, message);
+
+				// need this to prompts email client only
+				email.setType("message/rfc822");
+
+				startActivity(Intent.createChooser(email,
+						"Choose an Email client :"));
+
+			}
+		});
+
 	}
 
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
 			boolean fromUser) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStartTrackingTouch(SeekBar seekBar) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
