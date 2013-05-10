@@ -10,7 +10,7 @@
 
     <string name="presets">Presets:</string>
     <string name="app_name">VoltSet 1.0</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Bluetooth Share</string>
     <string name="staticLabel_measure">Measuring:</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_date_activity">Date</string>
@@ -29,11 +29,9 @@
     <string name="infoIcon">info</string>
     <string name="app_id">147486155427446</string>
     <string name="title_activity_log_viewer">LogViewer</string>
-
     <string-array name="graph_options">
         <item>Whole log</item>
-        <item>Date interval</item>
         <item>Time interval</item>
-        <item>Custom</item>
     </string-array>
+    <string name="title_activity_android_bluetooth">AndroidBluetooth</string>
 </resources>

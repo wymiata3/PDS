@@ -21,56 +21,11 @@
             <Button
                 android:id="@+id/btnMeasure"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="19dp"
                 android:text="@string/readingButton" />
-
-            <Button
-                android:id="@+id/btnProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/btnMeasure"
-                android:layout_alignRight="@+id/btnMeasure"
-                android:layout_below="@+id/btnMeasure"
-                android:text="@string/profile" />
-            
-			<Button
-			    android:id="@+id/btnShare"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:layout_alignLeft="@+id/btnProfile"
-			    android:layout_alignRight="@+id/btnProfile"
-			    android:layout_below="@+id/btnProfile"
-			    android:text="@string/share" />
-			
-            <Button
-                android:id="@+id/btnVault"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/btnShare"
-                android:layout_alignRight="@+id/btnShare"
-                android:layout_below="@+id/btnShare"
-                android:text="@string/vault" />
-
-            <Button
-                android:id="@+id/btnConf"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/btnVault"
-                android:layout_alignRight="@+id/btnVault"
-                android:layout_below="@+id/btnVault"
-                android:text="@string/conf" />
-
-            <Button
-                android:id="@+id/btnQuit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/btnConf"
-                android:layout_alignRight="@+id/btnConf"
-                android:layout_below="@+id/btnConf"
-                android:text="@string/quit" />
 
             <RelativeLayout
                 android:id="@+id/relativeLayout1"
@@ -90,7 +45,56 @@
                     android:contentDescription="@string/infoIcon"
                     android:src="@drawable/info" />
             </RelativeLayout>
+
+            <Button
+                android:id="@+id/btnBluetooth"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignLeft="@+id/btnMeasure"
+                android:layout_below="@+id/btnMeasure"
+                android:text="Bluetooth" />
+
+            <Button
+                android:id="@+id/btnConf"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignLeft="@+id/btnBluetooth"
+                android:layout_below="@+id/btnBluetooth"
+                android:text="@string/conf" />
+
+            <Button
+                android:id="@+id/btnProfile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignLeft="@+id/btnBluetooth"
+                android:layout_below="@+id/btnConf"
+                android:text="@string/profile" />
+
+            <Button
+                android:id="@+id/btnShare"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignLeft="@+id/btnBluetooth"
+                android:layout_below="@+id/btnProfile"
+                android:text="@string/share" />
+
+            <Button
+                android:id="@+id/btnVault"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignLeft="@+id/btnBluetooth"
+                android:layout_below="@+id/btnShare"
+                android:text="@string/vault" />
+
+            <Button
+                android:id="@+id/btnQuit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignLeft="@+id/btnBluetooth"
+                android:layout_below="@+id/btnVault"
+                android:text="@string/quit" />
         </RelativeLayout>
+
     </ScrollView>
 
 </FrameLayout>

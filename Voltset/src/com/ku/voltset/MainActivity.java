@@ -1,13 +1,23 @@
 package com.ku.voltset;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 
 import com.ku.voltset.R;
 import com.ku.voltset.services.HardwareController_service;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +37,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -39,6 +51,9 @@ public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener, TextToSpeech.OnInitListener,
 		DIYFragment.onVoiceOnOff {
 	Messenger mService = null;
+	BluetoothClient bluetoothClient;
+	private static final int REQUEST_ENABLE_BT = 1;
+	List<String> mArrayAdapter = new ArrayList<String>();
 	boolean mIsBound = false;
 	// Log tag
 	private static final String TAG = "MainActivity";
@@ -51,6 +66,7 @@ public class MainActivity extends FragmentActivity implements
 	private static final String file = "VoltSet.csv"; // Our log file
 	Logger log;
 	boolean isVoiceEnabled = false;
+	boolean isBTEnabled = false;
 	// init colors, max and avg
 	Boolean alreadyColoredAC = false;
 	Boolean alreadyColoredDC = false;
@@ -85,20 +101,64 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	public void onInit(int i) {
-		//do we have tts engine?
+		// do we have tts engine?
 		if (i == TextToSpeech.SUCCESS) {
-			//is us locale avaible? Then set it
+			// is us locale avaible? Then set it
 			if (mTts.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE)
 				mTts.setLanguage(Locale.US);
-			//inform about error
+			// inform about error
 		} else if (i == TextToSpeech.ERROR) {
 			Toast.makeText(this, "Sorry! Text To Speech failed...",
 					Toast.LENGTH_LONG).show();
 		}
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			if (!item.isChecked()) {
+				BluetoothAdapter mBluetoothAdapter = BluetoothAdapter
+						.getDefaultAdapter();
+				if (mBluetoothAdapter == null) {
+					// Device does not support Bluetooth
+				}
+				if (!mBluetoothAdapter.isEnabled()) {
+					Intent enableBtIntent = new Intent(
+							BluetoothAdapter.ACTION_REQUEST_ENABLE);
+					startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+				}
+				Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
+						.getBondedDevices();
+				// If there are paired devices
+				if (pairedDevices.size() > 0) {
+					// Loop through paired devices
+					for (BluetoothDevice device : pairedDevices) {
+						// Add the name and address to an array adapter to show
+						// in a
+						// ListView
+						mArrayAdapter.add(device.getAddress());
+
+					}
+				}
+				Toast.makeText(getApplicationContext(),
+						"1:" + mArrayAdapter.get(0), Toast.LENGTH_SHORT).show();
+				item.setChecked(true);
+				isBTEnabled = true;
+			} else {
+				isBTEnabled = false;
+				item.setChecked(false);
+				// TODO Stop bt
+			}
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		//data check code is just a checksum, can be any value
+		// data check code is just a checksum, can be any value
 		if (requestCode == MY_DATA_CHECK_CODE) {
 			if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 				// success, create the TTS instance
@@ -117,7 +177,7 @@ public class MainActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		//start internal activity to check if there is TTS engine 
+		// start internal activity to check if there is TTS engine
 		Intent checkIntent = new Intent();
 		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
@@ -333,22 +393,28 @@ public class MainActivity extends FragmentActivity implements
 						}
 						// Colorize end
 						if (holded != null) {
-							{
-								// show the avg and max
-								measurements += 1;
-								if (max < Double.valueOf(holded))
-									max = Double.valueOf(holded);
-								avg += Double.valueOf(voltage) / measurements;
-								showAVGandMAX(avg, max);
-								if (isVoiceEnabled) {
-									// Drop all pending entries in the
-									// playback queue.
-									mTts.speak(String.valueOf(holded)
-											+ " Volts.",
-											TextToSpeech.QUEUE_FLUSH, null);
-								}
-								// update the value and play animation
-								diyFragment.updateHolded(holded);
+							// show the avg and max
+							measurements += 1;
+							if (max < Double.valueOf(holded))
+								max = Double.valueOf(holded);
+							avg += Double.valueOf(voltage) / measurements;
+							showAVGandMAX(avg, max);
+							if (isVoiceEnabled) {
+								// Drop all pending entries in the
+								// playback queue.
+								mTts.speak(String.valueOf(holded) + " Volts.",
+										TextToSpeech.QUEUE_FLUSH, null);
+							}
+							// update the value and play animation
+							diyFragment.updateHolded(holded);
+							if (isBTEnabled) {
+								Bundle data=new Bundle();
+								data.putString("holded", holded);
+								data.putString("avg",String.valueOf(avg));
+								data.putString("max", String.valueOf(max));
+								bluetoothClient = new BluetoothClient(
+										mArrayAdapter, data);
+								bluetoothClient.start();
 							}
 						}
 					} else if (eduFragment.isVisible()) {
@@ -497,20 +563,64 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.ku.voltset.DIYFragment.onVoiceOnOff#onVoiceOn()
 	 */
 	@Override
 	public void onVoiceOn() {
 		isVoiceEnabled = true;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.ku.voltset.DIYFragment.onVoiceOnOff#onVoiceOff()
 	 */
 	@Override
 	public void onVoiceOff() {
 		isVoiceEnabled = false;
+	}
+
+	class BluetoothClient extends Thread {
+
+		BluetoothAdapter mBluetoothAdapter;
+		private Bundle data= null;
+		List<String> devices;
+		String voltage=null;
+		String avg=null;
+		String max=null;
+		public BluetoothClient(List<String> deviceList, Bundle data) {
+			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+			this.devices = deviceList;
+			this.data = data;
+			voltage=data.getString("holded");
+			avg=data.getString("avg");
+			max=data.getString("max");
+		}
+
+		public void run() {
+			BluetoothSocket clientSocket = null;
+			// Client knows the server MAC address
+			for (String device : devices) {
+				BluetoothDevice mmDevice = mBluetoothAdapter
+						.getRemoteDevice(device);
+
+				try {
+					// UUID string same used by server
+					clientSocket = mmDevice
+							.createRfcommSocketToServiceRecord(UUID
+									.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+					clientSocket.connect();
+					DataOutputStream out = new DataOutputStream(
+							clientSocket.getOutputStream());
+					out.writeUTF("Holded: "+voltage+" Volts "+"MAX: "+max+" AVG: "+String.format("%.2f",avg)); // Send to server
+				} catch (Exception e) {
+					Log.e("BT", "ERROR", e);
+				}
+			}
+		}
 	}
 
 }

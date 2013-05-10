@@ -1,5 +1,6 @@
 package com.ku.voltset;
 
+
 import com.yoctopuce.YoctoAPI.YAPI;
 import com.yoctopuce.YoctoAPI.YAPI_Exception;
 import com.yoctopuce.YoctoAPI.YModule;
@@ -30,9 +31,12 @@ public class StartupActivity extends FragmentActivity implements
 	ImageView infoIcon;
 	Bundle yocto_values = null;// holds device characteristics
 	private static final String file = "VoltSet.csv"; // Our log file
+//	private static final int REQUEST_ENABLE_BT = 1;
 	Handler serialscanner = new Handler();
 	YModule module = null; // null it
 	String serial = "null"; // immutable
+	final Handler handler = new Handler();
+	String mAdapter="";
 	Runnable scan = new Runnable() {
 		@Override
 		public void run() {
@@ -99,6 +103,8 @@ public class StartupActivity extends FragmentActivity implements
 		conf.setOnClickListener(this);
 		Button share = (Button) findViewById(R.id.btnShare);
 		share.setOnClickListener(this);
+		Button bt=(Button)findViewById(R.id.btnBluetooth);
+		bt.setOnClickListener(this);
 		Button quit = (Button) findViewById(R.id.btnQuit);
 		quit.setOnClickListener(this);
 		infoIcon = (ImageView) findViewById(R.id.infoIcon);
@@ -173,11 +179,11 @@ public class StartupActivity extends FragmentActivity implements
 		getMenuInflater().inflate(R.menu.startup, menu);
 		return true;
 	}
-
+	
 	@Override
 	public void onClick(View v) {
 		// User clicked Measurement
-		
+
 		if (v.getId() == R.id.btnMeasure) {
 			// we have connected device?
 			if (!serial.equalsIgnoreCase("null")) {
@@ -191,17 +197,14 @@ public class StartupActivity extends FragmentActivity implements
 				overridePendingTransition(R.anim.left_to_right,
 						R.anim.right_to_left);
 			} else {
-				
 				// dont progress to next activity is serial is "null"
 				// and inform user
-
 				Toast.makeText(getApplicationContext(),
 						"Device not found, can't proceed", Toast.LENGTH_SHORT)
 						.show();
 				return;
-				
+
 			}
-			
 
 		}
 		// clicked on share
@@ -216,6 +219,14 @@ public class StartupActivity extends FragmentActivity implements
 			overridePendingTransition(R.anim.left_to_right,
 					R.anim.right_to_left);
 
+		}
+		//User clicked bluetooth
+		if(v.getId()==R.id.btnBluetooth)
+		{
+			Intent btActivity=new Intent(this,AndroidBluetoothEchoServerActivity.class);
+			startActivity(btActivity);
+			overridePendingTransition(R.anim.left_to_right,
+					R.anim.right_to_left);
 		}
 		// User clicked conf
 		if (v.getId() == R.id.btnConf) {
@@ -232,7 +243,7 @@ public class StartupActivity extends FragmentActivity implements
 					R.anim.right_to_left);
 		}
 		if (v.getId() == R.id.btnQuit) {// user clicked quit
-			finish();
+			 finish();
 		}
 		if (v.getId() == R.id.infoIcon) {// user clicked info
 			if (!serial.equalsIgnoreCase("null")) {

@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import android.R.string;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

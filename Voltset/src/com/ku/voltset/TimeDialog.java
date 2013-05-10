@@ -1,6 +1,5 @@
 package com.ku.voltset;
 
-import java.util.Calendar;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -10,7 +9,6 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TimePicker;
-import android.widget.Toast;
 /**
  * creates a Dialog for selecting a time range.
  *
@@ -103,29 +101,27 @@ public class TimeDialog extends DialogFragment {
 	}
 	
 	
-	/** 
-	 * not working....
-	 */
-	private void setCurrentTimeOnView() {
-		
-		LayoutInflater inflater = getActivity().getLayoutInflater();
-		mRoot = inflater.inflate(R.layout.time_layout, null);
-		TimePicker timePicker1 = (TimePicker) mRoot.findViewById(R.id.tmpickerFrom);
-		TimePicker timePicker2 = (TimePicker) mRoot.findViewById(R.id.tmpickerTo);
-		int hour;
-		int minute;
-		
-		final Calendar c = Calendar.getInstance();
-		hour = c.get(Calendar.HOUR_OF_DAY);
-		minute = c.get(Calendar.MINUTE);
- 
-		// set current time into timepicker
-		timePicker1.setCurrentHour(0);
-		timePicker1.setCurrentMinute(0);
-		timePicker2.setCurrentHour(0);
-		timePicker2.setCurrentMinute(0);
-		Toast.makeText(getActivity(), "smthing", 4000).show();
-	}
+//	/** 
+//	 * not working....
+//	 */
+//	private void setCurrentTimeOnView() {
+//		
+//		LayoutInflater inflater = getActivity().getLayoutInflater();
+//		mRoot = inflater.inflate(R.layout.time_layout, null);
+//		TimePicker timePicker1 = (TimePicker) mRoot.findViewById(R.id.tmpickerFrom);
+//		TimePicker timePicker2 = (TimePicker) mRoot.findViewById(R.id.tmpickerTo);
+//		
+//		final Calendar c = Calendar.getInstance();
+////		int hour = c.get(Calendar.HOUR_OF_DAY);
+////		int minute = c.get(Calendar.MINUTE);
+// 
+//		// set current time into timepicker
+//		timePicker1.setCurrentHour(0);
+//		timePicker1.setCurrentMinute(0);
+//		timePicker2.setCurrentHour(0);
+//		timePicker2.setCurrentMinute(0);
+//		Toast.makeText(getActivity(), "smthing",).show();
+//	}
 
 	/**
 	 * Sets up a dialog for time interval selection.

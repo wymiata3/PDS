@@ -26,8 +26,7 @@
             android:name="com.ku.voltset.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
-        <activity
-            android:name="com.ku.voltset.bluetooth.DeviceListActivity">
+        <activity android:name="com.ku.voltset.AndroidBluetoothEchoServerActivity" >
         </activity>
         <activity
             android:name="com.ku.voltset.DateDialog"
@@ -66,6 +65,10 @@
         <activity
             android:name="com.ku.voltset.LogViewer"
             android:label="@string/title_activity_log_viewer" >
+        </activity>
+        <activity
+            android:name="com.ku.voltset.AndroidBluetooth"
+            android:label="@string/title_activity_android_bluetooth" >
         </activity>
     </application>
 

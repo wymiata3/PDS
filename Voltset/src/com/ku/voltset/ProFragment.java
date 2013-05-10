@@ -46,7 +46,6 @@ public class ProFragment extends Fragment implements OnClickListener,OnItemSelec
 	String userChoice="all";
 	private static final String file = "VoltSet.csv"; // Our log file
 	TimeDialog td=TimeDialog.newInstance();
-	DialogFragment dd=DateDialog.newInstance();
 
 	private int flag = 0;
 	//Button gettimebutton = (Button) mRoot.findViewById(R.id.Okbutton); // Take time button
