@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>SettingsActivity</groupId>
-	<artifactId>SettingsActivity</artifactId>
+	<groupId>MainActivity</groupId>
+	<artifactId>MainActivity</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>apk</packaging>
 
@@ -56,7 +56,6 @@
 					<resourceDirectory>${project.basedir}/res</resourceDirectory>
 					<nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>
 					<sdk>
-					    <path>c:/users/chmod//android-sdks</path>
 						<platform>17</platform>
 					</sdk>
 					<undeployBeforeDeploy>true</undeployBeforeDeploy>
