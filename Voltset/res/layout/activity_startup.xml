@@ -25,7 +25,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="19dp"
-                android:text="@string/readingButton" />
+                android:text="@string/readingButton" 
+                android:background="@drawable/purple_btn"/>
 
             <RelativeLayout
                 android:id="@+id/relativeLayout1"
@@ -52,7 +53,8 @@
                 android:layout_height="match_parent"
                 android:layout_alignLeft="@+id/btnMeasure"
                 android:layout_below="@+id/btnMeasure"
-                android:text="Bluetooth" />
+                android:text="Bluetooth"
+                android:background="@drawable/purple_btn" />
 
             <Button
                 android:id="@+id/btnConf"
@@ -60,7 +62,8 @@
                 android:layout_height="match_parent"
                 android:layout_alignLeft="@+id/btnBluetooth"
                 android:layout_below="@+id/btnBluetooth"
-                android:text="@string/conf" />
+                android:text="@string/conf" 
+                android:background="@drawable/purple_btn"/>
 
             <Button
                 android:id="@+id/btnProfile"
@@ -68,7 +71,8 @@
                 android:layout_height="match_parent"
                 android:layout_alignLeft="@+id/btnBluetooth"
                 android:layout_below="@+id/btnConf"
-                android:text="@string/profile" />
+                android:text="@string/profile"
+                android:background="@drawable/purple_btn" />
 
             <Button
                 android:id="@+id/btnShare"
@@ -76,7 +80,8 @@
                 android:layout_height="match_parent"
                 android:layout_alignLeft="@+id/btnBluetooth"
                 android:layout_below="@+id/btnProfile"
-                android:text="@string/share" />
+                android:text="@string/share"
+                android:background="@drawable/purple_btn" />
 
             <Button
                 android:id="@+id/btnVault"
@@ -84,7 +89,8 @@
                 android:layout_height="match_parent"
                 android:layout_alignLeft="@+id/btnBluetooth"
                 android:layout_below="@+id/btnShare"
-                android:text="@string/vault" />
+                android:text="@string/vault" 
+                android:background="@drawable/purple_btn"/>
 
             <Button
                 android:id="@+id/btnQuit"
@@ -92,7 +98,8 @@
                 android:layout_height="match_parent"
                 android:layout_alignLeft="@+id/btnBluetooth"
                 android:layout_below="@+id/btnVault"
-                android:text="@string/quit" />
+                android:text="@string/quit"
+                android:background="@drawable/purple_btn" />
         </RelativeLayout>
 
     </ScrollView>
