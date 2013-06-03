@@ -1,7 +1,6 @@
 package com.ku.voltset.fragments;
 
 import com.ku.voltset.R;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;

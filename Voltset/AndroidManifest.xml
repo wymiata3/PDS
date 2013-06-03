@@ -29,11 +29,7 @@
         <activity android:name="com.ku.voltset.activities.AndroidBluetoothServerActivity" >
         </activity>
         <activity
-            android:name="com.ku.voltset.DateDialog"
-            android:label="@string/title_date_activity" >
-        </activity>
-        <activity
-            android:name="com.ku.voltset.Share_function"
+            android:name="com.ku.voltset.activities.Share_function"
             android:label="@string/title_share_activity" >
         </activity>
         <activity
@@ -63,12 +59,8 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.ku.voltset.LogViewer"
+            android:name="com.ku.voltset.activities.LogViewer"
             android:label="@string/title_activity_log_viewer" >
-        </activity>
-        <activity
-            android:name="com.ku.voltset.AndroidBluetooth"
-            android:label="@string/title_activity_android_bluetooth" >
         </activity>
     </application>
 

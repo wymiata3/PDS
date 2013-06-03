@@ -1,6 +1,5 @@
 package com.ku.voltset.activities;
 
-import com.ku.voltset.LogViewer;
 import com.ku.voltset.R;
 
 import android.os.Bundle;

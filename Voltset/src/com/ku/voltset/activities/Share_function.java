@@ -1,10 +1,15 @@
-package com.ku.voltset;
+package com.ku.voltset.activities;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import com.ku.voltset.Logger;
+import com.ku.voltset.R;
+import com.ku.voltset.R.id;
+import com.ku.voltset.R.layout;
 
 import android.app.Activity;
 import android.content.Intent;
