@@ -1,4 +1,4 @@
-package com.ku.voltset.activities;
+package com.ku.voltset.fragments;
 
 import com.ku.voltset.R;
 
@@ -36,7 +36,7 @@ public class InfoDialog extends DialogFragment {
 	 *            Beacon
 	 * @return An instance of InfoDialog
 	 */
-	static InfoDialog newInstance(Bundle data) {
+	public static InfoDialog newInstance(Bundle data) {
 		InfoDialog f = new InfoDialog();
 		f.setArguments(data);
 		return f;

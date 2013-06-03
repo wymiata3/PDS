@@ -2,6 +2,7 @@ package com.ku.voltset.activities;
 
 import com.ku.voltset.Logger;
 import com.ku.voltset.R;
+import com.ku.voltset.fragments.InfoDialog;
 import com.yoctopuce.YoctoAPI.YAPI;
 import com.yoctopuce.YoctoAPI.YAPI_Exception;
 import com.yoctopuce.YoctoAPI.YModule;
