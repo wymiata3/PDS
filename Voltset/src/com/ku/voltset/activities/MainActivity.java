@@ -1,6 +1,9 @@
 package com.ku.voltset.activities;
 
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -642,10 +645,13 @@ public class MainActivity extends FragmentActivity implements
 							.createRfcommSocketToServiceRecord(UUID
 									.fromString("00001101-0000-1000-8000-00805F9B34FB"));
 					clientSocket.connect();
-					DataOutputStream out = new DataOutputStream(
-							clientSocket.getOutputStream());
-					out.writeUTF("Holded: " + voltage + " Volts " + "MAX: "
-							+ max + " AVG: " + avg); // Send to server
+					PrintWriter pWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream())));
+					pWriter.write("Holded: " + voltage + " Volts " + "MAX: "
+							+ max + " AVG: " + avg);
+//					DataOutputStream out = new DataOutputStream(
+//							clientSocket.getOutputStream());
+//					out.writeUTF("Holded: " + voltage + " Volts " + "MAX: "
+//							+ max + " AVG: " + avg); // Send to server
 				} catch (Exception e) {
 					Log.e("BT", "ERROR", e);
 				}
