@@ -9,6 +9,7 @@ import com.yoctopuce.YoctoAPI.YModule;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
@@ -247,6 +248,10 @@ public class StartupActivity extends FragmentActivity implements
 		}
 		// User clicked bluetooth
 		if (v.getId() == R.id.btnBluetooth) {
+			BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+			if (!mBluetoothAdapter.isEnabled()) {
+				mBluetoothAdapter.enable();
+			}
 			Intent btActivity = new Intent(this,
 					AndroidBluetoothServerActivity.class);
 			startActivity(btActivity);
