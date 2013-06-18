@@ -250,7 +250,8 @@ public class StartupActivity extends FragmentActivity implements
 		if (v.getId() == R.id.btnBluetooth) {
 			BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 			if (!mBluetoothAdapter.isEnabled()) {
-				mBluetoothAdapter.enable();
+				Toast.makeText(getApplicationContext(), "Please Enable Bluetooth first", Toast.LENGTH_LONG).show();
+				return;
 			}
 			Intent btActivity = new Intent(this,
 					AndroidBluetoothServerActivity.class);
