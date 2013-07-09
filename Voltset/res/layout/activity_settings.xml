@@ -34,21 +34,22 @@
                     android:id="@+id/acVolt"
                     android:layout_alignRight="@+id/seekBar" android:layout_alignBottom="@+id/seekBar"/>
 
-            <CheckBox
-                android:id="@+id/cbLog"
+            <Button
+                android:id="@+id/btnForm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/seekBar"
-                android:text="Enable Logging" />
+                android:text="Form Configuration" />
 
             <Button
                 android:id="@+id/btnViewLogs"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/cbLog"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/btnForm"
+                android:layout_marginTop="49dp"
                 android:text="View Logs" />
 
         </RelativeLayout>

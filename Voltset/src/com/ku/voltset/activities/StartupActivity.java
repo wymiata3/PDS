@@ -119,6 +119,8 @@ public class StartupActivity extends FragmentActivity implements
 		bt.setOnClickListener(this);
 		Button quit = (Button) findViewById(R.id.btnQuit);
 		quit.setOnClickListener(this);
+		Button quality = (Button) findViewById(R.id.btnReport);
+		quality.setOnClickListener(this);
 		infoIcon = (ImageView) findViewById(R.id.infoIcon);
 		// play animation for icon if module not found
 		runFadeOutAnimationOn(context, infoIcon).setFillAfter(true);
@@ -248,9 +250,12 @@ public class StartupActivity extends FragmentActivity implements
 		}
 		// User clicked bluetooth
 		if (v.getId() == R.id.btnBluetooth) {
-			BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+			BluetoothAdapter mBluetoothAdapter = BluetoothAdapter
+					.getDefaultAdapter();
 			if (!mBluetoothAdapter.isEnabled()) {
-				Toast.makeText(getApplicationContext(), "Please Enable Bluetooth first", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(),
+						"Please Enable Bluetooth first", Toast.LENGTH_LONG)
+						.show();
 				return;
 			}
 			Intent btActivity = new Intent(this,
@@ -301,6 +306,28 @@ public class StartupActivity extends FragmentActivity implements
 				// And show it
 				info.show(getSupportFragmentManager(), "info");
 			}
+		}
+		if (v.getId() == R.id.btnReport) {
+//			if (!serial.equalsIgnoreCase("null")) {
+				serialscanner.removeCallbacks(scan);
+				Intent reportActivity = new Intent(this, ReportActivity.class);
+				// set the flags
+				reportActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				// start activity
+				startActivity(reportActivity);
+				// with animation
+				overridePendingTransition(R.anim.left_to_right,
+						R.anim.right_to_left);
+//			}
+//			else {
+////				 dont progress to next activity is serial is "null"
+//				// and inform user
+//				Toast.makeText(getApplicationContext(),
+//						"Device not found, can't proceed", Toast.LENGTH_SHORT)
+//						.show();
+//				return;
+//
+//			}
 		}
 
 	}

@@ -66,20 +66,20 @@
                 android:background="@drawable/purple_btn"/>
 
             <Button
-                android:id="@+id/btnProfile"
+                android:id="@+id/btnReport"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignLeft="@+id/btnBluetooth"
                 android:layout_below="@+id/btnConf"
-                android:text="@string/profile"
-                android:background="@drawable/purple_btn" />
+                android:background="@drawable/purple_btn"
+                android:text="@string/quality" />
 
             <Button
                 android:id="@+id/btnShare"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignLeft="@+id/btnBluetooth"
-                android:layout_below="@+id/btnProfile"
+                android:layout_below="@+id/btnReport"
                 android:text="@string/share"
                 android:background="@drawable/purple_btn" />
 

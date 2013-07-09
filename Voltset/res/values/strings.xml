@@ -7,8 +7,10 @@
     <string name="initialText">0.00</string>
 
     <color name="generalColor">#808080</color>
+    <color name="bckgrndColor">#000000</color>
 
-    <string name="presets">Presets:</string>
+    <string name="external_dir">GetSignature</string>
+    <string name="init_test">Initialize QA form:</string>
     <string name="app_name">VoltSet 1.0</string>
     <string name="action_settings">Bluetooth Share</string>
     <string name="staticLabel_measure">Measuring:</string>
@@ -20,7 +22,7 @@
     <string name="initValue">0.00</string>
     <string name="title_activity_startup">VoltSet</string>
     <string name="readingButton">Measure</string>
-    <string name="profile">Go to my profile</string>
+    <string name="quality">Fill quality form</string>
     <string name="vault">The Vault</string>
     <string name="conf">Configurations</string>
     <string name="quit">Quit</string>
@@ -29,9 +31,15 @@
     <string name="infoIcon">info</string>
     <string name="app_id">147486155427446</string>
     <string name="title_activity_log_viewer">LogViewer</string>
+
     <string-array name="graph_options">
         <item>Whole log</item>
         <item>Time interval</item>
     </string-array>
+
     <string name="title_activity_android_bluetooth">AndroidBluetooth</string>
+    <string name="title_activity_report">ReportActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_capture_signature">CaptureSignatureActivity</string>
+
 </resources>

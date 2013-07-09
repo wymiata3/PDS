@@ -62,6 +62,19 @@
             android:name="com.ku.voltset.activities.LogViewer"
             android:label="@string/title_activity_log_viewer" >
         </activity>
+        <activity
+            android:name="com.ku.voltset.activities.ReportActivity"
+            android:label="@string/title_activity_report"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.ku.voltset.activities.FormActivity"
+            android:label="Report Configuration"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.ku.voltset.activities.ExcelExporter"
+            android:label="Excel"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
