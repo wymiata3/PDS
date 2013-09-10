@@ -50,7 +50,7 @@ public class ReportActivity extends Activity implements OnClickListener {
 	private static final String TAG = "ReportActivity";
 	private final Messenger mMessenger = new Messenger(new IncomingHandler());
 	private Handler fiveSecHandler = new Handler();
-	private Logger log;
+//	private Logger log;
 	private int secs;
 	private TextView currentTextView;
 	private boolean locked = false;
