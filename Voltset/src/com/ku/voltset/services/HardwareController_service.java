@@ -1,6 +1,10 @@
 package com.ku.voltset.services;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Locale;
+
 import com.yoctopuce.YoctoAPI.YAPI;
 import com.yoctopuce.YoctoAPI.YAPI.DeviceRemovalCallback;
 import com.yoctopuce.YoctoAPI.YAPI_Exception;
@@ -121,8 +125,12 @@ public class HardwareController_service extends Service {
 					// get the last
 					lastMeasurement = currentMeasurement;
 					// format it to 0.## digits
-					currentMeasurement = String.format("%.2f",
-							dc_sensor.get_currentValue());
+					DecimalFormatSymbols dfc = new DecimalFormatSymbols(Locale.getDefault());
+					dfc.setDecimalSeparator('.');
+					DecimalFormat df = new DecimalFormat("#.##",dfc);
+					currentMeasurement=df.format(dc_sensor.get_currentValue());
+//					currentMeasurement = String.format("%.2f",
+//							dc_sensor.get_currentValue());
 					// discard zero values, its spam
 					if (Double.valueOf(currentMeasurement) == 0
 							&& zeroSended == true) {

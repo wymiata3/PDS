@@ -7,7 +7,7 @@
     <string name="initialText">0.00</string>
 
     <color name="generalColor">#808080</color>
-    <color name="bckgrndColor">#000000</color>
+    
 
     <string name="external_dir">GetSignature</string>
     <string name="init_test">Initialize QA form:</string>

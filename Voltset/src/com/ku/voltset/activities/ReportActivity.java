@@ -79,7 +79,7 @@ public class ReportActivity extends Activity implements OnClickListener {
 		voltsTextView = (TextView) findViewById(R.id.txtVolts);
 		viewReport=(Button)findViewById(R.id.btnView);
 		viewReport.setOnClickListener(this);
-//		doBindService();
+		doBindService();
 	}
 
 	@Override
@@ -232,9 +232,9 @@ public class ReportActivity extends Activity implements OnClickListener {
 		m1.setText("");
 		m2.setText("");
 		m3.setText("");
-		m1.setBackgroundColor(R.color.bckgrndColor);
-		m2.setBackgroundColor(R.color.bckgrndColor);
-		m3.setBackgroundColor(R.color.bckgrndColor);
+		m1.setBackgroundColor(getResources().getColor(R.color.bckgrndColor));
+		m2.setBackgroundColor(getResources().getColor(R.color.bckgrndColor));
+		m3.setBackgroundColor(getResources().getColor(R.color.bckgrndColor));
 		nextTextView = 0;
 		locked = false;
 	}
